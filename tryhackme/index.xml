@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tryhackmes on badwichell</title>
+    <link>/tryhackme/</link>
+    <description>Recent content in Tryhackmes on badwichell</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>@badwichell</copyright>
+    <lastBuildDate>Tue, 13 Dec 2022 06:35:35 -0500</lastBuildDate><atom:link href="/tryhackme/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Test12</title>
+      <link>/tryhackme/test12/</link>
+      <pubDate>Tue, 13 Dec 2022 06:35:35 -0500</pubDate>
+      
+      <guid>/tryhackme/test12/</guid>
+      <description></description>
+      <content></content>
+    </item>
+    
+    <item>
+      <title>Test1</title>
+      <link>/tryhackme/test1/</link>
+      <pubDate>Tue, 13 Dec 2022 05:35:47 -0500</pubDate>
+      
+      <guid>/tryhackme/test1/</guid>
+      <description>1 </description>
+      <content>&lt;h2 id=&#34;1&#34;&gt;1&lt;/h2&gt;
+</content>
+    </item>
+    
+  </channel>
+</rss>

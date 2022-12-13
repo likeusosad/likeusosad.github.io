@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tools on badwichell</title>
+    <link>/tools/</link>
+    <description>Recent content in Tools on badwichell</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>@badwichell</copyright>
+    <lastBuildDate>Tue, 13 Dec 2022 05:51:10 -0500</lastBuildDate><atom:link href="/tools/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Tools</title>
+      <link>/tools/tools/</link>
+      <pubDate>Tue, 13 Dec 2022 05:51:10 -0500</pubDate>
+      
+      <guid>/tools/tools/</guid>
+      <description>11 </description>
+      <content>&lt;h2 id=&#34;11&#34;&gt;11&lt;/h2&gt;
+</content>
+    </item>
+    
+  </channel>
+</rss>
