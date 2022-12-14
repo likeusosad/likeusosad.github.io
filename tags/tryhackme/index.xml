@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tryhackmes on badwichell</title>
-    <link>/tryhackme/</link>
-    <description>Recent content in Tryhackmes on badwichell</description>
+    <title>tryhackme on badwichell</title>
+    <link>/tags/tryhackme/</link>
+    <description>Recent content in tryhackme on badwichell</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>@badwichell</copyright>
-    <lastBuildDate>Tue, 13 Dec 2022 12:02:03 -0500</lastBuildDate><atom:link href="/tryhackme/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 13 Dec 2022 12:02:03 -0500</lastBuildDate><atom:link href="/tags/tryhackme/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Mrrobot-Easy</title>
       <link>/tryhackme/mr.robot-easy/</link>
