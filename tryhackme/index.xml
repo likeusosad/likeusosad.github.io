@@ -6,36 +6,54 @@
     <description>Recent content in Tryhackmes on badwichell</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>@badwichell</copyright><atom:link href="/tryhackme/index.xml" rel="self" type="application/rss+xml" />
+    <copyright>@badwichell</copyright>
+    <lastBuildDate>Tue, 13 Dec 2022 12:02:03 -0500</lastBuildDate><atom:link href="/tryhackme/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title></title>
+      <title>Mrrobot-Easy</title>
       <link>/tryhackme/mr.robot-easy/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 13 Dec 2022 12:02:03 -0500</pubDate>
       
       <guid>/tryhackme/mr.robot-easy/</guid>
-      <description>Mr.robot-Easy Mr.robot-Easy +++ title = &amp;ldquo;Mrrobot-Easy&amp;rdquo; date = &amp;ldquo;2022-12-13T12:02:03-05:00&amp;rdquo; author = &amp;ldquo;@badwichell&amp;rdquo; authorTwitter = &amp;quot;&amp;quot; #do not include @ cover = &amp;quot;&amp;quot; tags = [&amp;ldquo;tryhackme&amp;rdquo;, &amp;ldquo;Linux SUID&amp;rdquo;] keywords = [&amp;ldquo;web攻防&amp;rdquo;, &amp;ldquo;linux提权&amp;rdquo;] description = &amp;ldquo;tryhackme-mr.robot&amp;rdquo; showFullContent = false readingTime = false hideComments = false color = &amp;quot;&amp;quot; #color from the theme settings +++
-0x1 目标介绍 该项目是一个非常简单的项目，在于考察对于前期信息收集，信息收集全面对于进行该项目，没有什么难点
+      <description>0x1 目标介绍 该项目是一个非常简单的项目，在于考察对于前期信息收集，信息收集全面对于进行该项目，没有什么难点
 Tag:linux提权、目录爆破、后台爆破、shell上传
 PS:该目标还存在其他入口点，大家可以再自行尝试。curl -s license目录会有回显
 ​​
-0x2 信息收集 端口扫描 执行nmap -sC -sV -oA tcp -vv 10.10.88.111 ​​​常规扫描TCP1000端口</description>
-      <content>&lt;h1 id=&#34;mrrobot-easy&#34;&gt;Mr.robot-Easy&lt;/h1&gt;
-&lt;h1 id=&#34;mrrobot-easy-1&#34;&gt;Mr.robot-Easy&lt;/h1&gt;
-&lt;p&gt;+++
-title = &amp;ldquo;Mrrobot-Easy&amp;rdquo;
-date = &amp;ldquo;2022-12-13T12:02:03-05:00&amp;rdquo;
-author = &amp;ldquo;@badwichell&amp;rdquo;
-authorTwitter = &amp;quot;&amp;quot; #do not include @
-cover = &amp;quot;&amp;quot;
-tags = [&amp;ldquo;tryhackme&amp;rdquo;, &amp;ldquo;Linux SUID&amp;rdquo;]
-keywords = [&amp;ldquo;web攻防&amp;rdquo;, &amp;ldquo;linux提权&amp;rdquo;]
-description = &amp;ldquo;tryhackme-mr.robot&amp;rdquo;
-showFullContent = false
-readingTime = false
-hideComments = false
-color = &amp;quot;&amp;quot; #color from the theme settings
-+++&lt;/p&gt;
-&lt;h1 id=&#34;0x1-目标介绍&#34;&gt;0x1 目标介绍&lt;/h1&gt;
+0x2 信息收集 端口扫描 执行nmap -sC -sV -oA tcp -vv 10.10.88.111 ​​​常规扫描TCP1000端口
+​​
+我们可以看到开放了80/tcp、443/tcp端口，存在web服务器，但在web页面审计过程中没有可用信息
+目录扫描 执行gobuster dir -u http://10.10.88.111 -w /usr/share/wordlists/dirb/common.txt -&amp;gt; mrbotmune.txt​​
+​​
+执行目录扫描过后我们可用看到有很多敏感目录，我们对他们进行一一查看，很显然它是一个wordpress站点
+​​
+在对目录一一查看时，在**/robots.txt**找到了一些有用的信息
+​​
+我们执行wget把文件下载到本机
+​​
+接着执行wc -l​​来查看fsocity.dic字典有多少行
+​​
+字典太大了，我们需要利用sort看一看有没有重复的字段，我们来让它精简一点，我们执行sort fsocity.dic | uniq &amp;gt; fsocity_uniq.dic​​
+​​
+0x3 ATT 此时我们掌握了一个字典以及后台登录地址/wp-admin，我们可用尝试进行爆破
+burpsuite 当我们打开wordpress后台登录，我们应该想到首先要获取正确的用户名，我们该如何定位到正确的用户名。在进行登录尝试时，wordpress会判断是否为正确用户名，这很重要
+​​
+下一步我们打开burp进行抓包，将登录时的包传送到intruder​​中，设置好变量，此时我们只需要设置log为变量
+​​
+下一步我们到payloads中设置好爆破字典
+​​
+准备就绪，我们开始进行爆破，爆破结束后我们通过字段长度进行判断正确的用户名
+​​
+我们通过登录来判断是否正确
+​​
+好的，我们获取了正确的用户名，我们接下来查找正确的密码，同样的方式我们通过抓取登录包发送到intruder设置pwd为变量字段，设置好payload进行爆破
+​​
+同样的方式，我们拿到了登录密码
+​​
+我们成功的进入了后台，在后台里我们可以修改模板，好，接下来我们生成一个phpshell进行上传
+​​
+我们执行msfvenom生成phpshell
+​​
+将生成的代码复制到404 Template文本框中进行上传</description>
+      <content>&lt;h1 id=&#34;0x1-目标介绍&#34;&gt;0x1 目标介绍&lt;/h1&gt;
 &lt;blockquote&gt;
 &lt;p&gt;该项目是一个非常简单的项目，在于考察对于前期信息收集，信息收集全面对于进行该项目，没有什么难点&lt;/p&gt;
 &lt;p&gt;Tag:linux提权、目录爆破、后台爆破、shell上传&lt;/p&gt;
