@@ -6,26 +6,121 @@
     <description>Recent content in Tryhackmes on badwichell</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>@badwichell</copyright>
-    <lastBuildDate>Tue, 13 Dec 2022 06:35:35 -0500</lastBuildDate><atom:link href="/tryhackme/index.xml" rel="self" type="application/rss+xml" />
+    <copyright>@badwichell</copyright><atom:link href="/tryhackme/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Test12</title>
-      <link>/tryhackme/test12/</link>
-      <pubDate>Tue, 13 Dec 2022 06:35:35 -0500</pubDate>
+      <title></title>
+      <link>/tryhackme/mr.robot-easy/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/tryhackme/test12/</guid>
-      <description></description>
-      <content></content>
-    </item>
-    
-    <item>
-      <title>Test1</title>
-      <link>/tryhackme/test1/</link>
-      <pubDate>Tue, 13 Dec 2022 05:35:47 -0500</pubDate>
-      
-      <guid>/tryhackme/test1/</guid>
-      <description>1 </description>
-      <content>&lt;h2 id=&#34;1&#34;&gt;1&lt;/h2&gt;
+      <guid>/tryhackme/mr.robot-easy/</guid>
+      <description>Mr.robot-Easy +++
+title = &amp;ldquo;Mrrobot-Easy&amp;rdquo;
+date = &amp;ldquo;2022-12-13T12:02:03-05:00&amp;rdquo;
+author = &amp;ldquo;@badwichell&amp;rdquo;
+authorTwitter = &amp;quot;&amp;quot; #do not include @
+cover = &amp;quot;&amp;quot;
+tags = [&amp;ldquo;tryhackme&amp;rdquo;, &amp;ldquo;Linux SUID&amp;rdquo;]
+keywords = [&amp;ldquo;web攻防&amp;rdquo;, &amp;ldquo;linux提权&amp;rdquo;]
+description = &amp;ldquo;tryhackme-mr.robot&amp;rdquo;
+showFullContent = false
+readingTime = false
+hideComments = false
+color = &amp;quot;&amp;quot; #color from the theme settings
++++
+0x1 目标介绍 该项目是一个非常简单的项目，在于考察对于前期信息收集，信息收集全面对于进行该项目，没有什么难点
+Tag:linux提权、目录爆破、后台爆破、shell上传
+PS:该目标还存在其他入口点，大家可以再自行尝试。curl -s license目录会有回显
+0x2 信息收集 端口扫描 执行nmap -sC -sV -oA tcp -vv 10.10.88.111 ​​​常规扫描TCP1000端口
+​​</description>
+      <content>&lt;h1 id=&#34;mrrobot-easy&#34;&gt;Mr.robot-Easy&lt;/h1&gt;
+&lt;p&gt;+++&lt;br&gt;
+title = &amp;ldquo;Mrrobot-Easy&amp;rdquo;&lt;br&gt;
+date = &amp;ldquo;2022-12-13T12:02:03-05:00&amp;rdquo;&lt;br&gt;
+author = &amp;ldquo;@badwichell&amp;rdquo;&lt;br&gt;
+authorTwitter = &amp;quot;&amp;quot; #do not include @&lt;br&gt;
+cover = &amp;quot;&amp;quot;&lt;br&gt;
+tags = [&amp;ldquo;tryhackme&amp;rdquo;, &amp;ldquo;Linux SUID&amp;rdquo;]&lt;br&gt;
+keywords = [&amp;ldquo;web攻防&amp;rdquo;, &amp;ldquo;linux提权&amp;rdquo;]&lt;br&gt;
+description = &amp;ldquo;tryhackme-mr.robot&amp;rdquo;&lt;br&gt;
+showFullContent = false&lt;br&gt;
+readingTime = false&lt;br&gt;
+hideComments = false&lt;br&gt;
+color = &amp;quot;&amp;quot; #color from the theme settings&lt;br&gt;
++++&lt;/p&gt;
+&lt;h1 id=&#34;0x1-目标介绍&#34;&gt;0x1 目标介绍&lt;/h1&gt;
+&lt;blockquote&gt;
+&lt;p&gt;该项目是一个非常简单的项目，在于考察对于前期信息收集，信息收集全面对于进行该项目，没有什么难点&lt;/p&gt;
+&lt;p&gt;Tag:linux提权、目录爆破、后台爆破、shell上传&lt;/p&gt;
+&lt;p&gt;PS:该目标还存在其他入口点，大家可以再自行尝试。curl -s license目录会有回显&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&#34;assets/image-20221214030043-j3v49s9.png&#34; alt=&#34;image&#34;&gt;&lt;/p&gt;
+&lt;h1 id=&#34;0x2-信息收集&#34;&gt;0x2 信息收集&lt;/h1&gt;
+&lt;h2 id=&#34;端口扫描&#34;&gt;端口扫描&lt;/h2&gt;
+&lt;p&gt;执行&lt;code&gt;nmap -sC -sV -oA tcp -vv 10.10.88.111 ​&lt;/code&gt;​​常规扫描TCP1000端口&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214030710-lfm03dy.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;我们可以看到开放了&lt;strong&gt;80/tcp&lt;/strong&gt;、&lt;strong&gt;443/tcp&lt;/strong&gt;端口，存在web服务器，但在web页面审计过程中没有可用信息&lt;/p&gt;
+&lt;h2 id=&#34;目录扫描&#34;&gt;目录扫描&lt;/h2&gt;
+&lt;p&gt;执行&lt;code&gt;gobuster dir -u http://10.10.88.111 -w /usr/share/wordlists/dirb/common.txt -&amp;gt; mrbotmune.txt&lt;/code&gt;​​&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214030952-tgu6cv6.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;执行目录扫描过后我们可用看到有很多敏感目录，我们对他们进行一一查看，很显然它是一个&lt;strong&gt;wordpress&lt;/strong&gt;站点&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214031104-1j008mc.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;在对目录一一查看时，在**/robots.txt**找到了一些有用的信息&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214031201-ab8aubd.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;我们执行wget把文件下载到本机&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214031332-qgeow8d.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;接着执行&lt;code&gt;wc -l&lt;/code&gt;​​来查看fsocity.dic字典有多少行&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214031509-w3q1ty6.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;字典太大了，我们需要利用sort看一看有没有重复的字段，我们来让它精简一点，我们执行&lt;code&gt;sort fsocity.dic | uniq &amp;gt; fsocity_uniq.dic&lt;/code&gt;​​&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214031616-2sfnizz.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;h1 id=&#34;0x3-att&#34;&gt;0x3 ATT&lt;/h1&gt;
+&lt;blockquote&gt;
+&lt;p&gt;此时我们掌握了一个字典以及后台登录地址/wp-admin，我们可用尝试进行爆破&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;burpsuite&#34;&gt;burpsuite&lt;/h2&gt;
+&lt;p&gt;当我们打开wordpress后台登录，我们应该想到首先要获取正确的用户名，我们该如何定位到正确的用户名。在进行登录尝试时，wordpress会判断是否为正确用户名，这很重要&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214031917-m7d5akq.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;下一步我们打开burp进行抓包，将登录时的包传送到&lt;code&gt;intruder&lt;/code&gt;​​中，设置好变量，此时我们只需要设置log为变量&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214032330-jw2b5a5.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;下一步我们到&lt;strong&gt;payloads&lt;/strong&gt;中设置好爆破字典&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214032418-seo45s3.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;准备就绪，我们开始进行爆破，爆破结束后我们通过字段长度进行判断正确的用户名&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214032503-6di58n8.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;我们通过登录来判断是否正确&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214032535-ld0okez.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;好的，我们获取了正确的用户名，我们接下来查找正确的密码，同样的方式我们通过抓取登录包发送到&lt;strong&gt;intruder&lt;/strong&gt;设置pwd为变量字段，设置好payload进行爆破&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214032650-y5gn89t.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;同样的方式，我们拿到了登录密码&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214032709-dfbkgxh.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;我们成功的进入了后台，在后台里我们可以修改模板，好，接下来我们生成一个phpshell进行上传&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214032823-9mn4dax.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;我们执行&lt;strong&gt;msfvenom&lt;/strong&gt;生成phpshell&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214032911-jjw017k.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;将生成的代码复制到&lt;strong&gt;404 Template&lt;/strong&gt;文本框中进行上传&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214033004-vh7rvjj.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;接下来我们打开msf使用multe/handler/php/reverse进行监听&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214033055-me5m97q.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;好的，现在回来了，我们进入shell&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214033136-0ilplmg.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;进入过后我们尝试查找第二个目标答案，在进入到/root目录时存在两个文件，我们无法直接查看key-2-of-3.txt（权限不足），在执行cat查看password.raw-md5时我们得到了一些信息&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214033401-ra229xp.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;我们将此MD5进行解密可以登录至robot用户中&lt;/p&gt;
+&lt;p&gt;我们执行&lt;code&gt;python -c &#39;import pty; pty.spawn(&amp;quot;/bin/bash&amp;quot;)&#39;&lt;/code&gt;​​shell upgrades，接着执行su robot输入密码登录&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214033633-l9z767y.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;继续cat答案文件，我们得到了第二个答案&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214033702-exai1t2.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;在我们查找第三个答案文件时，它存在与/root目录下，但是我们权限不够，我们尝试进行权限提升&lt;/p&gt;
+&lt;p&gt;执行**&lt;code&gt;find / -perm +6000 2&amp;gt;/dev/null | grep &#39;/bin/&#39;&lt;/code&gt;**​​，我们发现nmap在里面&lt;/p&gt;
+&lt;p&gt;此时我们执行&lt;code&gt;nmap --interactive&lt;/code&gt;​​尝试进行提权&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214034112-ovy1neu.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;成功，继续到/root目录查看第三个目标答案&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214034148-tke7k1i.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;项目结束！&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221214034202-l0w4ye6.png&#34; alt=&#34;image&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;‍&lt;/p&gt;
+&lt;p&gt;‍&lt;/p&gt;
+&lt;p&gt;‍&lt;/p&gt;
+&lt;p&gt;‍&lt;/p&gt;
+&lt;p&gt;‍&lt;/p&gt;
 </content>
     </item>
     
