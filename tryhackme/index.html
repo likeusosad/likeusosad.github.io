@@ -183,6 +183,46 @@
         
       </article>
     
+      <article class="post on-list">
+        <h1 class="post-title">
+          <a href="/tryhackme/wonderland/"></a>
+        </h1>
+        <div class="post-meta">
+          
+          
+        </div>
+
+        
+
+        
+
+
+        <div class="post-content">
+          
+            Wonderland +++title = “Wonderland-CTF”date = “2022-12-13T12:02:03-05:00”author = “@badwichell”authorTwitter = &quot;&quot; #do not include @cover = “&quot;tags = [“tryhackme”, “Linux SUID”]keywords = [“图片隐写”, “linux提权”, “代码审计”]description = “tryhackme-mr.robot”showFullContent = falsereadingTime = falsehideComments = falsecolor = &quot;” #color from the theme settings+++
+TAG：信息收集、图片隐写、代码审计、python库劫持、未指定调用劫持，权限提升
+PS：靶场我前后打了3个小时左右，其中不乏查找一些资料，总体心得来讲这个靶场对于我来说难度还是中等，在于代码审计以及文件信息收集。可能在我的字典里只有简单和中等，因为难的我根本打不下来，就不会出现在这个网站上了。
+靶场链接：https://tryhackme.com/room/wonderland
+0x1 信息收集 nmap扫描 首先我们先进行常规的TCP端口扫描，执行nmap -sC -sV -oA tcp -vv 10.10.10.223​
+​​
+可以在结果中看到，开放了80、22端口以及服务器的系统信息，当我们审查网页代码时还是没有可用的信息
+​​
+我们接下来继续进行目录扫描
+目录扫描 使用gobuster进行对目录的扫描，我们执行gobuster dir -u http://10.10.10.223 -w /usr/share/wordlists/dirb/common.txt -&gt; wanderland.txt​
+​
+图片隐写 在目录扫描结束后，扫描出来的目录不多在目录**/r中也没有什么可用的信息，那现在我们应该考虑/img**我决定下载一张图片看看图片里有没有隐藏内容
+​​
+┌──(kali㉿kali)-[~/tryhackme/wandler] └─$ wget http://10.
+          
+        </div>
+
+        
+          <div>
+            <a class="read-more button" href="/tryhackme/wonderland/">Read more →</a>
+          </div>
+        
+      </article>
+    
 
     <div class="pagination">
   <div class="pagination__buttons">
