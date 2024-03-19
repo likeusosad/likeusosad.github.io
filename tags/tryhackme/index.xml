@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tryhackme on Bad Wichell</title>
+    <link>https://example.org/tags/tryhackme/</link>
+    <description>Recent content in Tryhackme on Bad Wichell</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>The MIT License (MIT) Copyright © 2020 Jordan GAZEAU</copyright>
+    <lastBuildDate>Wed, 31 May 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://example.org/tags/tryhackme/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Tryhackme</title>
+      <link>https://example.org/attack/tryhackme/</link>
+      <pubDate>Wed, 31 May 2023 00:00:00 +0000</pubDate>
+      <guid>https://example.org/attack/tryhackme/</guid>
+      <description>HI,这里是TryHackMe# 以下是我目前所通关的项目,点击名称即可跳转到相关页面# ps：如果你想在Tryhackme中找到我,这是我的ID：getshell01# 你或许想加入我的Tryhackme团队,请点击加入我的团队 # 名称 描述 等级 Bash Scripting bash 教学 简单 Linux Strength Training linux 教学 简单 Post-Exploitation Basics 后渗透基础知识 linux 教学 简单 Attacktive Directory 域渗透 中等 Solar, exploiting log4j log4j 中等 </description>
+    </item>
+    <item>
+      <title>Bash Scripting-TryHackMe</title>
+      <link>https://example.org/attack/tryhackme/bash-scripting/</link>
+      <pubDate>Wed, 10 May 2023 00:00:00 +0000</pubDate>
+      <guid>https://example.org/attack/tryhackme/bash-scripting/</guid>
+      <description>0 x 001# 什么是 Bash？# 我们一起看看 Bash 的结构，Bash 脚本顶部代码始终以以下代码开头&#xA;#!/bin/bash&#xA;这样你的 shell 才知道始终在终端里运行&#xA;让我们看一些例子：&#xA;#!/bin/bash echo &amp;#34;Hello World!&amp;#34; 这将返回字符串“Hello World”。命令“ ”用于向屏幕输出文本，与 python 中的 echo “ ”命令相同。print 我建议在终端中对此进行测试以掌握 bash！&#xA;还可以在 bash 脚本中执行正常的 Linux 命令，如果格式正确，它将被执行。例如，我们可以在我们的 bash 脚本中运行命令“ls ”，我们将在运行该文件时看到输出。所以让它做到这一点！&#xA;我们将以上命令保存并并名为 xxx.sh 以.sh 结尾文件，接着我们输入 chmod +x xxx.sh 赋予可执行权限，运行后我们可以看到以下输出结果。&#xA;$ ./test.sh Hello World BadWiChell uid=1000(BadWiChell) gid=1000(BadWiChell) groups=1000(BadWiChell),998(BadWiChell) 0 x 002# 什么是变量？# 在 bash 中我们可以创建变量，例如：&#xA;name = BadWiChell&#xA;我们将 BadWiChell 分配给变量 name&#xA;请注意，要使变量起作用，不能在变量名、“ = ”和值之间留空格。他们不能有空格。</description>
+    </item>
+  </channel>
+</rss>

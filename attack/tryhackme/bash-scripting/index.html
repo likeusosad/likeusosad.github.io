@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html>
+  <head><meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="generator" content="Hugo 0.124.0">
+<meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content="bash 脚本基础知识的演练室" /><title>Bash Scripting-TryHackMe | Bad Wichell</title>
+
+<link
+  rel="icon"
+  href="/images/favicon.png"
+  type="image/x-icon"
+/>
+<link
+    rel="stylesheet"
+    rel="preload"
+    type="text/css"
+    href="/css/main.css"
+  /><link
+      rel="stylesheet"
+      type="text/css"
+      href="/css/external/fontawesome.all.min.css"
+    /><link
+      rel="stylesheet"
+      type="text/css"
+      href="/css/external/overlay-scrollbars/overlayscrollbars.min.css"
+    />
+</head>
+  <body onload="browserCompatibility()"><div id="navbarInfo" class="is-hidden modal-container">
+  <div class="modal-content-box modal-text-box">
+    <div class="card modal-title is-radiusless">
+      <div class="card-header">
+        <p class="card-header-title is-marginless">About</p>
+      </div>
+    </div>
+    <div class="modal-content-container">
+      <div class="modal-content-block is-block">
+</div>
+    </div>
+  </div>
+</div>
+<div id="navbarShortcuts" class="is-hidden modal-container">
+  <div class="modal-content-box modal-text-box"><div class="card modal-title is-radiusless">
+        <div class="card-header">
+          <p class="card-header-title is-marginless">Keyboard shortcuts</p>
+        </div>
+      </div>
+      <div class="modal-content-container">
+        <div class="modal-content-block"><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>q</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Show current page QR code</p>
+  </div><div class="modal-content"><kbd>Escape</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Close modals</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>i</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Show website information</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>k</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Show shortcuts</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>h</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Go to homepage</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>f</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Find on website</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>m</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Collapse/Uncollapse sidebar</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>t</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Collapse/Uncollapse table of contents</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>↑</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Go to the top of the page</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>↓</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Go to the bottom of the page</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>p</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Print current page</p>
+  </div></div>
+      </div></div>
+</div>
+<div id="modalContainer" class="is-hidden modal-container">
+  <div id="modal" class="modal-content-box"></div>
+</div>
+<nav id="navbar" class="navbar" role="navigation" aria-label="main navigation">
+  <div id="navbarItemsContainer" class="navbar-brand"><div id="globalLogoContainer" class="is-flex">
+  <a
+    id="globalLogo"
+    class="navbar-item navbar-item-standard is-paddingless"
+    href="/"
+  >
+    <img
+      alt="Homepage"
+      src="/images/logo.png"
+    />
+  </a>
+  <a
+    id="globalTouchLogo"
+    class="navbar-item navbar-item-standard is-paddingless"
+    href="/"
+  >
+    <img
+      alt="Homepage"
+      src="/images/logoTouch.png"
+    />
+  </a>
+</div>
+<div id="navbarItems" class="is-flex">
+      <div id="navbarItemsStart" class="is-flex">
+        <div id="searchContainer" class="navbar-item"><div class="control has-icons-left">
+  <span id="searchInput" class="autocomplete">
+    <input
+      id="search"
+      autocomplete="off"
+      class="input"
+      type="search"
+      placeholder="Search"
+    />
+  </span>
+  <span class="icon is-left">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </span>
+  <ul id="searchList" class="is-paddingless is-hidden"></ul>
+</div>
+</div>
+      </div>
+      <div id="navbarItemsEnd" class="is-flex is-invisible"><div class="navbar-item">
+  <a
+    id="printButton"
+    class="button navbar-item-standard"
+  >
+    <span class="icon-text">Print</span>
+    <span class="icon">
+      <i class="fa-solid fa-print fa-lg"></i>
+    </span>
+  </a>
+</div>
+<div class="navbar-item">
+  <a
+    id="qrCodeButton"
+    class="button navbar-item-standard"
+  >
+    <span class="icon-text">QR code</span>
+    <span class="icon">
+      <i class="fa-solid fa-qrcode fa-lg"></i>
+    </span>
+  </a>
+</div>
+<div class="navbar-item">
+  <a
+    id="shortcutsInfo"
+    trigger="navbarShortcuts"
+    class="button navbar-item-standard navbar-trigger"
+    title="Keyboard shortcuts"
+  >
+    <span class="icon-text">Shortcuts</span>
+    <span class="icon">
+      <i class="fa-solid fa-keyboard fa-lg"></i>
+    </span>
+  </a>
+</div><div class="navbar-item"><div
+  id="taxonomiesSelectorContainer"
+  class="dropdown is-right"
+>
+  <div class="dropdown-trigger">
+    <button
+      id="taxonomiesSelector"
+      class="button navbar-item-standard"
+      aria-haspopup="true"
+      aria-controls="dropdown-menu"
+    >
+      <span class="icon-text">Taxonomies</span>
+      <span class="icon">
+        <i class="fa-solid fa-tags fa-lg"></i>
+      </span>
+    </button>
+  </div>
+  <div
+    id="dropdown-menu-taxonomies"
+    class="dropdown-menu"
+    role="menu"
+  >
+    <div class="dropdown-content is-paddingless"><a
+              href="/categories/"
+              class="dropdown-item has-text-weight-bold"
+            >Categories</a><a
+              href="/tags/"
+              class="dropdown-item has-text-weight-bold"
+            >Tags</a></div>
+  </div>
+</div>
+</div><div class="navbar-item">
+  <a
+    id="siteInfo"
+    trigger="navbarInfo"
+    class="button navbar-item-standard navbar-trigger"
+    title="About"
+  >
+    <span class="icon-text">About</span>
+    <span class="icon">
+      <i class="fa-solid fa-circle-question fa-lg"></i>
+    </span>
+  </a>
+</div>
+<div id="navbarExtend" class="navbar-item">
+  <div id="navbarExtendWrapper">
+    <a id="navbarExtendButton" class="button navbar-item-standard">
+      <span class="icon">
+        <i class="fa-solid fa-ellipsis fa-lg"></i>
+      </span>
+    </a>
+    <div id="navbarExtendItemsContainer">
+      <div id="navbarExtendItemsWrapper"><div class="navbar-item">
+  <a
+    id="printButtonExtend"
+    class="button navbar-item-standard"
+  >
+    <span class="icon-text">Print</span>
+    <span class="icon">
+      <i class="fa-solid fa-print fa-lg"></i>
+    </span>
+  </a>
+</div>
+<div class="navbar-item">
+  <a
+    id="qrCodeButtonExtend"
+    class="button navbar-item-standard"
+  >
+    <span class="icon-text">QR code</span>
+    <span class="icon">
+      <i class="fa-solid fa-qrcode fa-lg"></i>
+    </span>
+  </a>
+</div>
+<div class="navbar-item">
+  <a
+    id="shortcutsInfoExtend"
+    trigger="navbarShortcuts"
+    class="button navbar-item-standard navbar-trigger"
+    title="Keyboard shortcuts"
+  >
+    <span class="icon-text">Shortcuts</span>
+    <span class="icon">
+      <i class="fa-solid fa-keyboard fa-lg"></i>
+    </span>
+  </a>
+</div><div class="navbar-item"><div
+  id="taxonomiesSelectorContainerExtend"
+  class="dropdown is-right"
+>
+  <div class="dropdown-trigger">
+    <button
+      id="taxonomiesSelectorExtend"
+      class="button navbar-item-standard"
+      aria-haspopup="true"
+      aria-controls="dropdown-menu"
+    >
+      <span class="icon-text">Taxonomies</span>
+      <span class="icon">
+        <i class="fa-solid fa-tags fa-lg"></i>
+      </span>
+    </button>
+  </div>
+  <div
+    id="dropdown-menu-taxonomiesExtend"
+    class="dropdown-menu"
+    role="menu"
+  >
+    <div class="dropdown-content is-paddingless"><a
+              href="/categories/"
+              class="dropdown-item has-text-weight-bold"
+            >Categories</a><a
+              href="/tags/"
+              class="dropdown-item has-text-weight-bold"
+            >Tags</a></div>
+  </div>
+</div>
+</div><div class="navbar-item">
+  <a
+    id="siteInfoExtend"
+    trigger="navbarInfo"
+    class="button navbar-item-standard navbar-trigger"
+    title="About"
+  >
+    <span class="icon-text">About</span>
+    <span class="icon">
+      <i class="fa-solid fa-circle-question fa-lg"></i>
+    </span>
+  </a>
+</div>
+</div>
+    </div>
+  </div>
+</div>
+</div>
+    </div>
+  </div>
+</nav>
+<div id="navbarOverlay"></div>
+<div
+      class="columns is-mobile is-paddingless is-marginless"
+      id="mainContainer"
+    ><div
+  id="sidebarContainer"
+  class="column is-narrow is-paddingless is-marginless"
+>
+  <div id="sidebarWrapper" class="is-fixed">
+    <div id="sidebar" class="is-marginless">
+      <aside class="menu is-paddingless is-marginless">
+        <ul class="menu-list is-marginless is-paddingless"><div class="card is-fs-expandable-icon is-sidebar-active"><div class="card-header">
+      <a
+        href='/attack/'
+        class='card-header-title'>
+        <i class='fa-solid fa-ghost fa-lg'></i></a></div>
+      </div><div class="is-expandable">
+      <div class="is-sidebar-list-wrapper"><li class="is-marginless is-tree-active is-entries-expandable is-entries-expanded"><div
+            class="card"><div class="card-header">
+      <a
+        href='/attack/'
+        class='card-header-title'
+          title='Attack'>
+        <i class='fa-solid fa-ghost fa-lg'></i><p class="pt-0 pb-0 pr-2 pl-1">Attack</p></a><a class="card-header-icon is-icon-expandable is-paddingless is-icon-expanded">
+                <span class='icon'></span>
+              </a>
+            </div>
+          </div><ul class="is-marginless is-tree-active"><div class="">
+      <div class=""><li class="is-marginless is-entries-expandable is-entries-expanded"><div
+            class="card"><div class="card-header">
+      <a
+        href='/attack/tryhackme/'
+        class='card-header-title'
+          title='Tryhackme'>
+        <i class='fa-solid fa-ghost'></i><p class="pt-0 pb-0 pr-2 pl-0">Tryhackme</p></a><a class="card-header-icon is-icon-expandable is-paddingless is-icon-expanded">
+                <span class='icon'></span>
+              </a>
+            </div>
+          </div><ul class="is-marginless"><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/attack/tryhackme/attacktive-directory/'
+        class='card-header-title'
+          title='Attacktive Directory'>
+        <i class='fa-solid fa-turn-up fa-rotate-90 fa-xs'></i><p class="pt-0 pb-0 pr-2 pl-0">Attacktive Directory</p></a></div>
+          </div></li>
+      </div>
+    </div><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/attack/tryhackme/solar-exploting-log4j/'
+        class='card-header-title'
+          title='Solar, exploiting log4j'>
+        <i class='fa-solid fa-turn-up fa-rotate-90 fa-xs'></i><p class="pt-0 pb-0 pr-2 pl-0">Solar, exploiting log4j</p></a></div>
+          </div></li>
+      </div>
+    </div><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/attack/tryhackme/post-exploitation-basics-%E5%90%8E%E6%B8%97%E9%80%8F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/'
+        class='card-header-title'
+          title='Post-Exploitation Basics'>
+        <i class='fa-solid fa-turn-up fa-rotate-90 fa-xs'></i><p class="pt-0 pb-0 pr-2 pl-0">Post-Exploitation Basics</p></a></div>
+          </div></li>
+      </div>
+    </div><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card is-sidebar-active"id='sidebarActiveEntry'><div class="card-header is-single-link">
+      <a
+        href='/attack/tryhackme/bash-scripting/'
+        class='card-header-title'
+          title='Bash Scripting-TryHackMe'>
+        <i class='fa-solid fa-turn-up fa-rotate-90 fa-xs'></i><p class="pt-0 pb-0 pr-2 pl-0">Bash Scripting-TryHackMe</p></a></div>
+          </div></li>
+      </div>
+    </div><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/attack/tryhackme/linux-strength-training/'
+        class='card-header-title'
+          title='Linux Strength Training I'>
+        <i class='fa-solid fa-turn-up fa-rotate-90 fa-xs'></i><p class="pt-0 pb-0 pr-2 pl-0">Linux Strength Training I</p></a></div>
+          </div></li>
+      </div>
+    </div></ul></li>
+      </div>
+    </div><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/attack/hackthebox/'
+        class='card-header-title'
+          title='HackTheBox'>
+        <i class='fa-solid fa-ghost'></i><p class="pt-0 pb-0 pr-2 pl-0">HackTheBox</p></a></div>
+          </div></li>
+      </div>
+    </div></ul></li>
+      </div>
+    </div><div class="card is-fs-expandable-icon"><div class="card-header is-single-link">
+      <a
+        href='/tools/'
+        class='card-header-title'>
+        <i class='fa-solid fa-hammer fa-lg'></i></a></div>
+      </div><div class="is-expandable">
+      <div class="is-sidebar-list-wrapper"><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/tools/'
+        class='card-header-title'
+          title='Tools'>
+        <i class='fa-solid fa-hammer fa-lg'></i><p class="pt-0 pb-0 pr-2 pl-1">Tools</p></a></div>
+          </div></li>
+      </div>
+    </div><div class="card is-fs-expandable-icon"><div class="card-header is-single-link">
+      <a
+        href='/sitemap/'
+        class='card-header-title'>
+        <i class='fa-solid fa-sitemap fa-lg'></i></a></div>
+      </div><div class="is-expandable">
+      <div class="is-sidebar-list-wrapper"><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/sitemap/'
+        class='card-header-title'
+          title='Sitemap'>
+        <i class='fa-solid fa-sitemap fa-lg'></i><p class="pt-0 pb-0 pr-2 pl-1">Sitemap</p></a></div>
+          </div></li>
+      </div>
+    </div></ul>
+      </aside>
+    </div>
+    <div id="sidebarCollapsible" class="is-marginless">
+      <div class="card is-uncollapse-action">
+        <div
+          id="sidebarUncollapse"
+          class="card-header is-single-link"
+          title="Collapse/Uncollapse sidebar"
+        >
+          <a class="card-header-title">
+            <i class="fa-solid fa-angles-right fa-lg"></i>
+          </a>
+        </div>
+      </div>
+      <div class="card is-collapse-action">
+        <div
+          id="sidebarCollapse"
+          class="card-header is-single-link"
+          title="Collapse/Uncollapse sidebar"
+        >
+          <a class="card-header-title">
+            <i class="fa-solid fa-angles-left fa-lg"></i>
+            <p>Collapse sidebar</p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="sidebarMobileWrapper" class="column is-narrow is-hidden-desktop"></div>
+<div class="columns is-mobile is-marginless is-scroll-smooth has-toc" id="contentContainer">
+  <div class="column" id="content"><div id="contentTitle">Bash Scripting-TryHackMe</div>
+<p><img
+  src="https://s2.loli.net/2023/05/10/LVcek26gxJuYWqQ.png"
+  alt=""
+  class=""/>
+</p>
+<h1 id='0-x-001'>0 x 001<a href='#0-x-001' class='anchor'>#</a>
+</h1><h2 id='什么是-bash'>什么是 Bash？<a href='#%e4%bb%80%e4%b9%88%e6%98%af-bash' class='anchor'>#</a>
+</h2><p>我们一起看看 Bash 的结构，Bash 脚本顶部代码始终以以下代码开头</p>
+<blockquote>
+<p>#!/bin/bash</p>
+</blockquote>
+<p>这样你的 shell 才知道始终在终端里运行</p>
+<p>让我们看一些例子：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>echo <span style="color:#e6db74">&#34;Hello World!&#34;</span>
+</span></span></code></pre></div><p>这将返回字符串“Hello World”。命令“ ”用于向屏幕输出文本，与 python 中的 <code>echo</code> “ ”命令相同。<code>print</code> 我建议在终端中对此进行测试以掌握 bash！</p>
+<p>还可以在 bash 脚本中执行正常的 Linux 命令，如果格式正确，它将被执行。例如，我们可以在我们的 bash 脚本中运行命令“<code>ls</code> ”，我们将在运行该文件时看到输出。所以让它做到这一点！</p>
+<p><img
+  src="https://s2.loli.net/2023/05/10/ZoUteJnH9K8PME5.png"
+  alt=""
+  class=""/>
+</p>
+<p>我们将以上命令保存并并名为 xxx.sh 以.sh 结尾文件，接着我们输入 chmod +x xxx.sh 赋予可执行权限，运行后我们可以看到以下输出结果。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ ./test.sh
+</span></span><span style="display:flex;"><span>Hello World
+</span></span><span style="display:flex;"><span>BadWiChell 
+</span></span><span style="display:flex;"><span>uid<span style="color:#f92672">=</span>1000<span style="color:#f92672">(</span>BadWiChell<span style="color:#f92672">)</span> gid<span style="color:#f92672">=</span>1000<span style="color:#f92672">(</span>BadWiChell<span style="color:#f92672">)</span> groups<span style="color:#f92672">=</span>1000<span style="color:#f92672">(</span>BadWiChell<span style="color:#f92672">)</span>,998<span style="color:#f92672">(</span>BadWiChell<span style="color:#f92672">)</span>
+</span></span></code></pre></div><h1 id='0-x-002'>0 x 002<a href='#0-x-002' class='anchor'>#</a>
+</h1><h2 id='什么是变量'>什么是变量？<a href='#%e4%bb%80%e4%b9%88%e6%98%af%e5%8f%98%e9%87%8f' class='anchor'>#</a>
+</h2><p>在 bash 中我们可以创建变量，例如：</p>
+<blockquote>
+<p>name = BadWiChell</p>
+</blockquote>
+<p>我们将 <code>BadWiChell</code> 分配给变量 <code>name</code></p>
+<p>请注意，要使变量起作用，不能在变量名、“ <strong>=</strong> ”和值之间留空格。他们不能有空格。</p>
+<p>那么我们现在如何使用我们的变量呢？那么它也很简单。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>name <span style="color:#f92672">=</span> BadWiChell 
+</span></span><span style="display:flex;"><span>echo $name
+</span></span></code></pre></div><p>为了可以使用变量，我们需加上 <code>$</code></p>
+<p>当然我们也可以在我们终端执行：</p>
+<p><code>$ name=&quot;BadWiChell &quot;</code></p>
+<p><code>$ echo $name</code></p>
+<p><code>BadWiChell</code>
+最后将 BadWiChell 输出到了屏幕</p>
+<p>变量使存储数据变得更加容易，而不是在多个地方输入相同的东西，我们可以简单地用 $var 插入我们的变量，然后将其声明为某个值，这样如果做错了什么并且需要时更容易回退改变它。那么我们如何调试我们的代码呢？</p>
+<p>调试是编程中非常重要的一部分，因此我们应该尽早习惯解决问题和修复错误。Bash 有一些内置功能，可以让我们的生活变得简单。变量使存储数据变得更加容易，而不是在多个地方输入相同的东西，我们可以简单地用 $var 插入我们的变量，然后将其声明为某个值，这样如果做错了什么并且需要时更容易回退改变它。那么我们如何调试我们的代码呢？</p>
+<p>调试是编程中非常重要的一部分，因此我们应该尽早习惯解决问题和修复错误。Bash 有一些内置功能，可以让我们的生活变得简单。</p>
+<p>在命令行运行时，可以执行以下操作：</p>
+<p><code>bash -x ./file.sh</code></p>
+<p>你可以制作一个简单的 bash 脚本（现在你知道一些基本的语法）并做出一些完全错误的事情。然后在调试模式下单步执行您的程序，看看它抛出错误时的样子！</p>
+<p>这会告诉您哪些线路有效，哪些线路无效。 如果您想在某个点进行调试，您可以插入<code>set -x</code>脚本并<code>set +x</code>结束该部分，如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ bash +x ./file.sh
+</span></span><span style="display:flex;"><span>+ echo <span style="color:#e6db74">&#39;Hello World&#39;</span>
+</span></span><span style="display:flex;"><span>Hello World
+</span></span><span style="display:flex;"><span>+ whoami
+</span></span><span style="display:flex;"><span>BadWiChell
+</span></span><span style="display:flex;"><span>+ id
+</span></span><span style="display:flex;"><span>uid<span style="color:#f92672">=</span>1000<span style="color:#f92672">(</span>BadWiChell<span style="color:#f92672">)</span> gid<span style="color:#f92672">=</span>1000<span style="color:#f92672">(</span>BadWiChell<span style="color:#f92672">)</span> groups<span style="color:#f92672">=</span>1000<span style="color:#f92672">(</span>BadWiChell<span style="color:#f92672">)</span>,998<span style="color:#f92672">(</span>wheel<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>可以看到它为命令输出+，然后输出该命令执行的内容。如果出现错误，它会在该行输出一个-这可以很容易地发现出错的地方，以便可以修复它们。</p>
+<h1 id='0-x-003'>0 x 003<a href='#0-x-003' class='anchor'>#</a>
+</h1><h2 id='参数'>参数<a href='#%e5%8f%82%e6%95%b0' class='anchor'>#</a>
+</h2><p>我们现在来看看 bash 的主要特性之一，那就是使用参数。
+我们将首先查看运行文件时使用命令行指定的参数。它们有多种形式，但通常带有“$”前缀，因为参数仍然是变量。</p>
+<p>让我们首先声明一个参数，该参数将成为我们运行 bash 脚本时的第一个参数。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>name<span style="color:#f92672">=</span>$1
+</span></span><span style="display:flex;"><span>echo $name
+</span></span></code></pre></div><p>接着我们执行该 bash 文件</p>
+<pre tabindex="0"><code>$ ./bash.sh alex
+alex
+</code></pre><p>我们运行该 bash 文件果然得到了 alex</p>
+<p>那么如果我们想要第二个参数呢？ 那么这个过程非常简单，我们只需添加一个 <code>$2</code> 而不是 <code>name=$1</code></p>
+<pre tabindex="0"><code>$ ./bash.sh alex tony
+tony
+</code></pre><p>它会返回 <code>tony</code></p>
+<p>然而，如果我们不想像这样提供它们，而是让我们以更具交互性的方式输入我们的名字，我们可以使用 <code>read</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>echo Enter Your nmae
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>read name
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;you are name is </span>$name<span style="color:#e6db74">&#34;</span>
+</span></span></code></pre></div><p>以上的代码片段我们保存为 name.sh 并执行：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ ./name.sh 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Enter Your name 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>alex
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>you are name is alex
+</span></span></code></pre></div><h1 id='0-x-004'>0 x 004<a href='#0-x-004' class='anchor'>#</a>
+</h1><h2 id='数组'>数组<a href='#%e6%95%b0%e7%bb%84' class='anchor'>#</a>
+</h2><blockquote>
+<p>该章节建议大家在 linux 终端下进行完成</p>
+</blockquote>
+<p>数组用于将多条数据存储在一个变量中，然后可以使用索引提取这些数据。最常记为 <code>var[index_position]</code>.</p>
+<p>数组使用索引意味着数组中的每个项目代表一个数字。</p>
+<p>数组中的 <code>['car', 'train', 'bike', 'bus']</code> 每一项都有对应的索引。</p>
+<p>所有索引都从位置 0 开始</p>
+<table>
+<thead>
+<tr>
+<th>物品</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>car</td>
+<td>0</td>
+</tr>
+<tr>
+<td>train</td>
+<td>1</td>
+</tr>
+<tr>
+<td>bike</td>
+<td>2</td>
+</tr>
+<tr>
+<td>bus</td>
+<td>3</td>
+</tr>
+<tr>
+<td>现在我们已经介绍了这个，让我们在 bash 中创建一个数组。</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>语法如下：</p>
+<p>我们有变量名，在我们的例子中是“运输”</p>
+<p>然后我们将每个项目包装在括号中，在每个项目之间留一个空格。</p>
+<p><code>transport=('car' 'train' 'bike' 'bus')</code></p>
+<p>然后我们可以像这样回显数组中的所有元素：</p>
+<p><code>echo &quot;${transport[@]}&quot;</code></p>
+<p>您可以在自己的终端中尝试此操作并查看其输出。</p>
+<p>其中“@”表示所有参数，环绕它的 [] 指定其索引。</p>
+<p>那么如果我们想打印出 item 呢 <code>train</code>？</p>
+<p>我们只需输入：</p>
+<p><code>echo &quot;${transport[1]}&quot;</code></p>
+<p>因为火车在索引位置 1。</p>
+<p>如下图：</p>
+<p><img
+  src="https://i.imgur.com/BchAR5l.png"
+  alt=""
+  class=""/>
+</p>
+<p>我们将讨论的最后一件事是我们是否要更改或删除一个元素。如果我们想删除一个元素，我们将使用该 <code>unset</code> 实用程序。</p>
+<p><code>unset transport[1]</code></p>
+<p>这现在删除了该 <code>train</code> 项目，如果我们想要我们可以回显它并看到它确实消失了</p>
+<p>现在让我们把它设置成别的东西。我们可以做的：</p>
+<p><code>transport[1]='trainride'</code></p>
+<p>如果我们回显数组然后我们得到：</p>
+<p><code>car trainride bike bus</code></p>
+<p>所以我们成功地换出了数组中的一个元素！我们将讨论的最后一件事是我们是否要更改或删除一个元素。如果我们想删除一个元素，我们将使用该 unset 实用程序。</p>
+<p>Unset transport[1]</p>
+<p>这现在删除了该 train 项目，如果我们想要我们可以回显它并看到它确实消失了</p>
+<p>现在让我们把它设置成别的东西。我们可以做的：</p>
+<p>Transport[1]=&lsquo;trainride&rsquo;</p>
+<p>如果我们回显数组然后我们得到：</p>
+<p>Car trainride bike bus</p>
+<p>所以我们成功地换出了数组中的一个元素！</p>
+<h1 id='0-x-004-1'>0 x 004<a href='#0-x-004-1' class='anchor'>#</a>
+</h1><h2 id='条件'>条件<a href='#%e6%9d%a1%e4%bb%b6' class='anchor'>#</a>
+</h2><p>我们谈论条件时，它意味着某段代码依赖于满足的条件，这通常由关系运算符确定，例如等于、大于和小于。</p>
+<p>我们将制作一个简单的“if”语句来检查一个变量是否等于一个值，我们还将制作一个脚本来检查文件是否存在以及它是否可写，如果存在我们将向该文件写入一条消息，如果不可写，它将删除它并创建一个新的。这里会教很多新东西，所以要注意。</p>
+<p>首先，我们将讨论 if 语句的基本语法。</p>
+<p>所有 if 语句如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span>something comparison something eles<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">then</span> 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	something 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	something different
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>让我们看一个例子：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>count<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span>$count -eq 10<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	echo <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span>	
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	echo <span style="color:#e6db74">&#34;false&#34;</span>
+</span></span><span style="display:flex;"><span>	
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><blockquote>
+<p>If 语句总是使用一对方括号，在 [] 的情况下，我们需要在文本的两边留一个空格（bash 语法）。我们也总是需要结束 if 语句 <code>fi</code></p>
+</blockquote>
+<p>这里一个变量被声明为 10，在 if 语句的第一行，变量 $count 与整数 10 进行比较。</p>
+<p>如果它们相等则输出<strong>true</strong>，如果它们为 false 则输出<strong>false</strong>。正如我们所知，10 等于 10，因此它输出 true。</p>
+<p>-eq 是一种方法，您也可以使用“=”</p>
+<p>我们将例子带入项目中可能更好的理解，我们来做一个经典的猜数字游戏：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>value<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;guessme&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>guss<span style="color:#f92672">=</span>$1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;</span>$value<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span>$guss<span style="color:#e6db74">&#34;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;They are equal&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	echo <span style="color:#e6db74">&#34;They are not equal&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>现在让我们在我们的终端中测试它。</p>
+<p><code># ./example.sh guessme</code></p>
+<p><code>&quot;They are equal&quot;</code></p>
+<p><code># ./example.sh hi</code></p>
+<p><code>&quot;They are not equal&quot;</code></p>
+<p>我们可以看到它有效！</p>
+<p>随意尝试这些并尝试进行不同的组合并使用不同的运算符。</p>
+<p>现在让我们创建另一个脚本，我们将同时使用 2 个条件并回到我们在第一课中学到的概念。</p>
+<p>让我们开始。</p>
+<p><strong>我们想制作一个脚本，我们将在参数</strong>给定的文件上执行。</p>
+<p>然后我们检查它是否存在以及它是否具有<strong>写</strong>权限。如果它有写权限，那么我们向它回显“ **hello ”。**如果它不可访问或不存在，我们将创建该文件并向其回显“hello”。让我们开始！</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>filename<span style="color:#f92672">=</span>$1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -f <span style="color:#e6db74">&#34;</span>$filename<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">[</span> -w  <span style="color:#e6db74">&#34;</span>$filename<span style="color:#e6db74"> &#34;</span> <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">then</span> 
+</span></span><span style="display:flex;"><span>	echo <span style="color:#e6db74">&#34;hello&#34;</span> &gt; $filename 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>	touch <span style="color:#e6db74">&#34;</span>$filename<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>	echo <span style="color:#e6db74">&#34;hello&#34;</span> &gt; $filename
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p><code>─# ./example.sh hello.txt ─# cat hello.txt</code></p>
+<p>Hello</p>
+<p>我们可以看到它起作用了！！</p>
+<p>-f 检查文件是否存在。</p>
+<p>-w 检查文件是否可写，没有写权限我们将无法将文本输出到文件中。</p>
+</div><div class="column is-sticky is-paddingless" id="tocWrapper">
+  <div class="is-paddingless" id="tocContainer">
+    <div class="toc-header">
+      <h6 class="toc-title is-marginless">On this page:</h6>
+      <i
+        title="Back to top"
+        id="tocBackToTop"
+        class="fa-solid fa-circle-arrow-up"
+      ></i>
+    </div>
+    <div id="tocContent">
+      <div id="toc"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#什么是-bash">什么是 Bash？</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#什么是变量">什么是变量？</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#参数">参数</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#数组">数组</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#条件">条件</a></li>
+  </ul>
+</nav></div>
+      <div id="taxonomies"><div class="taxonomy-wrapper"><div class="toc-header">
+                  <h6 class="toc-title is-marginless">Categories</h6>
+                </div><a href="/categories/tryhackme/" class="taxonomy"
+                    ><i class="fa-solid fa-circle-dot"></i>Tryhackme</a
+                  ></div><div class="taxonomy-wrapper"><div class="toc-header">
+                  <h6 class="toc-title is-marginless">Tags</h6>
+                </div><a href="/tags/bash/" class="taxonomy"
+                    ><i class="fa-solid fa-circle-dot"></i>Bash</a
+                  ><a href="/tags/tryhackme/" class="taxonomy"
+                    ><i class="fa-solid fa-circle-dot"></i>Tryhackme</a
+                  ></div></div>
+    </div>
+  </div>
+  <div
+    class="is-paddingless"
+    id="tocCollapsible"
+    title="Collapse/Uncollapse table of contents"
+  >
+    <i class="fa-solid fa-angles-right fa-lg"></i>
+  </div>
+</div>
+</div>
+</div><script type='text/javascript'>
+  const baseUrl = 'https:\/\/example.org\/';
+  const codeCopyBefore = 'Copy to clipboard';
+  const codeCopyAfter = 'Copied to clipboard';
+  const svgDownloadLabel = 'Download as SVG';
+  const helperLoadingLabel = 'Loading';
+  const searchNoResults = 'No result found';
+  const introNextLabel = 'Next';
+  const introPrevLabel = 'Previous';
+  const introSkipLabel = '✗';
+  const introDoneLabel = 'Done';
+  const printLabel = 'Print current page';
+  const qrCodeLabel = 'Show current page QR code';
+  const naCommonLabel = 'Not available';
+</script>
+<script
+      type="module"
+      src="/js/theme/modules/const.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/modules/helpers.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/modules/helpersGlobal.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/init.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/navbar.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/print.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/qrcode.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/search.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/shortcuts.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/sidebar.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/toc.min.js"
+    ></script><script
+      type="text/javascript"
+      src="/js/theme/browserCompatibility.min.js"
+    ></script><script
+      type="text/javascript"
+      src="/js/external/flexsearch/flexsearch.bundle.min.js"
+    ></script><script
+      type="text/javascript"
+      src="/js/external/qrious/qrious.min.js"
+    ></script><script
+      type="text/javascript"
+      src="/js/external/overlay-scrollbars/overlayscrollbars.min.js"
+    ></script>
+</body>
+</html>

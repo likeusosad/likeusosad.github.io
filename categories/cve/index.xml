@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>CVE on Bad Wichell</title>
+    <link>https://example.org/categories/cve/</link>
+    <description>Recent content in CVE on Bad Wichell</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>The MIT License (MIT) Copyright © 2020 Jordan GAZEAU</copyright>
+    <lastBuildDate>Wed, 31 May 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://example.org/categories/cve/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Solar, exploiting log4j</title>
+      <link>https://example.org/attack/tryhackme/solar-exploting-log4j/</link>
+      <pubDate>Wed, 31 May 2023 00:00:00 +0000</pubDate>
+      <guid>https://example.org/attack/tryhackme/solar-exploting-log4j/</guid>
+      <description>房间信息# 房间名称 https://tryhackme.com/room/solar 描述 log4j 积分 160💰 作者 BadWiChell CVE-2021-44228 简介# 2021 年 12 月 9 日，全世界发现了一个名为 CVE-2021-44228 的新漏洞，影响了 Java 日志记录包 **log4j**。此漏洞的严重性得分为 10.0（最严重的名称），并在使用该版本的软件的主机上提供远程代码简单的远程代码执行 **log4j**。这次攻击被称为“Log4Shell”&#xA;今天，**log4j**版本**2.16.0** 可用并修补了此漏洞（JNDI 已完全禁用，对消息查找的支持已删除，并且新的DoS漏洞 CVE-2021-45046 不存在）。 https://github.com/apache/logging-log4j2/releases/tag/rel%2F2.16.0 然而，这个漏洞的绝对危险是由于日志包的无处不在。数以百万计的应用程序和软件提供商使用这个包作为他们自己代码中的依赖项。虽然您可以使用 修补您自己的代码库**log4j**，但其他供应商和制造商仍需要向下游推送他们自己的安全更新。由于其巨大的攻击面的性质，许多安全研究人员将此漏洞比作Shellshock 。 我们将在未来几年看到这种脆弱性。&#xA;如需越来越多的社区支持的易受 CVE-2021-44228 攻击的软件和服务列表，请查看此 GitHub 存储库：&#xA;https://github.com/YfryTchsGD/Log4jAttackSurface 这个房间将展示如何在 Log4j 中测试、利用和缓解此漏洞。&#xA;虽然还有许多关于 CVE-2021-44228 的其他文章、博客、资源和学习材料，但我（本练习的作者）特别偏爱这些： https://www.huntress.com/blog/rapid-response-critical-rce-vulnerability-is-affecting-java https://log4shell.huntress.com/ https://www.youtube.com/watch?v=7qoPDq41xhQ 侦查阶段# 这次我们使用 Rustscan：&#xA;rustscan -a 10.10.232.98 --ulimit 5000 我们可以通过结果看到开放端口：22/111/8983&#xA;我们打开浏览器访问 8983 端口 环顾 Web 应用程序，我们确认这确实使用了 Log4j，因为我们可以看到 Log4j 配置文件的位置。 我们可以看到Dsolr.log.dir参数设置为 /var/solr/logs，这是 Solr 记录到的位置。</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html>
+  <head><meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="generator" content="Hugo 0.124.0">
+<meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content="Guided room for beginners to learn/reinforce linux command line skills." /><title>Linux Strength Training I | Bad Wichell</title>
+
+<link
+  rel="icon"
+  href="/images/favicon.png"
+  type="image/x-icon"
+/>
+<link
+    rel="stylesheet"
+    rel="preload"
+    type="text/css"
+    href="/css/main.css"
+  /><link
+      rel="stylesheet"
+      type="text/css"
+      href="/css/external/fontawesome.all.min.css"
+    /><link
+      rel="stylesheet"
+      type="text/css"
+      href="/css/external/overlay-scrollbars/overlayscrollbars.min.css"
+    />
+</head>
+  <body onload="browserCompatibility()"><div id="navbarInfo" class="is-hidden modal-container">
+  <div class="modal-content-box modal-text-box">
+    <div class="card modal-title is-radiusless">
+      <div class="card-header">
+        <p class="card-header-title is-marginless">About</p>
+      </div>
+    </div>
+    <div class="modal-content-container">
+      <div class="modal-content-block is-block">
+</div>
+    </div>
+  </div>
+</div>
+<div id="navbarShortcuts" class="is-hidden modal-container">
+  <div class="modal-content-box modal-text-box"><div class="card modal-title is-radiusless">
+        <div class="card-header">
+          <p class="card-header-title is-marginless">Keyboard shortcuts</p>
+        </div>
+      </div>
+      <div class="modal-content-container">
+        <div class="modal-content-block"><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>q</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Show current page QR code</p>
+  </div><div class="modal-content"><kbd>Escape</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Close modals</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>i</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Show website information</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>k</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Show shortcuts</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>h</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Go to homepage</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>f</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Find on website</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>m</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Collapse/Uncollapse sidebar</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>t</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Collapse/Uncollapse table of contents</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>↑</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Go to the top of the page</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>↓</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Go to the bottom of the page</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>p</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Print current page</p>
+  </div></div>
+      </div></div>
+</div>
+<div id="modalContainer" class="is-hidden modal-container">
+  <div id="modal" class="modal-content-box"></div>
+</div>
+<nav id="navbar" class="navbar" role="navigation" aria-label="main navigation">
+  <div id="navbarItemsContainer" class="navbar-brand"><div id="globalLogoContainer" class="is-flex">
+  <a
+    id="globalLogo"
+    class="navbar-item navbar-item-standard is-paddingless"
+    href="/"
+  >
+    <img
+      alt="Homepage"
+      src="/images/logo.png"
+    />
+  </a>
+  <a
+    id="globalTouchLogo"
+    class="navbar-item navbar-item-standard is-paddingless"
+    href="/"
+  >
+    <img
+      alt="Homepage"
+      src="/images/logoTouch.png"
+    />
+  </a>
+</div>
+<div id="navbarItems" class="is-flex">
+      <div id="navbarItemsStart" class="is-flex">
+        <div id="searchContainer" class="navbar-item"><div class="control has-icons-left">
+  <span id="searchInput" class="autocomplete">
+    <input
+      id="search"
+      autocomplete="off"
+      class="input"
+      type="search"
+      placeholder="Search"
+    />
+  </span>
+  <span class="icon is-left">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </span>
+  <ul id="searchList" class="is-paddingless is-hidden"></ul>
+</div>
+</div>
+      </div>
+      <div id="navbarItemsEnd" class="is-flex is-invisible"><div class="navbar-item">
+  <a
+    id="printButton"
+    class="button navbar-item-standard"
+  >
+    <span class="icon-text">Print</span>
+    <span class="icon">
+      <i class="fa-solid fa-print fa-lg"></i>
+    </span>
+  </a>
+</div>
+<div class="navbar-item">
+  <a
+    id="qrCodeButton"
+    class="button navbar-item-standard"
+  >
+    <span class="icon-text">QR code</span>
+    <span class="icon">
+      <i class="fa-solid fa-qrcode fa-lg"></i>
+    </span>
+  </a>
+</div>
+<div class="navbar-item">
+  <a
+    id="shortcutsInfo"
+    trigger="navbarShortcuts"
+    class="button navbar-item-standard navbar-trigger"
+    title="Keyboard shortcuts"
+  >
+    <span class="icon-text">Shortcuts</span>
+    <span class="icon">
+      <i class="fa-solid fa-keyboard fa-lg"></i>
+    </span>
+  </a>
+</div><div class="navbar-item"><div
+  id="taxonomiesSelectorContainer"
+  class="dropdown is-right"
+>
+  <div class="dropdown-trigger">
+    <button
+      id="taxonomiesSelector"
+      class="button navbar-item-standard"
+      aria-haspopup="true"
+      aria-controls="dropdown-menu"
+    >
+      <span class="icon-text">Taxonomies</span>
+      <span class="icon">
+        <i class="fa-solid fa-tags fa-lg"></i>
+      </span>
+    </button>
+  </div>
+  <div
+    id="dropdown-menu-taxonomies"
+    class="dropdown-menu"
+    role="menu"
+  >
+    <div class="dropdown-content is-paddingless"><a
+              href="/categories/"
+              class="dropdown-item has-text-weight-bold"
+            >Categories</a><a
+              href="/tags/"
+              class="dropdown-item has-text-weight-bold"
+            >Tags</a></div>
+  </div>
+</div>
+</div><div class="navbar-item">
+  <a
+    id="siteInfo"
+    trigger="navbarInfo"
+    class="button navbar-item-standard navbar-trigger"
+    title="About"
+  >
+    <span class="icon-text">About</span>
+    <span class="icon">
+      <i class="fa-solid fa-circle-question fa-lg"></i>
+    </span>
+  </a>
+</div>
+<div id="navbarExtend" class="navbar-item">
+  <div id="navbarExtendWrapper">
+    <a id="navbarExtendButton" class="button navbar-item-standard">
+      <span class="icon">
+        <i class="fa-solid fa-ellipsis fa-lg"></i>
+      </span>
+    </a>
+    <div id="navbarExtendItemsContainer">
+      <div id="navbarExtendItemsWrapper"><div class="navbar-item">
+  <a
+    id="printButtonExtend"
+    class="button navbar-item-standard"
+  >
+    <span class="icon-text">Print</span>
+    <span class="icon">
+      <i class="fa-solid fa-print fa-lg"></i>
+    </span>
+  </a>
+</div>
+<div class="navbar-item">
+  <a
+    id="qrCodeButtonExtend"
+    class="button navbar-item-standard"
+  >
+    <span class="icon-text">QR code</span>
+    <span class="icon">
+      <i class="fa-solid fa-qrcode fa-lg"></i>
+    </span>
+  </a>
+</div>
+<div class="navbar-item">
+  <a
+    id="shortcutsInfoExtend"
+    trigger="navbarShortcuts"
+    class="button navbar-item-standard navbar-trigger"
+    title="Keyboard shortcuts"
+  >
+    <span class="icon-text">Shortcuts</span>
+    <span class="icon">
+      <i class="fa-solid fa-keyboard fa-lg"></i>
+    </span>
+  </a>
+</div><div class="navbar-item"><div
+  id="taxonomiesSelectorContainerExtend"
+  class="dropdown is-right"
+>
+  <div class="dropdown-trigger">
+    <button
+      id="taxonomiesSelectorExtend"
+      class="button navbar-item-standard"
+      aria-haspopup="true"
+      aria-controls="dropdown-menu"
+    >
+      <span class="icon-text">Taxonomies</span>
+      <span class="icon">
+        <i class="fa-solid fa-tags fa-lg"></i>
+      </span>
+    </button>
+  </div>
+  <div
+    id="dropdown-menu-taxonomiesExtend"
+    class="dropdown-menu"
+    role="menu"
+  >
+    <div class="dropdown-content is-paddingless"><a
+              href="/categories/"
+              class="dropdown-item has-text-weight-bold"
+            >Categories</a><a
+              href="/tags/"
+              class="dropdown-item has-text-weight-bold"
+            >Tags</a></div>
+  </div>
+</div>
+</div><div class="navbar-item">
+  <a
+    id="siteInfoExtend"
+    trigger="navbarInfo"
+    class="button navbar-item-standard navbar-trigger"
+    title="About"
+  >
+    <span class="icon-text">About</span>
+    <span class="icon">
+      <i class="fa-solid fa-circle-question fa-lg"></i>
+    </span>
+  </a>
+</div>
+</div>
+    </div>
+  </div>
+</div>
+</div>
+    </div>
+  </div>
+</nav>
+<div id="navbarOverlay"></div>
+<div
+      class="columns is-mobile is-paddingless is-marginless"
+      id="mainContainer"
+    ><div
+  id="sidebarContainer"
+  class="column is-narrow is-paddingless is-marginless"
+>
+  <div id="sidebarWrapper" class="is-fixed">
+    <div id="sidebar" class="is-marginless">
+      <aside class="menu is-paddingless is-marginless">
+        <ul class="menu-list is-marginless is-paddingless"><div class="card is-fs-expandable-icon is-sidebar-active"><div class="card-header">
+      <a
+        href='/attack/'
+        class='card-header-title'>
+        <i class='fa-solid fa-ghost fa-lg'></i></a></div>
+      </div><div class="is-expandable">
+      <div class="is-sidebar-list-wrapper"><li class="is-marginless is-tree-active is-entries-expandable is-entries-expanded"><div
+            class="card"><div class="card-header">
+      <a
+        href='/attack/'
+        class='card-header-title'
+          title='Attack'>
+        <i class='fa-solid fa-ghost fa-lg'></i><p class="pt-0 pb-0 pr-2 pl-1">Attack</p></a><a class="card-header-icon is-icon-expandable is-paddingless is-icon-expanded">
+                <span class='icon'></span>
+              </a>
+            </div>
+          </div><ul class="is-marginless is-tree-active"><div class="">
+      <div class=""><li class="is-marginless is-entries-expandable is-entries-expanded"><div
+            class="card"><div class="card-header">
+      <a
+        href='/attack/tryhackme/'
+        class='card-header-title'
+          title='Tryhackme'>
+        <i class='fa-solid fa-ghost'></i><p class="pt-0 pb-0 pr-2 pl-0">Tryhackme</p></a><a class="card-header-icon is-icon-expandable is-paddingless is-icon-expanded">
+                <span class='icon'></span>
+              </a>
+            </div>
+          </div><ul class="is-marginless"><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/attack/tryhackme/attacktive-directory/'
+        class='card-header-title'
+          title='Attacktive Directory'>
+        <i class='fa-solid fa-turn-up fa-rotate-90 fa-xs'></i><p class="pt-0 pb-0 pr-2 pl-0">Attacktive Directory</p></a></div>
+          </div></li>
+      </div>
+    </div><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/attack/tryhackme/solar-exploting-log4j/'
+        class='card-header-title'
+          title='Solar, exploiting log4j'>
+        <i class='fa-solid fa-turn-up fa-rotate-90 fa-xs'></i><p class="pt-0 pb-0 pr-2 pl-0">Solar, exploiting log4j</p></a></div>
+          </div></li>
+      </div>
+    </div><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/attack/tryhackme/post-exploitation-basics-%E5%90%8E%E6%B8%97%E9%80%8F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/'
+        class='card-header-title'
+          title='Post-Exploitation Basics'>
+        <i class='fa-solid fa-turn-up fa-rotate-90 fa-xs'></i><p class="pt-0 pb-0 pr-2 pl-0">Post-Exploitation Basics</p></a></div>
+          </div></li>
+      </div>
+    </div><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/attack/tryhackme/bash-scripting/'
+        class='card-header-title'
+          title='Bash Scripting-TryHackMe'>
+        <i class='fa-solid fa-turn-up fa-rotate-90 fa-xs'></i><p class="pt-0 pb-0 pr-2 pl-0">Bash Scripting-TryHackMe</p></a></div>
+          </div></li>
+      </div>
+    </div><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card is-sidebar-active"id='sidebarActiveEntry'><div class="card-header is-single-link">
+      <a
+        href='/attack/tryhackme/linux-strength-training/'
+        class='card-header-title'
+          title='Linux Strength Training I'>
+        <i class='fa-solid fa-turn-up fa-rotate-90 fa-xs'></i><p class="pt-0 pb-0 pr-2 pl-0">Linux Strength Training I</p></a></div>
+          </div></li>
+      </div>
+    </div></ul></li>
+      </div>
+    </div><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/attack/hackthebox/'
+        class='card-header-title'
+          title='HackTheBox'>
+        <i class='fa-solid fa-ghost'></i><p class="pt-0 pb-0 pr-2 pl-0">HackTheBox</p></a></div>
+          </div></li>
+      </div>
+    </div></ul></li>
+      </div>
+    </div><div class="card is-fs-expandable-icon"><div class="card-header is-single-link">
+      <a
+        href='/tools/'
+        class='card-header-title'>
+        <i class='fa-solid fa-hammer fa-lg'></i></a></div>
+      </div><div class="is-expandable">
+      <div class="is-sidebar-list-wrapper"><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/tools/'
+        class='card-header-title'
+          title='Tools'>
+        <i class='fa-solid fa-hammer fa-lg'></i><p class="pt-0 pb-0 pr-2 pl-1">Tools</p></a></div>
+          </div></li>
+      </div>
+    </div><div class="card is-fs-expandable-icon"><div class="card-header is-single-link">
+      <a
+        href='/sitemap/'
+        class='card-header-title'>
+        <i class='fa-solid fa-sitemap fa-lg'></i></a></div>
+      </div><div class="is-expandable">
+      <div class="is-sidebar-list-wrapper"><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/sitemap/'
+        class='card-header-title'
+          title='Sitemap'>
+        <i class='fa-solid fa-sitemap fa-lg'></i><p class="pt-0 pb-0 pr-2 pl-1">Sitemap</p></a></div>
+          </div></li>
+      </div>
+    </div></ul>
+      </aside>
+    </div>
+    <div id="sidebarCollapsible" class="is-marginless">
+      <div class="card is-uncollapse-action">
+        <div
+          id="sidebarUncollapse"
+          class="card-header is-single-link"
+          title="Collapse/Uncollapse sidebar"
+        >
+          <a class="card-header-title">
+            <i class="fa-solid fa-angles-right fa-lg"></i>
+          </a>
+        </div>
+      </div>
+      <div class="card is-collapse-action">
+        <div
+          id="sidebarCollapse"
+          class="card-header is-single-link"
+          title="Collapse/Uncollapse sidebar"
+        >
+          <a class="card-header-title">
+            <i class="fa-solid fa-angles-left fa-lg"></i>
+            <p>Collapse sidebar</p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="sidebarMobileWrapper" class="column is-narrow is-hidden-desktop"></div>
+<div class="columns is-mobile is-marginless is-scroll-smooth has-toc" id="contentContainer">
+  <div class="column" id="content"><div id="contentTitle">Linux Strength Training I</div>
+<p><img
+  src="https://i.imgur.com/iuUYrco.png"
+  alt=""
+  class=""/>
+</p>
+<blockquote>
+<p>初学者 linux 命令加强学习</p>
+</blockquote>
+<h1 id='房间信息'>房间信息<a href='#%e6%88%bf%e9%97%b4%e4%bf%a1%e6%81%af' class='anchor'>#</a>
+</h1><table>
+<thead>
+<tr>
+<th>房间名称</th>
+<th><a
+  href="https://tryhackme.com/room/linuxstrengthtraining"
+    class="is-pretty-link">Linux Strength Training</a
+>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>描述</td>
+<td>简单的 linux 机器来练习技能</td>
+</tr>
+<tr>
+<td>积分</td>
+<td>110💰</td>
+</tr>
+<tr>
+<td>作者</td>
+<td>BadWiChell</td>
+</tr>
+</tbody>
+</table>
+<h1 id='0-x-001---文件查找'>0 x 001 - 文件查找<a href='#0-x-001---%e6%96%87%e4%bb%b6%e6%9f%a5%e6%89%be' class='anchor'>#</a>
+</h1><p>作为一名安全研究人员，经常需要根据各种条件（包括但不限于以下条件）在系统上查找特定文件/文件夹：</p>
+<ul>
+<li><strong>文件名</strong></li>
+<li><strong>大小</strong></li>
+<li><strong>用户/组</strong></li>
+<li><strong>修改日期</strong></li>
+<li><strong>访问日期</strong></li>
+<li><strong>其关键词内容</strong></li>
+</ul>
+<p>因此，我们可以使用以下语法来做到这一点：</p>
+<table>
+<thead>
+<tr>
+<th>我们可以做什么</th>
+<th>语法</th>
+<th>案例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>根据文件名称查找文件</td>
+<td>find [目录路径] -type f -name [文件名]</td>
+<td>find /home/Andy -type f -name sales.txt</td>
+</tr>
+<tr>
+<td>根据目录名称查找目录</td>
+<td>find [目录路径] -type d -name [文件名]</td>
+<td>find /home/Andy -type d -name image</td>
+</tr>
+<tr>
+<td>根据大小查找文件</td>
+<td>find [目录路径] -type f -size [大小]</td>
+<td>find /home/Andy -type f -size 10c</td>
+</tr>
+<tr>
+<td>根据用户名查找文件</td>
+<td>find [目录路径] -type f -user [用户名]</td>
+<td>find /etc/server -type f -user john</td>
+</tr>
+<tr>
+<td>根据组名称查找文件</td>
+<td>find [目录路径] -type f -group [组名]</td>
+<td>find /etc/server -type f -group teamstar</td>
+</tr>
+<tr>
+<td>查找在特定日期之后修改的文件</td>
+<td>find [目录路径] -type f -newermt &lsquo;[日期和时间]&rsquo;</td>
+<td>find /-type f -newermt &lsquo;6/30/2020 0:00:00&rsquo;</td>
+</tr>
+<tr>
+<td>根据修改日期查找文件</td>
+<td>find [目录路径] -type f -newermt [开始日期范围] ! -newermt [结束日期范围]</td>
+<td>find /-type f -newermt 2013-09-12 ！-newermt 2013-09-14</td>
+</tr>
+<tr>
+<td>根据访问日期查找文件</td>
+<td>find [目录路径] -type f -newerat [开始日期范围] ! -newerat [结束日期范围]</td>
+<td>find  / -type f -newerat 2017-09-12 ！-newerat 2017-09-14</td>
+</tr>
+<tr>
+<td>查找具有特定关键字的文件</td>
+<td>grep -iRl [目录路径/关键字]</td>
+<td>grep -iRl &lsquo;/folderA/flag&rsquo;</td>
+</tr>
+<tr>
+<td>阅读 find 命令的手册</td>
+<td>man find</td>
+<td>man find</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>注意! 根据大小找文件：</p>
+</blockquote>
+<p><strong>c 为字节、k 为千字节、M 为兆字节、G 为千兆</strong></p>
+<h3 id='问题'>问题：<a href='#%e9%97%ae%e9%a2%98' class='anchor'>#</a>
+</h3><blockquote>
+<p>阅读名为“ReadMeIfStuck.txt”的文件。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>topson@james:~$ cat ReadMeIfStuck.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Looking <span style="color:#66d9ef">for</span> flag 1?:It seems you will have to think harder <span style="color:#66d9ef">if</span> you want to find the flag. Perhaps try looking <span style="color:#66d9ef">for</span> a file called additionalHINT <span style="color:#66d9ef">if</span> you can<span style="color:#960050;background-color:#1e0010">&#39;</span>t find it..
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Looking <span style="color:#66d9ef">for</span> flag 2?: look <span style="color:#66d9ef">for</span> a file named readME_hint.txt
+</span></span></code></pre></div><p>好吧，让我们找到字符串 addittionalNINT 的文件，我们可以使用以下命令</p>
+<p><code>find /-type f -name addittionalNINT 2&gt;/dev/null </code></p>
+<p><code>/</code> 告诉该工具查看该路径内的所有文件夹。<code>/</code> 是 Linux 上可能的最高路径，<code>-type f</code> 告诉工具只查找文件 <code>-name additionalHINT</code> 告诉工具只查找该字符串。由于我无权访问系统上的所有文件夹，当查找工具试图遍历它们时，我也会遇到很多错误。<code>2&gt;/dev/null</code> 告诉工具丢弃这些消息。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>topson@james:~$ find / -type f -name additionalHINT 2&gt;/dev/null
+</span></span><span style="display:flex;"><span>/home/topson/channels/additionalHINT
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>topson@james:~$ cat /home/topson/channels/additionalHINT
+</span></span><span style="display:flex;"><span>try to find a directory called telephone numbers... Oh wait.. it  contains a space.. I wonder how we can find that....
+</span></span></code></pre></div><p>根据上述指令找到了该文件，我们进行 cat 该文件得知，我们还需要找到 telephone numbers</p>
+<p><code>find / -type d -name telephone\ numbers 2&gt;/dev/null</code></p>
+<p>我使用 \ 这是一个转义字符，转义字符让我们搜索一个有特殊用途的字符。在这种情况下它是“”。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>topson@james:~$ find / -type d -name telephone<span style="color:#ae81ff">\ </span>numbers 2&gt;/dev/null
+</span></span><span style="display:flex;"><span>/home/topson/corperateFiles/xch/telephone numbers
+</span></span></code></pre></div><p>我们使用 cat 查看该文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>topson@james:~$ cd /home/topson/corperateFiles/xch/telephone<span style="color:#ae81ff">\ </span>numbers/
+</span></span><span style="display:flex;"><span>topson@james:~/corperateFiles/xch/telephone numbers$ ls
+</span></span><span style="display:flex;"><span>readME.txt
+</span></span><span style="display:flex;"><span>topson@james:~/corperateFiles/xch/telephone numbers$ cat readME.txt
+</span></span><span style="display:flex;"><span>202-555-0150
+</span></span><span style="display:flex;"><span>202-555-0125
+</span></span><span style="display:flex;"><span>617-555-0115
+</span></span><span style="display:flex;"><span>+1-617-555-0115
+</span></span><span style="display:flex;"><span>+1-617-555-0186
+</span></span><span style="display:flex;"><span>+1-617-555-0138
+</span></span><span style="display:flex;"><span>use the Find command to find a file with a modified date of 2016-09-12 from the /workflows directory
+</span></span></code></pre></div><p>从命令中得知文件在/workflows</p>
+<p><code>find / -type d -name workflows 2&gt;/dev/null</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>topson@james:~/corperateFiles/xch/telephone numbers$ find / -type d -name workflows 2&gt;/dev/null
+</span></span><span style="display:flex;"><span>/home/topson/workflows
+</span></span></code></pre></div><p>好了，我们找到了目录，但是要找到这个文件，需要找到该文件我们可以使用上述终端中提到的日期</p>
+<p><code>find /home/topson/workflows -type f -newermt 2016-09-11 ! -newermt 2016-09-13</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>topson@james:~/corperateFiles/xch/telephone numbers$ find /home/topson/workflows -type f -newermt 2016-09-11 ! -newermt 2016-09-13
+</span></span><span style="display:flex;"><span>/home/topson/workflows/xft/eBQRhHvx
+</span></span></code></pre></div><p>用 less /home/topson/workflows/xft/eBQRhHvx 后输入/后接关键词 Flag 查看我们的旗帜</p>
+<p><img
+  src="https://i.imgur.com/hF1O0uA.png"
+  alt=""
+  class=""/>
+</p>
+<h1 id='0-x-002---文件操作'>0 x 002 - 文件操作<a href='#0-x-002---%e6%96%87%e4%bb%b6%e6%93%8d%e4%bd%9c' class='anchor'>#</a>
+</h1><p>我们可以做如下操作：</p>
+<ul>
+<li><strong>复制文件和文件夹</strong></li>
+<li><strong>移动文件和文件夹</strong></li>
+<li><strong>重命名文件和文件夹</strong></li>
+<li><strong>创建文件和文件夹</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>我们能做什么</th>
+<th>语法</th>
+<th>案例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>复制文件/文件夹</td>
+<td>cp [文件/文件夹] [目录]</td>
+<td>cp ssh.conf /home/new</td>
+</tr>
+<tr>
+<td>移动文件/文件夹</td>
+<td>mv [文件/文件夹]</td>
+<td>mv ssh.conf /home/new</td>
+</tr>
+<tr>
+<td>同时移动多个文件/文件夹</td>
+<td>mv [file1] [file2] [file3] -t [要移动到的目录]</td>
+<td>mv logs.txt keys.conf script.py -t /home/savedWork</td>
+</tr>
+<tr>
+<td>将所有文件从当前目录移动到另一个目录</td>
+<td>mv * [要将文件移动到的目录]</td>
+<td>mv * /home/脚本</td>
+</tr>
+<tr>
+<td>重命名文件/文件夹</td>
+<td>mv [当前文件名] [新文件名]</td>
+<td>mv ssh.conf 新 SSH.conf</td>
+</tr>
+<tr>
+<td>创建一个文件</td>
+<td>touch [文件名]</td>
+<td>touch 1.txt</td>
+</tr>
+<tr>
+<td>创建一个文件夹</td>
+<td>mkdir [文件夹名]</td>
+<td>mkdir new 1</td>
+</tr>
+<tr>
+<td>输出文件内容</td>
+<td>cat [文件名]</td>
+<td>cat 1. Txt</td>
+</tr>
+<tr>
+<td>上传文件到远程机器</td>
+<td>scp [文件名] [用户名]@[远程机器 IP]:/[上传目录]</td>
+<td>scp example.txt <a
+  href="mailto:john@192.168.100.123"
+    class="is-pretty-link">john@192.168.100.123</a
+>
+ :/home/john/</td>
+</tr>
+<tr>
+<td>运行 bash 脚本程序</td>
+<td>./脚本名称</td>
+<td>./sh. Sh</td>
+</tr>
+</tbody>
+</table>
+<h3 id='问题-1'>问题:<a href='#%e9%97%ae%e9%a2%98-1' class='anchor'>#</a>
+</h3><blockquote>
+<p>在 topson 的目录中找到一个名为 readME_hint.txt 的文件并阅读它。使用它给你的说明，得到第二个标志。</p>
+</blockquote>
+<p>我们连接到靶场：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>topson@james:~$ find / -type d -name  readME_hint.txt 2&gt;/dev/null
+</span></span><span style="display:flex;"><span>topson@james:~$ find / -type f -name  readME_hint.txt 2&gt;/dev/null
+</span></span><span style="display:flex;"><span>/home/topson/corperateFiles/RecordsFinances/readME_hint.txt
+</span></span></code></pre></div><p>我们来 cat 这个文件：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>topson@james:~$ cat /home/topson/corperateFiles/RecordsFinances/readME_hint.txt
+</span></span><span style="display:flex;"><span>Instructions: Move the MoveMe.txt file to the march folder directory and <span style="color:#66d9ef">then</span> execute the SH program to reveal the second flag.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> you need to research three things:
+</span></span><span style="display:flex;"><span>				 how to execute bash files
+</span></span><span style="display:flex;"><span>				 how to work with files that begin with a - <span style="color:#f92672">(</span>dash<span style="color:#f92672">)</span> whether that is to <span style="color:#66d9ef">do</span> with copying or moving files 
+</span></span><span style="display:flex;"><span>				 how to work with files with spaces
+</span></span></code></pre></div><p><code>find / -type f -name *MoveMe.txt* 2&gt;/dev/null</code></p>
+<blockquote>
+<p>注意 * 号为匹配任何字符</p>
+</blockquote>
+<p><code>mv -- /home/topson/corperateFiles/RecordsFinances/-MoveMe.txt </code>
+<code>/home/topson/corperateFiles/RecordsFinances/-march\ folder/cd -- </code></p>
+<p><code>/home/topson/corperateFiles/RecordsFinances/-march\ folder/</code></p>
+<p><img
+  src="https://i.imgur.com/BhpXqj4.png"
+  alt=""
+  class=""/>
+</p>
+<h1 id='0-x-003---hash-是什么'>0 x 003 - hash 是什么<a href='#0-x-003---hash-%e6%98%af%e4%bb%80%e4%b9%88' class='anchor'>#</a>
+</h1><h2 id='如何破解哈希'>如何破解哈希？<a href='#%e5%a6%82%e4%bd%95%e7%a0%b4%e8%a7%a3%e5%93%88%e5%b8%8c' class='anchor'>#</a>
+</h2><p>可以通过暴力破解的方法破解哈希。这实质上意味着使用单词列表并将单词列表中的每个潜在密码输入哈希函数，以查看我们是否获得与数据库中存储的任何哈希值相等的哈希等效输出。但是，在示例中，我们在指定要与计算出的哈希值进行比较的单词列表之前，将哈希值存储在文本文件中。</p>
+<p>使用一个名为 John the Ripper 的程序，我们可以指定我们希望破解的哈希 (md5) 单词列表 (rockyou.txt) 和单词列表 (hash.txt) 的格式。请参阅完整的手册页，以更全面地了解您可以使用该程序运行的所有命令。</p>
+<p><code>john --format=md5 --wordlist=/usr/share/dict/rockyou.txt hash1.txt</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ john --format<span style="color:#f92672">=</span>raw-md5 --wordlist<span style="color:#f92672">=</span>/usr/share/dict/rockyou.txt hash1.txt
+</span></span><span style="display:flex;"><span>Using default input encoding: UTF-8
+</span></span><span style="display:flex;"><span>Loaded <span style="color:#ae81ff">1</span> password hash <span style="color:#f92672">(</span>Raw-MD5 <span style="color:#f92672">[</span>MD5 128/128 AVX 4x3<span style="color:#f92672">])</span>
+</span></span><span style="display:flex;"><span>Warning: no OpenMP support <span style="color:#66d9ef">for</span> this hash type, consider --fork<span style="color:#f92672">=</span><span style="color:#ae81ff">16</span>
+</span></span><span style="display:flex;"><span>Press <span style="color:#e6db74">&#39;q&#39;</span> or Ctrl-C to abort, almost any other key <span style="color:#66d9ef">for</span> status
+</span></span><span style="display:flex;"><span>secret123        <span style="color:#f92672">(</span>?<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>1g 0:00:00:00 DONE <span style="color:#f92672">(</span>2023-05-10 16:05<span style="color:#f92672">)</span> 50.00g/s 854400p/s 854400c/s 854400C/s extremo..jaymark
+</span></span><span style="display:flex;"><span>Use the <span style="color:#e6db74">&#34;--show --format=Raw-MD5&#34;</span> options to display all of the cracked passwords reliably
+</span></span><span style="display:flex;"><span>Session completed
+</span></span></code></pre></div><p>注意：如果遇到不知道其类型的哈希，可以使用称为哈希标识符的工具。（注意，它可能并不准确）</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>hash-identifier 5d7845ac6ee7cfffafc5fe5f35cf666d
+</span></span></code></pre></div><p><code>Hash-identifier</code> 是一款用于识别各种 hash 算法和编码的命令行工具。
+它可以识别的 hash/编码类型包括:</p>
+<ul>
+<li>MD 5</li>
+<li>SHA 1</li>
+<li>SHA 2 (SHA 224, SHA 256, SHA 384, SHA 512)</li>
+<li>NTLM</li>
+<li>LM</li>
+<li>Double MD 5</li>
+<li>Triple MD 5</li>
+<li>MD 4</li>
+<li>MD 2</li>
+<li>RIPEMD-160</li>
+<li>CRC 32</li>
+<li>Etc.
+以及各种编码方式, 如:</li>
+<li>Base 64</li>
+<li>ROT 13</li>
+<li>URL Encoding</li>
+<li>Hex Encoding</li>
+<li>Etc.
+使用 hash-identifier, 你可以输入一个 hash 字符串或编码, 它会自动检测该串的类型和对应的算法, 以帮助你识别和验证各种 hash。
+例如, 如果我们输入一个 MD 5 hash:
+Bash
+$ hash-identifier 5 d 41402 abc 4 b 2 a 76 b 9719 d 911017 c 592</li>
+</ul>
+<p>Analyzing &lsquo;5 d 41402 abc 4 b 2 a 76 b 9719 d 911017 c 592&rsquo;
+[+] MD 5 hash
+它会正确识别这是 MD 5 hash。
+再如一个 Base 64 编码的字符串:
+Bash
+$ hash-identifier YTUxMDEx</p>
+<p>Analyzing &lsquo;YTUxMDEx&rsquo;
+[+] Base 64 encoded
+它也可以正确识别这是 Base 64 编码。
+Hash-identifier 支持识别大多数常见的 hash 算法和编码方式, 可以非常方便地在命令行下快速识别 hash 或编码类型, 无需手动测试各种算法, 极大提高效率。</p>
+<p><img
+  src="https://i.imgur.com/s8ScdT9.png"
+  alt=""
+  class=""/>
+</p>
+<blockquote>
+<p>注意：如果您有兴趣，一个更现代、更强大的 hash-identifer 替代工具是一个名为 haiti 的工具： https:<br>
+<a
+  href="https://github.com/noraj/haiti"
+    class="is-pretty-link">//github.com/noraj/haiti</a
+>
+</p>
+</blockquote>
+<p><img
+  src="https://i.imgur.com/NRiSHbU.png"
+  alt=""
+  class=""/>
+</p>
+<h2 id='问题-2'>问题：<a href='#%e9%97%ae%e9%a2%98-2' class='anchor'>#</a>
+</h2><p>我们进入机器，发现在目录没有该文件，我们尝试查找：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sarah@james:~$ find / -type f -name hashA.txt 2&gt;/dev/null
+</span></span><span style="display:flex;"><span>/home/sarah/system AB/server_mail/server settings/hashA.txt
+</span></span></code></pre></div><p>我们查看这个文件中存储的 hash。我们使用：</p>
+<p><code>hash-identifier f9d4049dd6a4dc35d40e5265954b2a46</code></p>
+<p>后查看 hash 类型后使用：</p>
+<p><code>john --format=raw-md4 /usr/share/dict/rockyou.txt 1.txt</code></p>
+<p>得到我们的密码</p>
+<blockquote>
+<p>找到文件扩展名为“.mnf”的单词列表，并使用它来破解文件名为 hashC.txt 的哈希。密码是什么？</p>
+</blockquote>
+<p>我们使用 find 来查找该后缀文件：</p>
+<p><code>find / -type f -name *.mnf 2&gt;/dev/null</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sarah@james:~$ find / -type f -name *.mnf 2&gt;/dev/null
+</span></span><span style="display:flex;"><span>/home/sarah/system AB/db/ww.mnf
+</span></span></code></pre></div><p>后查找 hashC. Txt：</p>
+<p><code>find / -type f -name hashC.txt 2&gt;/dev/null</code></p>
+<p>后使用命令：
+<code>john --format=raw-sha256 --wordlist=/home/hughug/Downloads/ww.mnf 3.txt</code></p>
+<p><img
+  src="https://i.imgur.com/ysixNU1.png"
+  alt=""
+  class=""/>
+</p>
+<h1 id='0-x-004---什么是-base-64'>0 x 004 - 什么是 base 64？<a href='#0-x-004---%e4%bb%80%e4%b9%88%e6%98%af-base-64' class='anchor'>#</a>
+</h1><p>Base64 是一组二进制到文本的编码方案，以 ASCII 字符串格式表示二进制数据。总之，它只是表示数据的另一种方式；一些系统依赖于 base64 数据编码进行处理，而其他系统则可能不依赖。</p>
+<blockquote>
+<p>找到一个名为 encoded.txt 的文件。什么是特殊答案？</p>
+</blockquote>
+<p>让我们使用：<code>find / -type f -name encoded.txt 2&gt;/dev/null</code></p>
+<p>进行了 base64 加密，我们来进行转换一下：</p>
+<p><code>cat /home/hughug/Downloads/encoded.txt | base64 -d &gt; test.txt</code></p>
+<p>我们使用 less text. Txt 来查找关键词</p>
+<p><img
+  src="https://i.imgur.com/FaPHsn7.png"
+  alt=""
+  class=""/>
+</p>
+<p>我们继续查找 ent. Txt</p>
+<p><code>find / -type f -name ent.txt 2&gt;/dev/null</code></p>
+<p>现在，找到文件“ <strong>ent.txt</strong> ”。它似乎不是 base64 编码的字符串。使用 hash-identifier 检查哈希算法。使用散列标识符进行检查时，会看到它是<strong>md4</strong>散列。</p>
+<p><img
+  src="https://i.imgur.com/gDXU8yQ.png"
+  alt=""
+  class=""/>
+</p>
+<h1 id='0-x-005---什么的-gpg'>0 x 005 - 什么的 gpg<a href='#0-x-005---%e4%bb%80%e4%b9%88%e7%9a%84-gpg' class='anchor'>#</a>
+</h1><h2 id='如何加密'>如何加密？<a href='#%e5%a6%82%e4%bd%95%e5%8a%a0%e5%af%86' class='anchor'>#</a>
+</h2><p><img
+  src="https://i.imgur.com/tsZe6Q3.png"
+  alt=""
+  class=""/>
+</p>
+<h2 id='如何解密'>如何解密？<a href='#%e5%a6%82%e4%bd%95%e8%a7%a3%e5%af%86' class='anchor'>#</a>
+</h2><p><img
+  src="https://i.imgur.com/OWpfQa4.png"
+  alt=""
+  class=""/>
+</p>
+<blockquote>
+<p>找到一个名为 layer4.txt 的加密文件，其密码为 bob。使用它来定位标志。旗帜是什么？</p>
+</blockquote>
+<p><img
+  src="https://i.imgur.com/7heysNa.png"
+  alt=""
+  class=""/>
+</p>
+<h1 id='0-x-006---john-破解-gpg-文件'>0 x 006 - John 破解 gpg 文件<a href='#0-x-006---john-%e7%a0%b4%e8%a7%a3-gpg-%e6%96%87%e4%bb%b6' class='anchor'>#</a>
+</h1><p>现在对使用 gpg 有了基本的了解，下一个问题是，如果我们没有解密文件的密码或密钥怎么办？我们怎样才能破解这个。</p>
+<blockquote>
+<p>我们可以使用 gpg2john 来进行破解</p>
+</blockquote>
+<p>我们可以通过任务来一一解答：</p>
+<blockquote>
+<p>问题：<br>
+找到一个名为 personal.txt.gpg 的加密文件，并找到一个名为 data.txt 的单词表。在对加密文件进行暴力破解之前，使用 tac 来反转单词表。加密文件的密码是什么？</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sarah@james:~$ find / -type f -name personal.txt.gpg 2&gt;/dev/null
+</span></span><span style="display:flex;"><span>/home/sarah/oldLogs/units/personal.txt.gpg
+</span></span></code></pre></div><p>首先使用 find 命令来查找该文件，在定位到该文件，我们将他下载到我们的物理机中。</p>
+<p>拿到 data.txt 后我们需要用 tac 命令来反转一下单词表：</p>
+<p><code>tac data.txt</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>gpg2john personal.txt.gpg &gt; hash //首先使用<span style="color:#e6db74">`</span>gpg2john<span style="color:#e6db74">`</span>来转化密钥文件生成hash文件
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>john --wordlist<span style="color:#f92672">=</span>data.txt --format<span style="color:#f92672">=</span>gpg hash //指定字典来进行爆破
+</span></span></code></pre></div><p>得到 gpg 密钥后使用密钥来得到答案</p>
+<h1 id='0-x-007---读取-sql-数据库'>0 x 007 - 读取 SQL 数据库<a href='#0-x-007---%e8%af%bb%e5%8f%96-sql-%e6%95%b0%e6%8d%ae%e5%ba%93' class='anchor'>#</a>
+</h1><p>SQL 是一种用于存储、操作和从数据库中检索数据的语言。因此，牢牢掌握如何在 Linux 中从数据库中读取数据的概念非常重要。如果您对数据库的理解薄弱或对它们一无所知，请在继续之前先阅读此内容：   <a
+  href="https://www.elated.com/mysql-for-absolute-beginners/"
+    class="is-pretty-link">//www.elated.com/mysql-for-absolute-beginners/</a
+>
+ 因为它将为初学者充分解释数据库的概念。要记住的关键是，开发人员大多创建“关系数据库”，它使用多个相互引用的数据库来组织数据，因此得名“关系数据库”。此外，每个数据库都包含记录表，每个表都可以包含多个列和行，这些列和行以有组织的格式存储数据。现在我们已经解决了这个问题，让我们开始吧。</p>
+<h2 id='服务-mysql-启动停止'>服务 mysql 启动/停止<a href='#%e6%9c%8d%e5%8a%a1-mysql-%e5%90%af%e5%8a%a8%e5%81%9c%e6%ad%a2' class='anchor'>#</a>
+</h2><p>Start 启动 mysql，而 stop 停止它。此外，如果您在 mysql 运行时遇到任何问题，可以使用 restart</p>
+<p><code>service start mysql</code></p>
+<h2 id='连接到远程-sql-数据库'>连接到远程 SQL 数据库<a href='#%e8%bf%9e%e6%8e%a5%e5%88%b0%e8%bf%9c%e7%a8%8b-sql-%e6%95%b0%e6%8d%ae%e5%ba%93' class='anchor'>#</a>
+</h2><p>可以托管 Mysql 数据库以供远程访问。要访问远程数据库，请使用以下命令：</p>
+<p><code>mysql -u [用户名] -p -h [主机 ip]</code></p>
+<h2 id='在本地打开-sql-数据库文件'>在本地打开 SQL 数据库文件<a href='#%e5%9c%a8%e6%9c%ac%e5%9c%b0%e6%89%93%e5%bc%80-sql-%e6%95%b0%e6%8d%ae%e5%ba%93%e6%96%87%e4%bb%b6' class='anchor'>#</a>
+</h2><p>要在本地打开 mysql 文件，只需切换到 mysql 文件的目录并键入 mysql，如下所示。您将被带到 mysql 的专门命令提示符。 </p>
+<p>注意：在某些情况下，如果 mysql 系统配置为需要身份验证，您可能必须运行 mysql -p [password]。</p>
+<p><code>mysql -u [用户名] -p</code></p>
+<h2 id='显示数据库'>显示数据库<a href='#%e6%98%be%e7%a4%ba%e6%95%b0%e6%8d%ae%e5%ba%93' class='anchor'>#</a>
+</h2><p>在此之后，将看到 mysql 如何花费一点时间来加载数据库。完成后，键入以下内容也可以查看所有关系数据库：</p>
+<p>显示数据库；</p>
+<p><code>SHOW DATABASES;</code></p>
+<p><img
+  src="https://i.imgur.com/eTsUqcR.png"
+  alt=""
+  class=""/>
+</p>
+<h2 id='选择要查看的数据库'>选择要查看的数据库<a href='#%e9%80%89%e6%8b%a9%e8%a6%81%e6%9f%a5%e7%9c%8b%e7%9a%84%e6%95%b0%e6%8d%ae%e5%ba%93' class='anchor'>#</a>
+</h2><p>我们可以使用 use 命令后跟数据库名称来选择其中一个数据库。在下面的示例中，我们选择“employees”数据库。</p>
+<p><code>USE [数据库名称];</code></p>
+<p><img
+  src="https://i.imgur.com/jZQLDvr.png"
+  alt=""
+  class=""/>
+</p>
+<h2 id='显示所选数据库中的表'>显示所选数据库中的表<a href='#%e6%98%be%e7%a4%ba%e6%89%80%e9%80%89%e6%95%b0%e6%8d%ae%e5%ba%93%e4%b8%ad%e7%9a%84%e8%a1%a8' class='anchor'>#</a>
+</h2><p>我们可以显示我们之前选择的数据库中的哪些表：</p>
+<p><code>SHOW TABLES;</code></p>
+<p>显示表格；</p>
+<p><img
+  src="https://i.imgur.com/wxhYmpv.png"
+  alt=""
+  class=""/>
+</p>
+<h2 id='描述表数据结构'>描述表数据结构<a href='#%e6%8f%8f%e8%bf%b0%e8%a1%a8%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84' class='anchor'>#</a>
+</h2><p>我们还可以使用 DESCRIBE 命令查看单个表的表结构：</p>
+<p><code>DESCRIBE [表名];</code></p>
+<p><img
+  src="https://i.imgur.com/QXhZYGj.png"
+  alt=""
+  class=""/>
+</p>
+<h2 id='显示存储在特定表中的所有数据'>显示存储在特定表中的所有数据<a href='#%e6%98%be%e7%a4%ba%e5%ad%98%e5%82%a8%e5%9c%a8%e7%89%b9%e5%ae%9a%e8%a1%a8%e4%b8%ad%e7%9a%84%e6%89%80%e6%9c%89%e6%95%b0%e6%8d%ae' class='anchor'>#</a>
+</h2><p>现在是真正有趣的部分。让我们使用以下命令显示存储在 employees 数据库中的所有数据：</p>
+<p><code>SELECT * FROM [表名]</code></p>
+<p>如下图，我们可以看到很多员工信息:</p>
+<p><img
+  src="https://i.imgur.com/groqiHh.png"
+  alt=""
+  class=""/>
+</p>
+<p>我们该如何在海量数据中找到我们需要的内容，我们可以使用以下语句：</p>
+<p><code>SELECT * FROM employees WHERE last_name LIKE &quot;%{%}%&quot;;</code></p>
+<p>现在，可以注意到该标志包含答案空间中给出的格式中的“{”符号。从员工表中哪个数据类型会有那个符号，所以 int 不能有，因为它只有所有数字，数据也不能有那个符号，同样适用于性别。<br>
+最后，它缩小到<strong>first_name</strong>和<strong>last_name</strong>，因为它使用 varchar 数据类型。我们将使用模式来查找标志。<br>
+可以找到有关 w3schools 的更多信息：<a
+  href="https://www.w3schools.com/SQL/func_sqlserver_patindex.asp"
+    class="is-pretty-link">https ://www.w3schools.com/SQL/func_sqlserver_patindex.asp</a
+>
+</p>
+<p><img
+  src="https://i.imgur.com/R1l3k9V.png"
+  alt=""
+  class=""/>
+</p>
+<h1 id='最终挑战'>最终挑战<a href='#%e6%9c%80%e7%bb%88%e6%8c%91%e6%88%98' class='anchor'>#</a>
+</h1><blockquote>
+<ol>
+<li>进入 /home/shared/chatlogs 目录并阅读名为：LpnQ 的第一条聊天记录。使用它来帮助您继续执行下一个任务。</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2">
+<li>Sameer 的 SSH 密码是什么？</li>
+</ol>
+</blockquote>
+<p>首先，我需要区分消息的相关部分。对于这个问题，我想找到 Sameer 的 SSH 密码。<br>
+露西说新的安全工程师不小心在某个地方以明文形式存储了一个 SSH 密码。<br>
+我通过使用 grep -iRl Sameer /home 2&gt;/dev/null在文件中搜索 Sameer 来检查是否可以找到任何内容，我发现了三个聊天记录，其中一个是我刚刚阅读的。</p>
+<p><img
+  src="https://i.imgur.com/oNUnOx6.png"
+  alt=""
+  class=""/>
+
+我们分别对他们进行阅读，并找到了 SSH 密码</p>
+<p><strong>这里注意</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>-i 用于进行不区分大小写的搜索。  
+</span></span><span style="display:flex;"><span>-R 用于递归搜索所有文件  
+</span></span><span style="display:flex;"><span>-l 用于仅打印与我正在搜索的单词匹配的文件。我在 /home 中搜索，因为我主要是在寻找聊天记录，在这种情况下，它们存储在 home/shared 下。我使用 /home 而不是 /home/shared 因为我想同时搜索 home/shared 和 home/sarah。
+</span></span></code></pre></div><blockquote>
+<ol start="3">
+<li>sql 数据库备份副本的密码是多少</li>
+</ol>
+</blockquote>
+<p>通过参考第二条消息，我被告知我需要登录 Sameers 帐户并进行搜索。<strong>我还被告知我应该在 home/shared/sql/conf</strong>中寻找一个大约 50mb 的文件。通过找到该文件，我将知道词表的存储位置，以及我要查找的词表中有一个以“ebq”开头的词。首先，我通过 ssh 进入 Sameer 的帐户。之后，我使用<strong>find /home/shared/sql/ -type f -size 50M</strong>来搜索文件。cat 的时候发现一个满是  文字的文件，用 nano 打开搜索，发现信息在最上面。</p>
+<p><img
+  src="https://i.imgur.com/F3uQh0s.png"
+  alt=""
+  class=""/>
+</p>
+<p>解密 base64 (因为看到是=号结尾，我就判定为 base64 就没有再用 hash 工具继续校验)
+<img
+  src="https://i.imgur.com/Nx6CSYQ.png"
+  alt=""
+  class=""/>
+</p>
+<p>并获取单词列表所在的目录。现在我需要找到单词列表，我使用：
+<code>grep -iRl ebq /home/sameer/History\ LB/labmind/latestBuild/configBDB/</code> 来搜索单词列表。</p>
+<p><img
+  src="https://i.imgur.com/6NFEArB.png"
+  alt=""
+  class=""/>
+</p>
+<p>我用 cat 将他们合并成一个文件：</p>
+<p><img
+  src="https://i.imgur.com/Psjk8yS.png"
+  alt=""
+  class=""/>
+</p>
+<p>使用 <code>grep -e ebq wordlistall.txt</code> 我们会得到所有以<strong>ebq</strong>开头的单词，所以让我们复制它们并将其保存在另一个文件中。</p>
+<p>接下来我需要找到并下载实际的备份:</p>
+<p>根据 Sameer 在上一条消息中的目录。备份将以消息的日期 (2020-08-13) 命名。我用:</p>
+<p><code>find /home/shared/sql/ -type f -name *2020–08–13* 2&gt;/dev/null</code></p>
+<p>找到了</p>
+<p><img
+  src="https://i.imgur.com/gLdlzra.png"
+  alt=""
+  class=""/>
+</p>
+<p>gpg2john 2020–08–13.zip.gpg 2020.zip</p>
+<p>现在让john使用ebq.txt wordlist破解密码</p>
+<p><code>john — format=gpg — wordlist=ebq.txt 2020–08–13.zip</code></p>
+<p><code>john — format=gpg — show 2020–08–13.zip</code></p>
+<p>得到密码：<strong>ebqattle</strong></p>
+<blockquote>
+<p>找到用户 James 的 SSH 密码。密码是什么？</p>
+</blockquote>
+<p>现在解压<strong>2020–08–13.zip</strong>并<strong>cd</strong>到文件夹中</p>
+<p>打开 mysql 并使用以下命令：</p>
+<p><strong>mysql -u sarah -p</strong> (enter <strong>password</strong> for password)<br>
+<strong>source employees.sql<br>
+show databases;<br>
+use employees;<br>
+describe employees;<br>
+select * from employees where first_name like ‘James’;</strong></p>
+<p><img
+  src="https://inventyourshit.com/wp-content/uploads/2023/03/Pasted-image-20230317000224.png"
+  alt="ssh password of james"
+  class="ssh password of james"/>
+</p>
+<p>最后一步就是找到 flag, 自己登陆 james 用户在 root 查看吧～</p>
+</div><div class="column is-sticky is-paddingless" id="tocWrapper">
+  <div class="is-paddingless" id="tocContainer">
+    <div class="toc-header">
+      <h6 class="toc-title is-marginless">On this page:</h6>
+      <i
+        title="Back to top"
+        id="tocBackToTop"
+        class="fa-solid fa-circle-arrow-up"
+      ></i>
+    </div>
+    <div id="tocContent">
+      <div id="toc"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#问题">问题：</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#问题-1">问题:</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#如何破解哈希">如何破解哈希？</a></li>
+    <li><a href="#问题-2">问题：</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#如何加密">如何加密？</a></li>
+    <li><a href="#如何解密">如何解密？</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#服务-mysql-启动停止">服务 mysql 启动/停止</a></li>
+    <li><a href="#连接到远程-sql-数据库">连接到远程 SQL 数据库</a></li>
+    <li><a href="#在本地打开-sql-数据库文件">在本地打开 SQL 数据库文件</a></li>
+    <li><a href="#显示数据库">显示数据库</a></li>
+    <li><a href="#选择要查看的数据库">选择要查看的数据库</a></li>
+    <li><a href="#显示所选数据库中的表">显示所选数据库中的表</a></li>
+    <li><a href="#描述表数据结构">描述表数据结构</a></li>
+    <li><a href="#显示存储在特定表中的所有数据">显示存储在特定表中的所有数据</a></li>
+  </ul>
+</nav></div>
+      <div id="taxonomies"><div class="taxonomy-wrapper"><div class="toc-header">
+                  <h6 class="toc-title is-marginless">Categories</h6>
+                </div><a href="/categories/tryhackme/" class="taxonomy"
+                    ><i class="fa-solid fa-circle-dot"></i>Tryhackme</a
+                  ></div><div class="taxonomy-wrapper"><div class="toc-header">
+                  <h6 class="toc-title is-marginless">Tags</h6>
+                </div><a href="/tags/linux/" class="taxonomy"
+                    ><i class="fa-solid fa-circle-dot"></i>Linux</a
+                  ><a href="/tags/note/" class="taxonomy"
+                    ><i class="fa-solid fa-circle-dot"></i>Note</a
+                  ></div></div>
+    </div>
+  </div>
+  <div
+    class="is-paddingless"
+    id="tocCollapsible"
+    title="Collapse/Uncollapse table of contents"
+  >
+    <i class="fa-solid fa-angles-right fa-lg"></i>
+  </div>
+</div>
+</div>
+</div><script type='text/javascript'>
+  const baseUrl = 'https:\/\/example.org\/';
+  const codeCopyBefore = 'Copy to clipboard';
+  const codeCopyAfter = 'Copied to clipboard';
+  const svgDownloadLabel = 'Download as SVG';
+  const helperLoadingLabel = 'Loading';
+  const searchNoResults = 'No result found';
+  const introNextLabel = 'Next';
+  const introPrevLabel = 'Previous';
+  const introSkipLabel = '✗';
+  const introDoneLabel = 'Done';
+  const printLabel = 'Print current page';
+  const qrCodeLabel = 'Show current page QR code';
+  const naCommonLabel = 'Not available';
+</script>
+<script
+      type="module"
+      src="/js/theme/modules/const.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/modules/helpers.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/modules/helpersGlobal.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/init.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/navbar.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/print.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/qrcode.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/search.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/shortcuts.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/sidebar.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/toc.min.js"
+    ></script><script
+      type="text/javascript"
+      src="/js/theme/browserCompatibility.min.js"
+    ></script><script
+      type="text/javascript"
+      src="/js/external/flexsearch/flexsearch.bundle.min.js"
+    ></script><script
+      type="text/javascript"
+      src="/js/external/qrious/qrious.min.js"
+    ></script><script
+      type="text/javascript"
+      src="/js/external/overlay-scrollbars/overlayscrollbars.min.js"
+    ></script>
+</body>
+</html>

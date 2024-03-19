@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux on Bad Wichell</title>
+    <link>https://example.org/tags/linux/</link>
+    <description>Recent content in Linux on Bad Wichell</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>The MIT License (MIT) Copyright © 2020 Jordan GAZEAU</copyright>
+    <lastBuildDate>Wed, 10 May 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://example.org/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux Strength Training I</title>
+      <link>https://example.org/attack/tryhackme/linux-strength-training/</link>
+      <pubDate>Wed, 10 May 2023 00:00:00 +0000</pubDate>
+      <guid>https://example.org/attack/tryhackme/linux-strength-training/</guid>
+      <description>初学者 linux 命令加强学习&#xA;房间信息# 房间名称 Linux Strength Training 描述 简单的 linux 机器来练习技能 积分 110💰 作者 BadWiChell 0 x 001 - 文件查找# 作为一名安全研究人员，经常需要根据各种条件（包括但不限于以下条件）在系统上查找特定文件/文件夹：&#xA;文件名 大小 用户/组 修改日期 访问日期 其关键词内容 因此，我们可以使用以下语法来做到这一点：&#xA;我们可以做什么 语法 案例 根据文件名称查找文件 find [目录路径] -type f -name [文件名] find /home/Andy -type f -name sales.txt 根据目录名称查找目录 find [目录路径] -type d -name [文件名] find /home/Andy -type d -name image 根据大小查找文件 find [目录路径] -type f -size [大小] find /home/Andy -type f -size 10c 根据用户名查找文件 find [目录路径] -type f -user [用户名] find /etc/server -type f -user john 根据组名称查找文件 find [目录路径] -type f -group [组名] find /etc/server -type f -group teamstar 查找在特定日期之后修改的文件 find [目录路径] -type f -newermt &amp;lsquo;[日期和时间]&amp;rsquo; find /-type f -newermt &amp;lsquo;6/30/2020 0:00:00&amp;rsquo; 根据修改日期查找文件 find [目录路径] -type f -newermt [开始日期范围] !</description>
+    </item>
+  </channel>
+</rss>

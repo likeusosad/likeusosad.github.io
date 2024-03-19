@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tools on Bad Wichell</title>
+    <link>https://example.org/categories/tools/</link>
+    <description>Recent content in Tools on Bad Wichell</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>The MIT License (MIT) Copyright © 2020 Jordan GAZEAU</copyright>
+    <lastBuildDate>Wed, 31 May 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://example.org/categories/tools/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Tools</title>
+      <link>https://example.org/tools/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://example.org/tools/</guid>
+      <description>欢迎你来到这里# 这里是 Bad Wichell 打靶记录# 我会进行：# TryHackMe HackTheBox &amp;hellip; 我会从低到高的来完成每个靶场的项目并将过程与细节记录在此</description>
+    </item>
+    <item>
+      <title>Attacktive Directory</title>
+      <link>https://example.org/attack/tryhackme/attacktive-directory/</link>
+      <pubDate>Wed, 31 May 2023 00:00:00 +0000</pubDate>
+      <guid>https://example.org/attack/tryhackme/attacktive-directory/</guid>
+      <description>房间信息# 房间名称 https://tryhackme.com/room/attacktivedirectory 描述 简单域渗透 积分 160💰 作者 BadWiChell 安装 Impacket# 安装 Impacket，这是一组用于处理网络协议的 Python 类。要了解有关 Impacket 的更多信息并了解其部分工具的概览，您可以查看此处 。&#xA;查看此 Github 存储库以了解如何安装它。&#xA;枚举# 我这里比较常用的是 nmap nmap -sC -sV -oA tcp -vv 10.10.0.144 在 nmap 中我们也发现了主机名与 AD 接下来，我们将机器 ip 写入到/etc/hosts 中&#xA;echo &amp;lt;ip&amp;gt; spookysec.local &amp;gt;&amp;gt; /etc/hosts&#xA;枚举 2# 使用 enum4linux 我们能够枚举端口 139 和 445。这个工具有一个相当长的输出，因此为了演练我们只发布重要的部分。&#xA;enum4linux &amp;lt;spookysec.local&amp;gt; 再一次，我们设法检索了有关完整 AD 域名和机器域名以及一些稍后可能有用的用户名的信息。&#xA;通过 kerbrute 枚举用户# kerbrute userenum --dc spookysec.local -d spookysec.local userlist.txt 在这个过程中我们发现了 svc-admin@spookysec.local ASREPRoasting# 从上面输出中，我们能够验证一些活动的用户名。</description>
+    </item>
+    <item>
+      <title>Solar, exploiting log4j</title>
+      <link>https://example.org/attack/tryhackme/solar-exploting-log4j/</link>
+      <pubDate>Wed, 31 May 2023 00:00:00 +0000</pubDate>
+      <guid>https://example.org/attack/tryhackme/solar-exploting-log4j/</guid>
+      <description>房间信息# 房间名称 https://tryhackme.com/room/solar 描述 log4j 积分 160💰 作者 BadWiChell CVE-2021-44228 简介# 2021 年 12 月 9 日，全世界发现了一个名为 CVE-2021-44228 的新漏洞，影响了 Java 日志记录包 **log4j**。此漏洞的严重性得分为 10.0（最严重的名称），并在使用该版本的软件的主机上提供远程代码简单的远程代码执行 **log4j**。这次攻击被称为“Log4Shell”&#xA;今天，**log4j**版本**2.16.0** 可用并修补了此漏洞（JNDI 已完全禁用，对消息查找的支持已删除，并且新的DoS漏洞 CVE-2021-45046 不存在）。 https://github.com/apache/logging-log4j2/releases/tag/rel%2F2.16.0 然而，这个漏洞的绝对危险是由于日志包的无处不在。数以百万计的应用程序和软件提供商使用这个包作为他们自己代码中的依赖项。虽然您可以使用 修补您自己的代码库**log4j**，但其他供应商和制造商仍需要向下游推送他们自己的安全更新。由于其巨大的攻击面的性质，许多安全研究人员将此漏洞比作Shellshock 。 我们将在未来几年看到这种脆弱性。&#xA;如需越来越多的社区支持的易受 CVE-2021-44228 攻击的软件和服务列表，请查看此 GitHub 存储库：&#xA;https://github.com/YfryTchsGD/Log4jAttackSurface 这个房间将展示如何在 Log4j 中测试、利用和缓解此漏洞。&#xA;虽然还有许多关于 CVE-2021-44228 的其他文章、博客、资源和学习材料，但我（本练习的作者）特别偏爱这些： https://www.huntress.com/blog/rapid-response-critical-rce-vulnerability-is-affecting-java https://log4shell.huntress.com/ https://www.youtube.com/watch?v=7qoPDq41xhQ 侦查阶段# 这次我们使用 Rustscan：&#xA;rustscan -a 10.10.232.98 --ulimit 5000 我们可以通过结果看到开放端口：22/111/8983&#xA;我们打开浏览器访问 8983 端口 环顾 Web 应用程序，我们确认这确实使用了 Log4j，因为我们可以看到 Log4j 配置文件的位置。 我们可以看到Dsolr.log.dir参数设置为 /var/solr/logs，这是 Solr 记录到的位置。</description>
+    </item>
+    <item>
+      <title>Post-Exploitation Basics</title>
+      <link>https://example.org/attack/tryhackme/post-exploitation-basics-%E5%90%8E%E6%B8%97%E9%80%8F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</link>
+      <pubDate>Wed, 24 May 2023 00:00:00 +0000</pubDate>
+      <guid>https://example.org/attack/tryhackme/post-exploitation-basics-%E5%90%8E%E6%B8%97%E9%80%8F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</guid>
+      <description>使用 mimikatz、bloodhound、powerview 和 msfvenom 学习后期开发和维护访问的基础知识 房间信息# 房间名称 https://tryhackme.com/room/postexploit 描述 后身渗透基础知识 积分 160💰 作者 BadWiChell Powerview 枚举# Powerview 是 powershell empire 的一个强大的 powershell 脚本，可用于在您已经在系统中获得 shell 后枚举域。 我们将专注于如何从 PowerView 启动和获取用户和组。&#xA;1，启动 Powershell - powershell -ep bypass -ep 绕过 powershell 的执行策略让你轻松运行脚本。&#xA;powershell -ep bypass的作用是:临时绕过PowerShell的Execution Policy设置,允许运行本地 unsigned 脚本。需要注意的是,该参数只在当前PowerShell会话中临时生效。要永久更改PowerShell的执行策略,需要使用Set-ExecutionPolicy cmdlet。&#xA;2，启动 PowerView - . .\Downloads\PowerView.ps1，枚举域用户 - Get-NetUser | select cn&#xA;3 ，枚举域组 - Get-NetGroup -GroupName *admin*&#xA;4，使用 Invoke-ShareFinder 来发现网络共享 Invoke-ShareFinder 的主要功能是:- 搜索当前子网内的 Windows 主机,发现开启的网络共享</description>
+    </item>
+  </channel>
+</rss>

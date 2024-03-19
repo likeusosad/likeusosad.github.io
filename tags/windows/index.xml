@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Windows on Bad Wichell</title>
+    <link>https://example.org/tags/windows/</link>
+    <description>Recent content in Windows on Bad Wichell</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>The MIT License (MIT) Copyright © 2020 Jordan GAZEAU</copyright>
+    <lastBuildDate>Wed, 24 May 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://example.org/tags/windows/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Post-Exploitation Basics</title>
+      <link>https://example.org/attack/tryhackme/post-exploitation-basics-%E5%90%8E%E6%B8%97%E9%80%8F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</link>
+      <pubDate>Wed, 24 May 2023 00:00:00 +0000</pubDate>
+      <guid>https://example.org/attack/tryhackme/post-exploitation-basics-%E5%90%8E%E6%B8%97%E9%80%8F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</guid>
+      <description>使用 mimikatz、bloodhound、powerview 和 msfvenom 学习后期开发和维护访问的基础知识 房间信息# 房间名称 https://tryhackme.com/room/postexploit 描述 后身渗透基础知识 积分 160💰 作者 BadWiChell Powerview 枚举# Powerview 是 powershell empire 的一个强大的 powershell 脚本，可用于在您已经在系统中获得 shell 后枚举域。 我们将专注于如何从 PowerView 启动和获取用户和组。&#xA;1，启动 Powershell - powershell -ep bypass -ep 绕过 powershell 的执行策略让你轻松运行脚本。&#xA;powershell -ep bypass的作用是:临时绕过PowerShell的Execution Policy设置,允许运行本地 unsigned 脚本。需要注意的是,该参数只在当前PowerShell会话中临时生效。要永久更改PowerShell的执行策略,需要使用Set-ExecutionPolicy cmdlet。&#xA;2，启动 PowerView - . .\Downloads\PowerView.ps1，枚举域用户 - Get-NetUser | select cn&#xA;3 ，枚举域组 - Get-NetGroup -GroupName *admin*&#xA;4，使用 Invoke-ShareFinder 来发现网络共享 Invoke-ShareFinder 的主要功能是:- 搜索当前子网内的 Windows 主机,发现开启的网络共享</description>
+    </item>
+  </channel>
+</rss>

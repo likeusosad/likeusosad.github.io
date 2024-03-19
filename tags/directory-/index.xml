@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Directory  on Bad Wichell</title>
+    <link>https://example.org/tags/directory-/</link>
+    <description>Recent content in Directory  on Bad Wichell</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>The MIT License (MIT) Copyright © 2020 Jordan GAZEAU</copyright>
+    <lastBuildDate>Wed, 31 May 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://example.org/tags/directory-/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Attacktive Directory</title>
+      <link>https://example.org/attack/tryhackme/attacktive-directory/</link>
+      <pubDate>Wed, 31 May 2023 00:00:00 +0000</pubDate>
+      <guid>https://example.org/attack/tryhackme/attacktive-directory/</guid>
+      <description>房间信息# 房间名称 https://tryhackme.com/room/attacktivedirectory 描述 简单域渗透 积分 160💰 作者 BadWiChell 安装 Impacket# 安装 Impacket，这是一组用于处理网络协议的 Python 类。要了解有关 Impacket 的更多信息并了解其部分工具的概览，您可以查看此处 。&#xA;查看此 Github 存储库以了解如何安装它。&#xA;枚举# 我这里比较常用的是 nmap nmap -sC -sV -oA tcp -vv 10.10.0.144 在 nmap 中我们也发现了主机名与 AD 接下来，我们将机器 ip 写入到/etc/hosts 中&#xA;echo &amp;lt;ip&amp;gt; spookysec.local &amp;gt;&amp;gt; /etc/hosts&#xA;枚举 2# 使用 enum4linux 我们能够枚举端口 139 和 445。这个工具有一个相当长的输出，因此为了演练我们只发布重要的部分。&#xA;enum4linux &amp;lt;spookysec.local&amp;gt; 再一次，我们设法检索了有关完整 AD 域名和机器域名以及一些稍后可能有用的用户名的信息。&#xA;通过 kerbrute 枚举用户# kerbrute userenum --dc spookysec.local -d spookysec.local userlist.txt 在这个过程中我们发现了 svc-admin@spookysec.local ASREPRoasting# 从上面输出中，我们能够验证一些活动的用户名。</description>
+    </item>
+  </channel>
+</rss>
