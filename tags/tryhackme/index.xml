@@ -7,14 +7,21 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>The MIT License (MIT) Copyright © 2020 Jordan GAZEAU</copyright>
-    <lastBuildDate>Wed, 31 May 2023 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 26 Mar 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://example.org/tags/tryhackme/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Tryhackme</title>
       <link>https://example.org/attack/tryhackme/</link>
-      <pubDate>Wed, 31 May 2023 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 26 Mar 2024 00:00:00 +0000</pubDate>
       <guid>https://example.org/attack/tryhackme/</guid>
       <description>HI,这里是TryHackMe# 以下是我目前所通关的项目,点击名称即可跳转到相关页面# ps：如果你想在Tryhackme中找到我,这是我的ID：getshell01# 你或许想加入我的Tryhackme团队,请点击加入我的团队 # 名称 描述 等级 Bash Scripting bash 教学 简单 Linux Strength Training linux 教学 简单 Post-Exploitation Basics 后渗透基础知识 linux 教学 简单 Attacktive Directory 域渗透 中等 Solar, exploiting log4j log4j 中等 </description>
+    </item>
+    <item>
+      <title>Runtime Detection Evasion</title>
+      <link>https://example.org/attack/tryhackme/runtime-detection-evasion/</link>
+      <pubDate>Tue, 26 Mar 2024 00:00:00 +0000</pubDate>
+      <guid>https://example.org/attack/tryhackme/runtime-detection-evasion/</guid>
+      <description>房间信息# 房间名称 https://tryhackme.com/r/room/runtimedetectionevasion 描述 运行时检测规避 难度 Hard 作者 BadWiChell 任务一# 介绍# 随着 PowerShell &amp;lt;3 的发布，蓝队 Microsoft 发布了 AMSI（反恶意软件扫描接口），这是一种运行时监控解决方案，旨在阻止和监控持续的威胁。&#xA;学习目标&#xA;了解运行时检测的目的及其检测方式。 学习并应用绕过 AMSI 的技术。 了解常见的缓解措施和潜在的技术替代方案。 在执行恶意代码时，运行时检测措施可能会导致许多麻烦和障碍。幸运的是，作为攻击者，我们可以滥用和利用多种技术和方法来绕过常见的运行时检测解决方案。&#xA;任务二# 在执行代码或应用程序时，无论解释器如何，它几乎总是会流经运行时。这在使用 Windows API 调用和与 .NET 交互时最常见。CLR（公共语言运行时）和 DLR（动态语言运行时）是 .NET 的运行时，是使用 Windows 系统时最常遇到的运行时。在此任务中，我们不会讨论运行时的细节;相反，我们将讨论如何监控它们并检测恶意代码。&#xA;运行时检测度量将在运行时执行之前扫描代码，并确定它是否是恶意的。根据检测措施及其背后的技术，此检测可能基于字符串签名、启发式或行为。如果代码被怀疑是恶意的，它将被分配一个值，如果在指定的范围内，它将停止执行，并可能隔离或删除文件/代码。&#xA;运行时检测措施与标准防病毒软件不同，因为它们将直接从内存和运行时进行扫描。同时，防病毒产品还可以利用这些运行时检测来更深入地了解源自代码的调用和钩子。在某些情况下，防病毒产品可能会使用运行时检测流/源作为其启发式方法的一部分。&#xA;任务三# AMSI（反恶意软件扫描接口）是一项 PowerShell 安全功能，允许任何应用程序或服务直接集成到反恶意软件产品中。Defender 检测 AMSI 以在 .NET 运行时内执行之前扫描有效负载和脚本。来自Microsoft：“Windows 反恶意软件扫描接口 （AMSI） 是一种通用接口标准，它允许您的应用程序和服务与计算机上存在的任何反恶意软件产品集成。AMSI 为您的最终用户及其数据、应用程序和工作负载提供增强的恶意软件保护。有关 AMSI 的详细信息，请查看 Windows 文档。&#xA;AMSI将根据监视和扫描的结果，根据响应代码确定其操作。以下是可能的响应代码列表，&#xA;AMSI_RESULT_CLEAN = 0 AMSI_RESULT_NOT_DETECTED = 1 AMSI_RESULT_BLOCKED_BY_ADMIN_START = 16384 AMSI_RESULT_BLOCKED_BY_ADMIN_END = 20479 AMSI_RESULT_DETECTED = 32768 这些响应代码将仅在 AMSI 的后端或通过第三方实现进行报告。如果 AMSI 检测到恶意结果，它将停止执行并发送以下错误消息。</description>
     </item>
     <item>
       <title>Bash Scripting-TryHackMe</title>

