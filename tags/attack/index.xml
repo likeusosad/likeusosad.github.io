@@ -7,12 +7,12 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>The MIT License (MIT) Copyright © 2020 Jordan GAZEAU</copyright>
-    <lastBuildDate>Tue, 26 Mar 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 02 Apr 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://example.org/tags/attack/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Attack</title>
       <link>https://example.org/attack/</link>
-      <pubDate>Tue, 26 Mar 2024 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 02 Apr 2024 00:00:00 +0000</pubDate>
       <guid>https://example.org/attack/</guid>
       <description>欢迎你来到这里# 这里是 Bad Wichell 打靶记录# 我会进行：# TryHackMe HackTheBox &amp;hellip; 我会从低到高的来完成每个靶场的项目并将过程与细节记录在此</description>
     </item>

@@ -7,14 +7,21 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>The MIT License (MIT) Copyright © 2020 Jordan GAZEAU</copyright>
-    <lastBuildDate>Tue, 26 Mar 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 02 Apr 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://example.org/tags/tryhackme/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Tryhackme</title>
       <link>https://example.org/attack/tryhackme/</link>
-      <pubDate>Tue, 26 Mar 2024 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 02 Apr 2024 00:00:00 +0000</pubDate>
       <guid>https://example.org/attack/tryhackme/</guid>
       <description>HI,这里是TryHackMe# 以下是我目前所通关的项目,点击名称即可跳转到相关页面# ps：如果你想在Tryhackme中找到我,这是我的ID：getshell01# 你或许想加入我的Tryhackme团队,请点击加入我的团队 # 名称 描述 等级 Bash Scripting bash 教学 简单 Linux Strength Training linux 教学 简单 Post-Exploitation Basics 后渗透基础知识 linux 教学 简单 Attacktive Directory 域渗透 中等 Solar, exploiting log4j log4j 中等 </description>
+    </item>
+    <item>
+      <title>靠山吃山</title>
+      <link>https://example.org/attack/tryhackme/%E9%9D%A0%E5%B1%B1%E5%90%83%E5%B1%B1/</link>
+      <pubDate>Tue, 02 Apr 2024 00:00:00 +0000</pubDate>
+      <guid>https://example.org/attack/tryhackme/%E9%9D%A0%E5%B1%B1%E5%90%83%E5%B1%B1/</guid>
+      <description>房间名称 https://tryhackme.com/r/room/monitoringevasion 描述 靠山吃山 难度 中等 作者 BadWiChell 任务一# 介绍# Living Off the Land 是红队社区的一个热门术语。这个名字取自现实生活，靠吃土地上可用的食物为生。同样，攻击者和恶意软件创建者会利用目标计算机的内置工具和实用程序。2013 年，DerbyCon3 上引入了“Living Off the Land”一词，此后在红队社区中获得了更多的关注，成为一种常用和流行的技术。&#xA;这些内置工具在目标系统或网络功能中执行各种常规活动;但是，它们越来越多地被使用和滥用，例如，使用 CertUtil 工具将恶意文件下载到目标计算机中。&#xA;主要思想是使用 Microsoft 签名的程序、脚本和库来融入和规避防御性控制。红队成员在对目标执行交战活动时不希望被发现，因此使用这些工具可以更安全地保持隐身。&#xA;以下是生活在陆地上所包含的一些类别：&#xA;识别 文件操作 任意代码执行 横向移动 安全产品旁路 学习目标&#xA;了解红队参与的“生活在土地上”一词。 了解 LOLBAS 项目及其使用方法。 了解并应用红队参与中使用的技术。 会议室先决条件&#xA;一般黑客技术的基本知识。 完成 Jr. 渗透测试器学习路径。 TryHackMe Red Team 初始访问模块. 任务二# windows 内部系统# Windows Sysinternals 是一组工具和高级系统实用工具，旨在帮助 IT 专业人员在各种高级主题中管理、疑难解答和诊断 Windows 操作系统。&#xA;Sysinternals 套件分为多个类别，包括：&#xA;磁盘管理 流程管理 网络工具 系统信息 安全工具 为了使用 Windows Sysinternals 工具，我们需要接受这些工具的 Microsoft 许可协议。我们可以通过在命令提示符下传递 -accepteula 参数或在工具执行期间通过 GUI 来做到这一点。</description>
     </item>
     <item>
       <title>Runtime Detection Evasion</title>

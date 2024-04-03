@@ -3,10 +3,10 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://example.org/attack/tryhackme/</loc>
-    <lastmod>2024-03-26T00:00:00+00:00</lastmod>
+    <lastmod>2024-04-02T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://example.org/attack/</loc>
-    <lastmod>2024-03-26T00:00:00+00:00</lastmod>
+    <lastmod>2024-04-02T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://example.org/attack/hackthebox/</loc>
   </url><url>
@@ -15,33 +15,36 @@
     <loc>https://example.org/sitemap/</loc>
   </url><url>
     <loc>https://example.org/</loc>
-    <lastmod>2024-03-26T00:00:00+00:00</lastmod>
+    <lastmod>2024-04-02T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://example.org/tags/attack/</loc>
-    <lastmod>2024-03-26T00:00:00+00:00</lastmod>
+    <lastmod>2024-04-02T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://example.org/categories/attack/</loc>
-    <lastmod>2024-03-26T00:00:00+00:00</lastmod>
+    <lastmod>2024-04-02T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://example.org/categories/</loc>
-    <lastmod>2024-03-26T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://example.org/attack/tryhackme/runtime-detection-evasion/</loc>
-    <lastmod>2024-03-26T00:00:00+00:00</lastmod>
+    <lastmod>2024-04-02T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://example.org/tags/</loc>
-    <lastmod>2024-03-26T00:00:00+00:00</lastmod>
+    <lastmod>2024-04-02T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://example.org/tags/tryhackme/</loc>
-    <lastmod>2024-03-26T00:00:00+00:00</lastmod>
+    <lastmod>2024-04-02T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://example.org/categories/tryhackme/</loc>
-    <lastmod>2024-03-26T00:00:00+00:00</lastmod>
+    <lastmod>2024-04-02T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://example.org/tags/windows/</loc>
-    <lastmod>2024-03-26T00:00:00+00:00</lastmod>
+    <lastmod>2024-04-02T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://example.org/tags/%E7%BB%95%E8%BF%87-uac/</loc>
+    <lastmod>2024-04-02T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://example.org/attack/tryhackme/%E9%9D%A0%E5%B1%B1%E5%90%83%E5%B1%B1/</loc>
+    <lastmod>2024-04-02T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://example.org/attack/tryhackme/runtime-detection-evasion/</loc>
     <lastmod>2024-03-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://example.org/attack/tryhackme/attacktive-directory/</loc>
